@@ -6,7 +6,12 @@ LDFLAGS+=
 CORE_OBJ=
 RM=rm -f
 SOURCES=testParsePtx.cpp test.cpp
-HEADERS=../ptx/Parser.h ../ptx/Tokenizer.h ../ptx/semantics/Semantics.h ../ptx/semantics/globals.h ../ptx/semantics/Variable.h
+HEADERS=../ptx/Parser.h \
+		../ptx/Tokenizer.h \
+		../ptx/semantics/Semantics.h \
+		../ptx/semantics/globals.h \
+		../ptx/semantics/Variable.h	\
+		../ptx/semantics/Module.h
 INCLUDES=-I../ptx -I../ptx/semantics
 
 all: test
