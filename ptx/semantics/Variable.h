@@ -52,6 +52,9 @@ namespace ptx {
 			}
 		}
 	public:
+		Variable()
+			:Variable(AllocSpace::undefined, Type::Undefined, 0, "")
+		{}
 		Variable (AllocSpace space, Type type, size_t size, const std::string& name)
 			:_space(space)
 			,_type(type)

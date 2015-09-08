@@ -2,6 +2,7 @@
 #define PTXMODULEH
 
 #include <string>
+#include "semantics/Function.h"
 
 namespace ptx {
 	class Module {
