@@ -11,8 +11,9 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/Semantics.h \
 		../ptx/semantics/globals.h \
 		../ptx/semantics/Variable.h	\
-		../ptx/semantics/Module.h
-INCLUDES=-I../ptx -I../ptx/semantics
+		../ptx/semantics/Module.h	\
+		../ptx/parser/ParserResult.h
+INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser
 
 all: test
 
