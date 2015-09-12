@@ -5,7 +5,7 @@ static const std::string test_source = ".version 4.2\n"
 		".address_size 64\n"
 		".visible .entry kernel(\n"
 		"	.param .u64 kernel_param_0,\n"
-		"	.param .u64 kernel_param_1\n"
+		"	.param .s32 kernel_param_1\n"
 		")\n"
 		"{\n"
 		"	.reg .s32 	%r<2>; /*another comment\n"
@@ -72,9 +72,11 @@ static void test_parser(){
 	assert(kernel.parameters().variable(0).name() == "kernel_param_0");
 	assert(kernel.parameters().variable(0).type() == ptx::Type::Unsigned);
 	assert(kernel.parameters().variable(0).space() == ptx::AllocSpace::param);
+	assert(kernel.parameters().variable(0).size() == 64);
 	assert(kernel.parameters().variable(1).name() == "kernel_param_1");
-	assert(kernel.parameters().variable(1).type() == ptx::Type::Unsigned);
+	assert(kernel.parameters().variable(1).type() == ptx::Type::Signed);
 	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::param);
+	assert(kernel.parameters().variable(1).size() == 32);
 }
 
 void test_ptx() {
