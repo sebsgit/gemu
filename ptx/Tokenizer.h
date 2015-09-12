@@ -42,6 +42,9 @@ namespace ptx {
 			}
 			return result;
 		}
+		TokenList sublist(const token_t& endToken) const {
+			return this->sublist(this->_tokens.at(0), endToken);
+		}
 		void removeFirst(const size_t count = 1) {
 			if (count <= this->size())
 				this->_tokens.erase(this->_tokens.begin(), this->_tokens.begin() + count);

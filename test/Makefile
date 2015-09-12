@@ -16,11 +16,18 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/instructions/ModuleDirective.h	\
 		../ptx/semantics/instructions/VariableDeclaration.h	\
 		../ptx/semantics/instructions/FunctionDeclaration.h	\
+		../ptx/semantics/instructions/memory/Load.h	\
+		../ptx/semantics/instructions/memory/Store.h	\
+		../ptx/semantics/instructions/memory/Move.h	\
+		../ptx/semantics/instructions/memory/Convert.h	\
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
 		../ptx/parser/FunctionParser.h	\
 		../ptx/parser/VariableParser.h	\
-		../ptx/parser/InstructionParser.h
+		../ptx/parser/InstructionParser.h	\
+		../ptx/parser/LoadStoreParser.h	\
+		../ptx/parser/MoveParser.h	\
+		../ptx/parser/ConvertParser.h
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser
 
 all: test
