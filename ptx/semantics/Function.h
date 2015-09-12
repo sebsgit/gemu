@@ -31,11 +31,24 @@ namespace ptx {
 		void setParameters(const std::vector<ptx::Variable>& vars) {
 			this->_parameters._data = vars;
 		}
+		void addInstruction(const ptx::InstructionPtr& i) {
+			this->_instructions.push_back(i);
+		}
+		void addInstructions(const std::vector<ptx::InstructionPtr>& toAdd) {
+			for (const auto& i: toAdd)
+				this->_instructions.push_back(i);
+		}
+		void setAllocSpace(ptx::AllocSpace space){
+			this->_space = space;
+		}
+		void setName(const std::string& name) {
+			this->_name = name;
+		}
 	private:
 		std::string _name;
 		std::vector<ptx::InstructionPtr> _instructions;
 		FunctionParameters _parameters;
-		AllocSpace _space;
+		AllocSpace _space = undefined;
 	};
 }
 

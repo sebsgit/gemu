@@ -14,9 +14,6 @@ namespace ptx {
 	};
 	typedef std::shared_ptr<ptx::Instruction> InstructionPtr;
 
-	class FunctionDeclaration : public Instruction {
-
-	};
 	class ControlInstruction : public Instruction {
 
 	};

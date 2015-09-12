@@ -51,6 +51,11 @@ namespace ptx {
 			if (pos != this->_tokens.end())
 				this->removeFirst(pos-this->_tokens.begin());
 		}
+		void removeUntilWith(const token_t& token) {
+			const auto pos = std::find(this->_tokens.begin(), this->_tokens.end(), token);
+			if (pos != this->_tokens.end())
+				this->removeFirst(pos-this->_tokens.begin()+1);
+		}
 		void clear() {
 			this->_tokens.clear();
 		}

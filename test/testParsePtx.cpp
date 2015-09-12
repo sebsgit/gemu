@@ -65,6 +65,7 @@ static void test_parser(){
 	assert(result.fetch<ptx::ModuleDirective>(0)->version() == 4.2f);
 	assert(result.fetch<ptx::ModuleDirective>(1)->target() == "sm_20");
 	assert(result.fetch<ptx::ModuleDirective>(2)->addressSize() == 64);
+	assert(result.fetch<ptx::FunctionDeclaration>(3)->func().name() == "kernel");
 }
 
 void test_ptx() {
