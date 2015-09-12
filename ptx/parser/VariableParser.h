@@ -3,9 +3,9 @@
 
 namespace ptx {
 	namespace parser {
-		class VariableParser {
+		class VariableParser : public AbstractParser {
 		public:
-			bool parse(TokenList& tokens, std::vector<ptx::Variable>& result) const {
+			bool parse(TokenList& tokens, ParserResult& result) const override {
 				return true;
 			}
 		};

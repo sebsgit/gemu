@@ -17,7 +17,19 @@ namespace ptx {
 	};
 
 	class ParserResult {
-	
+	public:
+		void add(const ptx::InstructionPtr& toAdd) {
+			this->_instructions.push_back(toAdd);
+		}
+		void add(const std::vector<ptx::InstructionPtr>& toAdd) {
+			for (const auto& i : toAdd)
+				this->add(i);
+		}
+		ptx::InstructionPtr fetch(size_t i = 0) const {
+			return this->_instructions.at(i);
+		}
+	private:
+		std::vector<ptx::InstructionPtr> _instructions;
 	};
 }
 
