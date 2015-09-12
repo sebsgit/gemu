@@ -10,6 +10,8 @@ namespace ptx {
 		class LoadStoreParser : public AbstractParser{
 		public:
 			bool parse(TokenList& tokens, ParserResult& result) const override {
+				if (tokens.peek() == "ld" || tokens.peek() == "st") {
+				}
 				return false;
 			}
 		};

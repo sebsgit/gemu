@@ -22,6 +22,7 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/instructions/memory/Convert.h	\
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
+		../ptx/parser/ParserUtils.h	\
 		../ptx/parser/FunctionParser.h	\
 		../ptx/parser/VariableParser.h	\
 		../ptx/parser/InstructionParser.h	\

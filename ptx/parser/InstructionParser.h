@@ -29,7 +29,6 @@ namespace ptx {
 				}
 				if (!parsedOk)
 					tokens = toRevert;
-
 				tokens.clear();
 				return parsedOk;
 			}

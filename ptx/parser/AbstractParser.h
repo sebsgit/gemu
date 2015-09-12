@@ -1,6 +1,7 @@
 #ifndef PTXABSTRACTPARSERH
 #define PTXABSTRACTPARSERH
 
+#include "parser/ParserUtils.h"
 #include "parser/ParserResult.h"
 #include "Tokenizer.h"
 

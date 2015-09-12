@@ -105,6 +105,9 @@ namespace ptx {
 					} else if (c == ';') {
 						PUSHT
 						result << ";";
+					} else if (c == '.' && !(!token.empty() && std::isdigit(token[token.size()-1]))) {
+						PUSHT
+						token.push_back(c);
 					} else {
 						token.push_back(c);
 					}
