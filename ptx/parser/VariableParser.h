@@ -1,3 +1,6 @@
+#ifndef PTXVARSPARSERH
+#define PTXVARSPARSERH
+
 #include "semantics/Variable.h"
 #include "parser/AbstractParser.h"
 #include "semantics/instructions/VariableDeclaration.h"
@@ -67,31 +70,14 @@ namespace ptx {
 			}
 		};
 
-		class VariableListParser : public AbstractParser {
+		class VariableListParser : public SplittingParser<VariableParser> {
 		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.empty())
-					return true;
-				const TokenList toRevert(tokens);
-				ParserResult partialResult;
-				VariableParser vars;
-				bool parsedOk = false;
-				while (!tokens.empty()) {
-					vars.parse(tokens, partialResult);
-					if (tokens.empty()) {
-						parsedOk = true;
-						break;
-					} else if (tokens.peek() == ",") {
-						tokens.removeFirst();
-					}
-				}
-				if (parsedOk==false) {
-					tokens = toRevert;
-				} else {
-					result.add(partialResult);
-				}
-				return parsedOk;
+			VariableListParser()
+				:SplittingParser<VariableParser>(token_t(","))
+			{
 			}
 		};
 	}
 }
+
+#endif

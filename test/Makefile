@@ -19,7 +19,8 @@ HEADERS=../ptx/Parser.h \
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
 		../ptx/parser/FunctionParser.h	\
-		../ptx/parser/VariableParser.h
+		../ptx/parser/VariableParser.h	\
+		../ptx/parser/InstructionParser.h
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser
 
 all: test

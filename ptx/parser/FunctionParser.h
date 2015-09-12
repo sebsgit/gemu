@@ -3,6 +3,7 @@
 
 #include "parser/AbstractParser.h"
 #include "parser/VariableParser.h"
+#include "parser/InstructionParser.h"
 #include "semantics/Function.h"
 #include "semantics/instructions/FunctionDeclaration.h"
 
@@ -38,9 +39,14 @@ namespace ptx {
 					}
 					if (toReturn) {
 						TokenList body = tokens.sublist("{", "}");
+						ParserResult bodyResult;
 						if (body.empty()==false) {
-
-							tokens.removeUntilWith("}");
+							if (InstructionBlockParser().parse(body, bodyResult)) {
+								tokens.removeUntilWith("}");
+								function.add(bodyResult);
+							} else {
+								toReturn = false;
+							}
 						} else {
 							toReturn = false;
 						}
