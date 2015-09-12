@@ -19,7 +19,7 @@ namespace ptx {
 		friend class Function;
 	};
 
-	class Function {
+	class Function : public InstructionList {
 	public:
 		Function(const std::string& name = std::string())
 		:_name(name)
@@ -31,13 +31,6 @@ namespace ptx {
 		void setParameters(const std::vector<ptx::Variable>& vars) {
 			this->_parameters._data = vars;
 		}
-		void addInstruction(const ptx::InstructionPtr& i) {
-			this->_instructions.push_back(i);
-		}
-		void addInstructions(const std::vector<ptx::InstructionPtr>& toAdd) {
-			for (const auto& i: toAdd)
-				this->_instructions.push_back(i);
-		}
 		void setAllocSpace(ptx::AllocSpace space){
 			this->_space = space;
 		}
@@ -46,7 +39,6 @@ namespace ptx {
 		}
 	private:
 		std::string _name;
-		std::vector<ptx::InstructionPtr> _instructions;
 		FunctionParameters _parameters;
 		AllocSpace _space = undefined;
 	};
