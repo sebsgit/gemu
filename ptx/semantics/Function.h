@@ -8,11 +8,17 @@ namespace ptx {
 
 	class FunctionParameters {
 	public:
+		ptx::Variable variable(size_t i) const{
+			return this->_data.at(i);
+		}
 		ptx::Variable variable(const std::string& name) const{
 			for (const auto& v : _data)
 				if (v.name()==name)
 					return v;
 			return ptx::Variable();
+		}
+		size_t size() const {
+			return this->_data.size();
 		}
 	private:
 		std::vector<ptx::Variable> _data;
@@ -25,6 +31,8 @@ namespace ptx {
 		:_name(name)
 		{}
 		std::string name() const { return this->_name; }
+		AllocSpace space() const { return this->_space; }
+		FunctionParameters parameters() const { return this->_parameters; }
 		void addParameter(const ptx::Variable& var){
 			this->_parameters._data.push_back(var);
 		}

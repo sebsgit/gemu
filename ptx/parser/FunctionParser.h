@@ -27,7 +27,7 @@ namespace ptx {
 					TokenList varDecl = tokens.sublist("(", ")");
 					if (varDecl.empty() == false) {
 						ParserResult vars;
-						if (VariableParser().parse(varDecl, vars)) {
+						if (VariableListParser().parse(varDecl, vars)) {
 							tokens.removeUntilWith(")");
 							for (size_t i=0 ; i<vars.count() ; ++i){
 								function.addParameter(vars.fetch<ptx::VariableDeclaration>(i)->var());
@@ -39,6 +39,7 @@ namespace ptx {
 					if (toReturn) {
 						TokenList body = tokens.sublist("{", "}");
 						if (body.empty()==false) {
+
 							tokens.removeUntilWith("}");
 						} else {
 							toReturn = false;

@@ -16,6 +16,8 @@ namespace ptx {
 						std::string name = tokens.peek(2);
 						tokens.removeFirst(3);
 						result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name)));
+						if (tokens.peek() == ";")
+							tokens.removeFirst();
 						return true;
 					}
 				}
@@ -62,6 +64,33 @@ namespace ptx {
 							*size = 0;
 					}
 				}
+			}
+		};
+
+		class VariableListParser : public AbstractParser {
+		public:
+			bool parse(TokenList& tokens, ParserResult& result) const override {
+				if (tokens.empty())
+					return true;
+				const TokenList toRevert(tokens);
+				ParserResult partialResult;
+				VariableParser vars;
+				bool parsedOk = false;
+				while (!tokens.empty()) {
+					vars.parse(tokens, partialResult);
+					if (tokens.empty()) {
+						parsedOk = true;
+						break;
+					} else if (tokens.peek() == ",") {
+						tokens.removeFirst();
+					}
+				}
+				if (parsedOk==false) {
+					tokens = toRevert;
+				} else {
+					result.add(partialResult);
+				}
+				return parsedOk;
 			}
 		};
 	}

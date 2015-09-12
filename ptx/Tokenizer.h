@@ -27,8 +27,8 @@ namespace ptx {
 		token_t& operator[](int i) {
 			return this->_tokens[i];
 		}
-		const token_t peek(int i=0) const {
-			return this->_tokens.at(i);
+		const token_t peek(size_t i=0) const {
+			return i < this->_tokens.size() ? this->_tokens.at(i) : token_t();
 		}
 		TokenList sublist(const token_t& startToken, const token_t& endToken) const {
 			TokenList result;

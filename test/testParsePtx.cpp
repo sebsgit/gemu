@@ -4,7 +4,8 @@ static const std::string test_source = ".version 4.2\n"
 		".target sm_20 // a comment\n"
 		".address_size 64\n"
 		".visible .entry kernel(\n"
-		"	.param .u64 kernel_param_0\n"
+		"	.param .u64 kernel_param_0,\n"
+		"	.param .u64 kernel_param_1\n"
 		")\n"
 		"{\n"
 		"	.reg .s32 	%r<2>; /*another comment\n"
@@ -29,12 +30,12 @@ static void test_tokenizer() {
 	assert(result[6] == ".visible");
 	assert(result.peek() == ".version");
 	auto sublist = result.sublist("(", ")");
-	assert(sublist.size() == 3);
+	assert(sublist.size() == 7);
 	assert(sublist[0] == ".param");
 	assert(sublist[1] == ".u64");
 	assert(sublist[2] == "kernel_param_0");
 	sublist.removeFirst(2);
-	assert(sublist.size() == 1);
+	assert(sublist.size() == 5);
 	assert(sublist[0] == "kernel_param_0");
 }
 
@@ -65,7 +66,15 @@ static void test_parser(){
 	assert(result.fetch<ptx::ModuleDirective>(0)->version() == 4.2f);
 	assert(result.fetch<ptx::ModuleDirective>(1)->target() == "sm_20");
 	assert(result.fetch<ptx::ModuleDirective>(2)->addressSize() == 64);
-	assert(result.fetch<ptx::FunctionDeclaration>(3)->func().name() == "kernel");
+	ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(3)->func();
+	assert(kernel.name() == "kernel");
+	assert(kernel.parameters().size() == 2);
+	assert(kernel.parameters().variable(0).name() == "kernel_param_0");
+	assert(kernel.parameters().variable(0).type() == ptx::Type::Unsigned);
+	assert(kernel.parameters().variable(0).space() == ptx::AllocSpace::param);
+	assert(kernel.parameters().variable(1).name() == "kernel_param_1");
+	assert(kernel.parameters().variable(1).type() == ptx::Type::Unsigned);
+	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::param);
 }
 
 void test_ptx() {
