@@ -3,14 +3,6 @@
 
 #include "semantics/Instruction.h"
 #include "semantics/Variable.h"
-
-namespace ptx {
-	class Symbol {
-
-	};
-	class SymbolTable {
-
-	};
-}
+#include "semantics/instructions/ModuleDirective.h"
 
 #endif
