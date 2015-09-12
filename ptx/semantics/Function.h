@@ -21,12 +21,21 @@ namespace ptx {
 
 	class Function {
 	public:
+		Function(const std::string& name = std::string())
+		:_name(name)
+		{}
+		std::string name() const { return this->_name; }
 		void addParameter(const ptx::Variable& var){
 			this->_parameters._data.push_back(var);
 		}
+		void setParameters(const std::vector<ptx::Variable>& vars) {
+			this->_parameters._data = vars;
+		}
 	private:
+		std::string _name;
 		std::vector<ptx::InstructionPtr> _instructions;
 		FunctionParameters _parameters;
+		AllocSpace _space;
 	};
 }
 

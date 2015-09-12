@@ -9,6 +9,7 @@
 #include "semantics/Semantics.h"
 #include "parser/AbstractParser.h"
 #include "parser/DirectiveParser.h"
+#include "parser/FunctionParser.h"
 
 namespace ptx {
 	class Parser : public parser::AbstractParser {
@@ -25,6 +26,8 @@ namespace ptx {
 		bool parse(TokenList& tokens, ParserResult& result) const {
 			parser::DirectiveParser directive;
 			while (directive.parse(tokens, result));
+			parser::FunctionParser functions;
+			while (functions.parse(tokens, result));
 			return true;
 		}
 	};

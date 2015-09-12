@@ -11,6 +11,9 @@ namespace ptx {
 	class TokenList {
 	public:
 		typedef std::string token_t;
+		bool empty() const {
+			return this->_tokens.empty();
+		}
 		size_t size() const {
 			return this->_tokens.size();
 		}
@@ -39,7 +42,7 @@ namespace ptx {
 			}
 			return result;
 		}
-		void removeFirst(const size_t count) {
+		void removeFirst(const size_t count = 1) {
 			if (count <= this->size())
 				this->_tokens.erase(this->_tokens.begin(), this->_tokens.begin() + count);
 		}
