@@ -57,16 +57,7 @@ static void test_tokenizer() {
 }
 
 static void test_parser(){
-	ptx::Parser parser;
-	try {
-		auto result = parser.parseModule(test_source);
-		assert(result.module().targetArch() == "sm_20");
-		assert(result.module().addressSize() == 64);
-		assert(result.module().version() == 4.2f);
-	} catch (const ptx::ParserException& exc) {
-		std::cout << exc.what() << "\n";
-		assert(false);
-	}
+	
 }
 
 void test_ptx() {

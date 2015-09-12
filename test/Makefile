@@ -11,7 +11,6 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/Semantics.h \
 		../ptx/semantics/globals.h \
 		../ptx/semantics/Variable.h	\
-		../ptx/semantics/Module.h	\
 		../ptx/semantics/Function.h	\
 		../ptx/semantics/Instruction.h	\
 		../ptx/parser/ParserResult.h	\

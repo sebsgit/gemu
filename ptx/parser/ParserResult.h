@@ -17,11 +17,7 @@ namespace ptx {
 	};
 
 	class ParserResult {
-	public:
-		const Module module() const { return this->_module; }
-		Module& module() { return this->_module; }
-	private:
-		Module _module;
+	
 	};
 }
 

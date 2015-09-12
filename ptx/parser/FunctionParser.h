@@ -3,6 +3,7 @@
 
 #include "parser/AbstractParser.h"
 #include "parser/VariableParser.h"
+#include "semantics/Function.h"
 
 namespace ptx {
 	namespace parser {

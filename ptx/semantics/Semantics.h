@@ -1,8 +1,8 @@
 #ifndef PTXSEMANTICSH
 #define PTXSEMANTICSH
 
+#include "semantics/Instruction.h"
 #include "semantics/Variable.h"
-#include "semantics/Module.h"
 
 namespace ptx {
 	class Symbol {
