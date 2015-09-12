@@ -10,13 +10,16 @@ namespace ptx {
 			~DirectiveParser(){}
 			bool parse(TokenList& tokens, ParserResult& result) const {
 				if (isDirective(tokens.peek())) {
+					ptx::ModuleDirective::Type type = ptx::ModuleDirective::Undefined;
 					if (tokens.peek() == ".version") {
-						tokens.removeFirst(2);
-						return true;
+						type = ptx::ModuleDirective::Version;
 					} else if (tokens.peek() == ".target") {
-						tokens.removeFirst(2);
-						return true;
+						type = ptx::ModuleDirective::Target;
 					} else if (tokens.peek() == ".address_size") {
+						type = ptx::ModuleDirective::AddressSize;
+					}
+					if (type != ptx::ModuleDirective::Undefined) {
+						result.add(std::make_shared<ptx::ModuleDirective>(type, tokens.peek(1)));
 						tokens.removeFirst(2);
 						return true;
 					}

@@ -57,7 +57,11 @@ static void test_tokenizer() {
 }
 
 static void test_parser(){
-	
+	ptx::ParserResult result = ptx::Parser().parseModule(test_source);
+	assert(result.empty()==false);
+	assert(result.fetch<ptx::ModuleDirective>(0)->version() == 4.2f);
+	assert(result.fetch<ptx::ModuleDirective>(1)->target() == "sm_20");
+	assert(result.fetch<ptx::ModuleDirective>(2)->addressSize() == 64);
 }
 
 void test_ptx() {
