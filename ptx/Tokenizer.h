@@ -51,6 +51,9 @@ namespace ptx {
 			if (pos != this->_tokens.end())
 				this->removeFirst(pos-this->_tokens.begin());
 		}
+		void clear() {
+			this->_tokens.clear();
+		}
 		friend std::ostream& operator << (std::ostream& out, const TokenList& list);
 	private:
 		std::vector<token_t> _tokens;

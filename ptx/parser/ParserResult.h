@@ -35,6 +35,10 @@ namespace ptx {
 			for (const auto& i : toAdd)
 				this->add(i);
 		}
+		void add(const ParserResult& other) {
+			for (const auto& i : other._instructions)
+				this->add(i);
+		}
 	private:
 		std::vector<ptx::InstructionPtr> _instructions;
 	};

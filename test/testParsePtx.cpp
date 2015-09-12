@@ -19,24 +19,6 @@ static const std::string test_source = ".version 4.2\n"
 		"	ret;\n"
 		"}";
 
-static void test_vars(){
-	ptx::Variable bad(".not", ".g62", "badvalue");
-	assert(bad.space() == ptx::AllocSpace::undefined);
-	assert(bad.size() == 0);
-
-	ptx::Variable var(".param", ".u64", "kernel_param_0");
-	assert(var.space() == ptx::AllocSpace::param);
-	assert(var.type() == ptx::Type::Unsigned);
-	assert(var.size() == 64);
-	assert(var.name() == "kernel_param_0");
-
-	var = ptx::Variable(".reg", ".s32", "%p");
-	assert(var.space() == ptx::AllocSpace::reg);
-	assert(var.type() == ptx::Type::Signed);
-	assert(var.size() == 32);
-	assert(var.name() == "%p");
-}
-
 static void test_tokenizer() {
 	ptx::Tokenizer token;
 	auto result = token.tokenize(test_source);
@@ -56,6 +38,27 @@ static void test_tokenizer() {
 	assert(sublist[0] == "kernel_param_0");
 }
 
+static void test_variable_parser() {
+	ptx::TokenList tokens;
+	tokens << ".param" << ".u64" << "kernel_param_0";
+	ptx::ParserResult result;
+	ptx::parser::VariableParser p;
+	assert(p.parse(tokens, result));
+	assert(result.fetch<ptx::VariableDeclaration>(0));
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().name() == "kernel_param_0");
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().size() == 64);
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::param);
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().type() == ptx::Type::Unsigned);
+	tokens.clear();
+	tokens << ".reg" << ".s32" << "%p";
+	assert(p.parse(tokens, result));
+	assert(result.fetch<ptx::VariableDeclaration>(1));
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().name() == "%p");
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().size() == 32);
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::reg);
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
+}
+
 static void test_parser(){
 	ptx::ParserResult result = ptx::Parser().parseModule(test_source);
 	assert(result.empty()==false);
@@ -65,7 +68,7 @@ static void test_parser(){
 }
 
 void test_ptx() {
-	test_vars();
+	test_variable_parser();
 	test_tokenizer();
 	test_parser();
 }

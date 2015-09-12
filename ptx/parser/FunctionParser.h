@@ -11,15 +11,16 @@ namespace ptx {
 			bool parse(TokenList& tokens, ParserResult& result) const {
 				bool toReturn = false;
 				TokenList toRevert(tokens);
+				ParserResult partialResult;
 				if (tokens.peek() == ".visible") {
-					
+
 					tokens.removeFirst();
 				}
 				if (tokens.peek() == ".entry") {
 					tokens.removeFirst(2);
 					TokenList varDecl = tokens.sublist("(", ")");
 					if (varDecl.empty() == false) {
-						if (VariableParser().parse(varDecl, result)) {
+						if (VariableParser().parse(varDecl, partialResult)) {
 							tokens.removeUntil(")");
 						} else {
 							toReturn = false;
@@ -36,6 +37,8 @@ namespace ptx {
 				}
 				if (!toReturn) {
 					tokens = toRevert;
+				} else {
+					result.add(partialResult);
 				}
 				return toReturn;
 			}
