@@ -3,6 +3,7 @@
 
 #include "semantics/globals.h"
 #include "semantics/Instruction.h"
+#include "semantics/instructions/memory/MemoryInstruction.h"
 #include "Tokenizer.h"
 
 namespace ptx {

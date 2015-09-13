@@ -89,7 +89,33 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::Register);
 	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
 	assert(kernel.fetch<ptx::Load>(2));
+	assert(kernel.fetch<ptx::Load>(2)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
+	assert(kernel.fetch<ptx::Load>(2)->space() == ptx::AllocSpace::Parameter);
+	assert(kernel.fetch<ptx::Load>(2)->type() == ptx::Type::Unsigned);
+	assert(kernel.fetch<ptx::Load>(2)->vectorized() == ptx::VectorType::VecNone);
+	assert(kernel.fetch<ptx::Load>(2)->size() == 64);
+	assert(kernel.fetch<ptx::Load>(2)->isVolatile() == false);
+	assert(kernel.fetch<ptx::Load>(2)->operands().count() == 2);
+	assert(kernel.fetch<ptx::Load>(2)->operands()[0].symbol() == "%rd1");
+	assert(kernel.fetch<ptx::Load>(2)->operands()[0].isAddressed() == false);
+	assert(kernel.fetch<ptx::Load>(2)->operands()[0].offset() == 0);
+	assert(kernel.fetch<ptx::Load>(2)->operands()[1].symbol() == "kernel_param_0");
+	assert(kernel.fetch<ptx::Load>(2)->operands()[1].isAddressed() == true);
+	assert(kernel.fetch<ptx::Load>(2)->operands()[1].offset() == 0);
 	assert(kernel.fetch<ptx::Store>(3));
+	assert(kernel.fetch<ptx::Store>(3)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
+	assert(kernel.fetch<ptx::Store>(3)->space() == ptx::AllocSpace::Global);
+	assert(kernel.fetch<ptx::Store>(3)->type() == ptx::Type::Unsigned);
+	assert(kernel.fetch<ptx::Store>(3)->vectorized() == ptx::VectorType::VecNone);
+	assert(kernel.fetch<ptx::Store>(3)->size() == 32);
+	assert(kernel.fetch<ptx::Store>(3)->isVolatile() == false);
+	assert(kernel.fetch<ptx::Store>(3)->operands().count() == 2);
+	assert(kernel.fetch<ptx::Store>(3)->operands()[0].symbol() == "%rd2");
+	assert(kernel.fetch<ptx::Store>(3)->operands()[0].isAddressed() == true);
+	assert(kernel.fetch<ptx::Store>(3)->operands()[0].offset() == 0);
+	assert(kernel.fetch<ptx::Store>(3)->operands()[1].symbol() == "%r1");
+	assert(kernel.fetch<ptx::Store>(3)->operands()[1].isAddressed() == false);
+	assert(kernel.fetch<ptx::Store>(3)->operands()[1].offset() == 0);
 
 }
 

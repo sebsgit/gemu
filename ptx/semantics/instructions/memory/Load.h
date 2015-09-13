@@ -1,7 +1,7 @@
 #ifndef PTXSEMANTICLOADINSTRH
 #define PTXSEMANTICLOADINSTRH
 
-#include "semantics/Instruction.h"
+#include "semantics/instructions/memory/MemoryInstruction.h"
 
 namespace ptx {
 	class Load : public MemoryInstruction {

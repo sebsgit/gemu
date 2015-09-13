@@ -27,8 +27,10 @@ namespace ptx {
 					if (Utils::parseAllocSpace(temp.peek(), &space)){
 						temp.removeFirst();
 						if (!instr.isVolatile()) {
-							if (Utils::parseCacheOperation(temp.peek(), &cacheOp))
+							if (Utils::parseCacheOperation(temp.peek(), &cacheOp)) {
+								instr.setCacheMode(cacheOp);
 								temp.removeFirst();
+							}
 						}
 						if (Utils::parseVectorType(temp.peek(), &vecType)){
 							temp.removeFirst();
@@ -37,7 +39,6 @@ namespace ptx {
 							temp.removeFirst();
 							instr.setType(type);
 							instr.setSize(size);
-							instr.setCacheMode(cacheOp);
 							instr.setAllocSpace(space);
 							instr.setVectorized(vecType);
 							MemoryInstructionOperand op1, op2;

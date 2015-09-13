@@ -16,6 +16,7 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/instructions/ModuleDirective.h	\
 		../ptx/semantics/instructions/VariableDeclaration.h	\
 		../ptx/semantics/instructions/FunctionDeclaration.h	\
+		../ptx/semantics/instructions/memory/MemoryInstruction.h	\
 		../ptx/semantics/instructions/memory/Load.h	\
 		../ptx/semantics/instructions/memory/Store.h	\
 		../ptx/semantics/instructions/memory/Move.h	\

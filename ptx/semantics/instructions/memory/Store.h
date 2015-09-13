@@ -1,7 +1,7 @@
 #ifndef PTXSEMANTICSTOREINSTRH
 #define PTXSEMANTICSTOREINSTRH
 
-#include "semantics/Instruction.h"
+#include "semantics/instructions/memory/MemoryInstruction.h"
 
 namespace ptx {
 	class Store : public MemoryInstruction {

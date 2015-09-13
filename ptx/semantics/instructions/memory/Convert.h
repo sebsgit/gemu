@@ -1,10 +1,10 @@
 #ifndef PTXSEMANTICCONVERTINSTRH
 #define PTXSEMANTICCONVERTINSTRH
 
-#include "semantics/Instruction.h"
+#include "semantics/instructions/memory/MemoryInstruction.h"
 
 namespace ptx {
-	class Convert : public Instruction {
+	class Convert : public MemoryInstruction {
 
 	};
 }

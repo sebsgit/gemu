@@ -1,10 +1,10 @@
 #ifndef PTXSEMANTICMOVEINSTRH
 #define PTXSEMANTICMOVEINSTRH
 
-#include "semantics/Instruction.h"
+#include "semantics/instructions/memory/MemoryInstruction.h"
 
 namespace ptx {
-	class Move : public Instruction {
+	class Move : public MemoryInstruction {
 
 	};
 }
