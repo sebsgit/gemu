@@ -48,7 +48,7 @@ static void test_variable_parser() {
 	assert(result.fetch<ptx::VariableDeclaration>(0));
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().name() == "kernel_param_0");
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().size() == 64);
-	assert(result.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::param);
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::Parameter);
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().type() == ptx::Type::Unsigned);
 	tokens.clear();
 	tokens << ".reg" << ".s32" << "%p";
@@ -56,7 +56,7 @@ static void test_variable_parser() {
 	assert(result.fetch<ptx::VariableDeclaration>(1));
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().name() == "%p");
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().size() == 32);
-	assert(result.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::reg);
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::Register);
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
 }
 
@@ -71,11 +71,11 @@ static void test_parser(){
 	assert(kernel.parameters().size() == 2);
 	assert(kernel.parameters().variable(0).name() == "kernel_param_0");
 	assert(kernel.parameters().variable(0).type() == ptx::Type::Unsigned);
-	assert(kernel.parameters().variable(0).space() == ptx::AllocSpace::param);
+	assert(kernel.parameters().variable(0).space() == ptx::AllocSpace::Parameter);
 	assert(kernel.parameters().variable(0).size() == 64);
 	assert(kernel.parameters().variable(1).name() == "kernel_param_1");
 	assert(kernel.parameters().variable(1).type() == ptx::Type::Signed);
-	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::param);
+	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::Parameter);
 	assert(kernel.parameters().variable(1).size() == 32);
 }
 

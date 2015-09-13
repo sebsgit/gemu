@@ -48,7 +48,7 @@ namespace ptx {
 	private:
 		std::string _name;
 		FunctionParameters _parameters;
-		AllocSpace _space = undefined;
+		AllocSpace _space = Undefined;
 	};
 }
 

@@ -12,7 +12,7 @@ namespace ptx {
 		std::string _name;
 	public:
 		Variable()
-			:Variable(AllocSpace::undefined, Type::Undefined, 0, "")
+			:Variable(AllocSpace::Undefined, Type::Unknown, 0, std::string())
 		{}
 		Variable (AllocSpace space, Type type, size_t size, const std::string& name)
 			:_space(space)

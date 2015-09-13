@@ -9,28 +9,28 @@ namespace ptx {
 		public:
 			static AllocSpace parseAllocSpace(const std::string& str) {
 				if (str == ".reg")
-					return AllocSpace::reg;
+					return AllocSpace::Register;
 				else if (str == ".sreg")
-					return AllocSpace::sreg;
+					return AllocSpace::SpecialRegister;
 				else if (str == ".const")
-					return AllocSpace::const_;
+					return AllocSpace::Constant;
 				else if (str == ".global")
-					return AllocSpace::global;
+					return AllocSpace::Global;
 				else if (str == ".local")
-					return AllocSpace::local;
+					return AllocSpace::Local;
 				else if (str == ".param")
-					return AllocSpace::param;
+					return AllocSpace::Parameter;
 				else if (str == ".shared")
-					return AllocSpace::shared;
-				return AllocSpace::undefined;
+					return AllocSpace::Shared;
+				return AllocSpace::Undefined;
 			}
 			static bool parseAllocSpace(const std::string& str, AllocSpace * space) {
 				*space = parseAllocSpace(str);
-				return *space != AllocSpace::undefined;
+				return *space != AllocSpace::Undefined;
 			}
 			static bool parseTypeAndSize(const std::string& str, Type * type, size_t * size) {
 				*size = 0;
-				*type = Type::Undefined;
+				*type = Type::Unknown;
 				if (str.size() > 2) {
 					if (str == ".pred") {
 						*type = Type::Predicate;

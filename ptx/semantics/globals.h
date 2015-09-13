@@ -3,14 +3,14 @@
 
 namespace ptx {
 	enum AllocSpace {
-		reg,
-		sreg,
-		const_,
-		global,
-		local,
-		param,
-		shared,
-		undefined
+		Register,
+		SpecialRegister,
+		Constant,
+		Global,
+		Local,
+		Parameter,
+		Shared,
+		Undefined
 	};
 	enum Type {
 		Signed,
@@ -18,7 +18,19 @@ namespace ptx {
 		Float,
 		Bits,
 		Predicate,
-		Undefined
+		Unknown
+	};
+	enum VectorType {
+		VecNone,
+		Vec2,
+		Vec4
+	};
+	enum CacheOperation {
+		CacheAllLevels,
+		CacheGlobal,
+		CacheStreaming,
+		CacheLastUse,
+		CacheVolatile
 	};
 }
 

@@ -17,9 +17,9 @@ namespace ptx {
 				bool toReturn = true;
 				TokenList toRevert(tokens);
 				Function function;
-				function.setAllocSpace(AllocSpace::local);
+				function.setAllocSpace(AllocSpace::Local);
 				if (tokens.peek() == ".visible") {
-					function.setAllocSpace(AllocSpace::shared);
+					function.setAllocSpace(AllocSpace::Shared);
 					tokens.removeFirst();
 				}
 				if (tokens.peek() == ".entry") {

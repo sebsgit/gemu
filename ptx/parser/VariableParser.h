@@ -10,7 +10,7 @@ namespace ptx {
 		class VariableParser : public AbstractParser {
 		public:
 			bool parse(TokenList& tokens, ParserResult& result) const override {
-				AllocSpace space = AllocSpace::undefined;
+				AllocSpace space = AllocSpace::Undefined;
 				if (Utils::parseAllocSpace(tokens.peek(), &space)) {
 					ptx::Type type;
 					size_t size = 0;
