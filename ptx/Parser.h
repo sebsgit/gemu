@@ -22,8 +22,8 @@ namespace ptx {
 			this->parse(tokens, result);
 			return result;
 		}
-	private:
-		bool parse(TokenList& tokens, ParserResult& result) const {
+	protected:
+		bool parseTokens(TokenList& tokens, ParserResult& result) const {
 			parser::DirectiveParser directive;
 			while (directive.parse(tokens, result));
 			parser::FunctionParser functions;

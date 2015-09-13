@@ -7,8 +7,8 @@
 namespace ptx {
 	namespace parser {
 		class ReturnExitParser : public AbstractParser{
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				if (tokens.peek() == "ret") {
 					bool isDivergent = true;
 					tokens.removeFirst();

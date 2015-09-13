@@ -8,7 +8,8 @@ namespace ptx {
 		class DirectiveParser : public AbstractParser {
 		public:
 			~DirectiveParser(){}
-			bool parse(TokenList& tokens, ParserResult& result) const {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const {
 				if (isDirective(tokens.peek())) {
 					ptx::ModuleDirective::Type type = ptx::ModuleDirective::Undefined;
 					if (tokens.peek() == ".version") {

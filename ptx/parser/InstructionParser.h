@@ -11,10 +11,9 @@
 namespace ptx {
 	namespace parser {
 		class InstructionParser : public AbstractParser {
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				bool parsedOk = false;
-				const TokenList toRevert(tokens);
 				std::vector<std::shared_ptr<AbstractParser>> parsers;
 				parsers.push_back(std::make_shared<VariableParser>());
 				parsers.push_back(std::make_shared<LoadStoreParser>());
@@ -22,15 +21,11 @@ namespace ptx {
 				parsers.push_back(std::make_shared<ConvertParser>());
 				parsers.push_back(std::make_shared<ReturnExitParser>());
 				for (const auto& p : parsers) {
-					ParserResult partialResult;
-					if (p->parse(tokens, partialResult)) {
+					if (p->parse(tokens, result)) {
 						parsedOk = true;
-						result.add(partialResult);
 						break;
 					}
 				}
-				if (!parsedOk)
-					tokens = toRevert;
 				return parsedOk;
 			}
 		};

@@ -12,7 +12,18 @@ namespace ptx {
 			typedef TokenList::token_t token_t;
 		public:
 			virtual ~AbstractParser(){}
-			virtual bool parse(TokenList& tokens, ParserResult& result) const = 0;
+			bool parse(TokenList& tokens, ParserResult& result) const {
+				TokenList copy = tokens;
+				ParserResult partialResult;
+				const bool parsedOk = this->parseTokens(copy, partialResult);
+				if (parsedOk) {
+					tokens = copy;
+					result.add(partialResult);
+				}
+				return parsedOk;
+			}
+		protected:
+			virtual bool parseTokens(TokenList& tokens, ParserResult& result) const = 0;
 		};
 
 		template <typename Parser>
@@ -23,15 +34,14 @@ namespace ptx {
 			SplittingParser(const token_t& token) : _separator(token) {
 
 			}
-			bool parse(TokenList& tokens, ParserResult& result) const override {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				if (tokens.empty())
 					return true;
-				const TokenList toRevert(tokens);
-				ParserResult partialResult;
 				Parser parser;
 				bool parsedOk = false;
 				while (!tokens.empty()) {
-					parser.parse(tokens, partialResult);
+					parser.parse(tokens, result);
 					if (tokens.empty()) {
 						parsedOk = true;
 						break;
@@ -42,11 +52,6 @@ namespace ptx {
 							break;
 						}
 					}
-				}
-				if (parsedOk==false) {
-					tokens = toRevert;
-				} else {
-					result.add(partialResult);
 				}
 				return parsedOk;
 			}

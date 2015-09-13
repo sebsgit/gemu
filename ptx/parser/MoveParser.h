@@ -7,20 +7,18 @@
 namespace ptx {
 	namespace parser {
 		class MoveParser : public AbstractParser{
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
-				TokenList temp = tokens;
-				if (temp.peek() == "mov") {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
+				if (tokens.peek() == "mov") {
 					Type type = Type::Unknown;
 					size_t size = 0;
-					temp.removeFirst();
-					if (Utils::parseTypeAndSize(temp, &type, &size)) {
+					tokens.removeFirst();
+					if (Utils::parseTypeAndSize(tokens, &type, &size)) {
 						MemoryInstructionOperand op1, op2;
-						if (Utils::parseOperand(temp, &op1)){
-							if (temp.peek()==",") {
-								temp.removeFirst();
-								if (Utils::parseOperand(temp, &op2)) {
-									tokens = temp;
+						if (Utils::parseOperand(tokens, &op1)){
+							if (tokens.peek()==",") {
+								tokens.removeFirst();
+								if (Utils::parseOperand(tokens, &op2)) {
 									MemoryInstruction instr;
 									instr.setType(type);
 									instr.setSize(size);

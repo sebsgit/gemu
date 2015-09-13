@@ -10,12 +10,11 @@
 namespace ptx {
 	namespace parser {
 		class FunctionParser : public AbstractParser {
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const {
 				if (tokens.empty())
 					return false;
 				bool toReturn = true;
-				TokenList toRevert(tokens);
 				Function function;
 				function.setAllocSpace(AllocSpace::Local);
 				if (tokens.peek() == ".visible") {
@@ -52,9 +51,7 @@ namespace ptx {
 						}
 					}
 				}
-				if (!toReturn) {
-					tokens = toRevert;
-				} else {
+				if (toReturn) {
 					result.add(std::make_shared<ptx::FunctionDeclaration>(function));
 				}
 				return toReturn;

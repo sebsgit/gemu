@@ -7,8 +7,8 @@
 namespace ptx {
 	namespace parser {
 		class ConvertParser : public AbstractParser{
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				return false;
 			}
 		};

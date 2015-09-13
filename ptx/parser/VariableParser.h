@@ -8,8 +8,8 @@
 namespace ptx {
 	namespace parser {
 		class VariableParser : public AbstractParser {
-		public:
-			bool parse(TokenList& tokens, ParserResult& result) const override {
+		protected:
+			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				AllocSpace space = AllocSpace::Undefined;
 				if (Utils::parseAllocSpace(tokens, &space)) {
 					ptx::Type type;
