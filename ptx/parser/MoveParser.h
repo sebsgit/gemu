@@ -13,13 +13,13 @@ namespace ptx {
 				if (temp.peek() == "mov") {
 					Type type = Type::Unknown;
 					size_t size = 0;
-					if (Utils::parseTypeAndSize(temp.peek(1), &type, &size)) {
-						temp.removeFirst(2);
+					temp.removeFirst();
+					if (Utils::parseTypeAndSize(temp, &type, &size)) {
 						MemoryInstructionOperand op1, op2;
-						if (Utils::parseOperand(temp, op1)){
+						if (Utils::parseOperand(temp, &op1)){
 							if (temp.peek()==",") {
 								temp.removeFirst();
-								if (Utils::parseOperand(temp, op2)) {
+								if (Utils::parseOperand(temp, &op2)) {
 									tokens = temp;
 									MemoryInstruction instr;
 									instr.setType(type);

@@ -24,28 +24,23 @@ namespace ptx {
 						temp.removeFirst();
 						instr.setVolatile();
 					}
-					if (Utils::parseAllocSpace(temp.peek(), &space)){
-						temp.removeFirst();
+					if (Utils::parseAllocSpace(temp, &space)){
 						if (!instr.isVolatile()) {
-							if (Utils::parseCacheOperation(temp.peek(), &cacheOp)) {
+							if (Utils::parseCacheOperation(temp, &cacheOp)) {
 								instr.setCacheMode(cacheOp);
-								temp.removeFirst();
 							}
 						}
-						if (Utils::parseVectorType(temp.peek(), &vecType)){
-							temp.removeFirst();
-						}
-						if (Utils::parseTypeAndSize(temp.peek(), &type, &size)) {
-							temp.removeFirst();
+						Utils::parseVectorType(temp, &vecType);
+						if (Utils::parseTypeAndSize(temp, &type, &size)) {
 							instr.setType(type);
 							instr.setSize(size);
 							instr.setAllocSpace(space);
 							instr.setVectorized(vecType);
 							MemoryInstructionOperand op1, op2;
-							if (Utils::parseOperand(temp, op1)) {
+							if (Utils::parseOperand(temp, &op1)) {
 								if (temp.peek()==","){
 									temp.removeFirst();
-									if (Utils::parseOperand(temp, op2)) {
+									if (Utils::parseOperand(temp, &op2)) {
 										tokens = temp;
 										instr.addOperand(op1);
 										instr.addOperand(op2);

@@ -10,7 +10,7 @@ namespace ptx {
 	namespace parser {
 		class Utils {
 		public:
-			static AllocSpace parseAllocSpace(const std::string& str) {
+			static AllocSpace parseAllocSpace(const TokenList::token_t& str) {
 				if (str == ".reg")
 					return AllocSpace::Register;
 				else if (str == ".sreg")
@@ -27,11 +27,16 @@ namespace ptx {
 					return AllocSpace::Shared;
 				return AllocSpace::Undefined;
 			}
-			static bool parseAllocSpace(const std::string& str, AllocSpace * space) {
-				*space = parseAllocSpace(str);
-				return *space != AllocSpace::Undefined;
+			static bool parseAllocSpace(TokenList& tokens, AllocSpace * result) {
+				*result = parseAllocSpace(tokens.peek());
+				if (*result != AllocSpace::Undefined) {
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
-			static bool parseTypeAndSize(const std::string& str, Type * type, size_t * size) {
+			static bool parseTypeAndSize(TokenList& tokens, Type * type, size_t * size) {
+				const auto str = tokens.peek();
 				*size = 0;
 				*type = Type::Unknown;
 				if (str.size() > 2) {
@@ -48,24 +53,33 @@ namespace ptx {
 							*type = Type::Bits;
 						else if (c == 'f')
 							*type = Type::Float;
-						const std::string sizeStr = str.substr(2,str.size()-2);
+						const TokenList::token_t sizeStr = str.substr(2,str.size()-2);
 						*size = atoi(sizeStr.c_str());
 						if (*size != 8 && *size!=16 && *size!=32 && *size!=64)
 							*size = 0;
 					}
 				}
-				return size!=0;
+				if(size!=0) {
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
-			static bool parseVectorType(const std::string& token, VectorType * result) {
+			static bool parseVectorType(TokenList& tokens, VectorType * result) {
 				*result = VectorType::VecNone;
-				if (token == ".vec2")
+				if (tokens.peek() == ".vec2")
 					*result = VectorType::Vec2;
-				else if (token == ".vec4")
+				else if (tokens.peek() == ".vec4")
 					*result = VectorType::Vec4;
-				return *result != VectorType::VecNone;
+				if(*result != VectorType::VecNone){
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
-			static bool parseCacheOperation(const std::string& token, CacheOperation * result) {
+			static bool parseCacheOperation(TokenList& tokens, CacheOperation * result) {
 				*result = CacheOperation::CacheUndefined;
+				const auto token = tokens.peek();
 				if (token == ".ca") *result = CacheOperation::CacheAllLevels;
 				else if (token == ".cg") *result = CacheOperation::CacheGlobal;
 				else if (token == ".cs") *result = CacheOperation::CacheStreaming;
@@ -73,9 +87,13 @@ namespace ptx {
 				else if (token == ".cv") *result = CacheOperation::CacheVolatile;
 				else if (token == ".wb") *result = CacheOperation::CacheWriteBack;
 				else if (token == ".wt") *result = CacheOperation::CacheWriteThrough;
-				return *result != CacheOperation::CacheUndefined;
+				if(*result != CacheOperation::CacheUndefined){
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
-			static bool parseOperand(TokenList& tokens, MemoryInstructionOperand& result) {
+			static bool parseOperand(TokenList& tokens, MemoryInstructionOperand * result) {
 				TokenList temp = tokens;
 				bool isAddressed = false;
 				if (temp.peek() == "[") {
@@ -83,13 +101,13 @@ namespace ptx {
 					temp.removeFirst();
 				}
 				// if (temp.peek is valid identifier)
-				std::string name = temp.peek();
+				auto name = temp.peek();
 				temp.removeFirst();
 				if (isAddressed && temp.peek() == "]"){
 					temp.removeFirst();
 				}
 				tokens = temp;
-				result = MemoryInstructionOperand(name, isAddressed, 0);
+				*result = MemoryInstructionOperand(name, isAddressed, 0);
 				return true;
 			}
 		};

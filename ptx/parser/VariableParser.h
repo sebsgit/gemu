@@ -11,12 +11,12 @@ namespace ptx {
 		public:
 			bool parse(TokenList& tokens, ParserResult& result) const override {
 				AllocSpace space = AllocSpace::Undefined;
-				if (Utils::parseAllocSpace(tokens.peek(), &space)) {
+				if (Utils::parseAllocSpace(tokens, &space)) {
 					ptx::Type type;
 					size_t size = 0;
-					if  (Utils::parseTypeAndSize(tokens.peek(1), &type, &size)) {
-						std::string name = tokens.peek(2);
-						tokens.removeFirst(3);
+					if  (Utils::parseTypeAndSize(tokens, &type, &size)) {
+						std::string name = tokens.peek();
+						tokens.removeFirst();
 						result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name)));
 						if (tokens.peek() == ";")
 							tokens.removeFirst();
