@@ -35,20 +35,14 @@ namespace ptx {
 							instr.setSize(size);
 							instr.setAllocSpace(space);
 							instr.setVectorized(vecType);
-							MemoryInstructionOperand op1, op2;
-							if (Utils::parseOperand(tokens, &op1)) {
-								if (tokens.peek()==","){
-									tokens.removeFirst();
-									if (Utils::parseOperand(tokens, &op2)) {
-										instr.addOperand(op1);
-										instr.addOperand(op2);
-										if (isLoad)
-											result.add(std::make_shared<ptx::Load>(std::move(instr)));
-										else
-											result.add(std::make_shared<ptx::Store>(std::move(instr)));
-										return true;
-									}
-								}
+							MemoryInstructionOperands operands;
+							if (Utils::parseOperands(tokens, 2, &operands)) {
+								instr.setOperands(operands);
+								if (isLoad)
+									result.add(std::make_shared<ptx::Load>(std::move(instr)));
+								else
+									result.add(std::make_shared<ptx::Store>(std::move(instr)));
+								return true;
 							}
 						}
 					}

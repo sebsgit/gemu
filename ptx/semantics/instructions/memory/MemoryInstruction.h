@@ -52,6 +52,7 @@ namespace ptx {
 			return ss.str();
 		}
 		void addOperand(const MemoryInstructionOperand& op) { this->_operands.add(op); }
+		void setOperands(const MemoryInstructionOperands& ops) { this->_operands = ops; }
 		void setCacheMode(CacheOperation op) { this->_cacheMode = op; }
 		void setAllocSpace(AllocSpace space) { this->_space = space; }
 		void setType(Type type) { this->_type = type; }

@@ -19,21 +19,15 @@ namespace ptx {
 					Type type = Type::Unknown;
 					size_t size = 0;
 					if (Utils::parseAllocSpace(tokens, &space) && Utils::parseTypeAndSize(tokens, &type, &size)) {
-						MemoryInstructionOperand op1, op2;
-						if (Utils::parseOperand(tokens, &op1)){
-							if (tokens.peek() == ",") {
-								tokens.removeFirst();
-								if (Utils::parseOperand(tokens, &op2)) {
-									MemoryInstruction instr;
-									instr.setAllocSpace(space);
-									instr.setSize(size);
-									instr.setType(type);
-									instr.addOperand(op1);
-									instr.addOperand(op2);
-									result.add(std::make_shared<ptx::Convert>(std::move(instr)));
-									return true;
-								}
-							}
+						MemoryInstructionOperands operands;
+						if (Utils::parseOperands(tokens, 2, &operands)){
+							MemoryInstruction instr;
+							instr.setAllocSpace(space);
+							instr.setSize(size);
+							instr.setType(type);
+							instr.setOperands(operands);
+							result.add(std::make_shared<ptx::Convert>(std::move(instr)));
+							return true;
 						}
 					}
 				}

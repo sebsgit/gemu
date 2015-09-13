@@ -94,6 +94,8 @@ namespace ptx {
 				return false;
 			}
 			static bool parseOperand(TokenList& tokens, MemoryInstructionOperand * result) {
+				if (tokens.empty())
+					return false;
 				TokenList temp = tokens;
 				bool isAddressed = false;
 				if (temp.peek() == "[") {
@@ -109,6 +111,24 @@ namespace ptx {
 				tokens = temp;
 				*result = MemoryInstructionOperand(name, isAddressed, 0);
 				return true;
+			}
+			static bool parseOperands(TokenList& tokens, size_t requiredCount, MemoryInstructionOperands * result) {
+				MemoryInstructionOperand op;
+				MemoryInstructionOperands tmpResult;
+				bool parsedOk = false;
+				while (Utils::parseOperand(tokens, &op)) {
+					tmpResult.add(op);
+					if (tmpResult.count() == requiredCount) {
+						parsedOk = true;
+						break;
+					}
+					if (tokens.peek() != ",")
+						break;
+					tokens.removeFirst();
+				}
+				if (parsedOk)
+					*result = tmpResult;
+				return parsedOk;
 			}
 		};
 	}
