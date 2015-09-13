@@ -6,6 +6,7 @@
 #include "parser/LoadStoreParser.h"
 #include "parser/MoveParser.h"
 #include "parser/ConvertParser.h"
+#include "parser/ReturnExitParser.h"
 
 namespace ptx {
 	namespace parser {
@@ -19,6 +20,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<LoadStoreParser>());
 				parsers.push_back(std::make_shared<MoveParser>());
 				parsers.push_back(std::make_shared<ConvertParser>());
+				parsers.push_back(std::make_shared<ReturnExitParser>());
 				for (const auto& p : parsers) {
 					ParserResult partialResult;
 					if (p->parse(tokens, partialResult)) {

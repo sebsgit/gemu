@@ -17,7 +17,7 @@ static const std::string test_source = ".version 4.2\n"
 		// "	cvta.to.global.u64 	%rd2, %rd1;\n"
 		// "	mov.u32 	%r1, 5;\n"
 		"	st.global.u32 	[%rd2], %r1;\n"
-		// "	ret;\n"
+		"	ret;\n"
 		"}";
 
 static void test_tokenizer() {
@@ -116,7 +116,8 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::Store>(3)->operands()[1].symbol() == "%r1");
 	assert(kernel.fetch<ptx::Store>(3)->operands()[1].isAddressed() == false);
 	assert(kernel.fetch<ptx::Store>(3)->operands()[1].offset() == 0);
-
+	assert(kernel.last<ptx::Return>());
+	assert(kernel.last<ptx::Return>()->isDivergent());
 }
 
 void test_ptx() {

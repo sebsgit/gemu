@@ -21,6 +21,8 @@ HEADERS=../ptx/Parser.h \
 		../ptx/semantics/instructions/memory/Store.h	\
 		../ptx/semantics/instructions/memory/Move.h	\
 		../ptx/semantics/instructions/memory/Convert.h	\
+		../ptx/semantics/instructions/control/ControlInstruction.h	\
+		../ptx/semantics/instructions/control/Return.h	\
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
 		../ptx/parser/ParserUtils.h	\
@@ -29,7 +31,9 @@ HEADERS=../ptx/Parser.h \
 		../ptx/parser/InstructionParser.h	\
 		../ptx/parser/LoadStoreParser.h	\
 		../ptx/parser/MoveParser.h	\
-		../ptx/parser/ConvertParser.h
+		../ptx/parser/ConvertParser.h	\
+		../ptx/parser/ReturnExitParser.h	\
+
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser
 
 all: test

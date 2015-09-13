@@ -16,10 +16,6 @@ namespace ptx {
 	};
 	typedef std::shared_ptr<ptx::Instruction> InstructionPtr;
 
-	class ControlInstruction : public Instruction {
-
-	};
-
 	class InstructionList {
 	public:
 		bool empty() const {
@@ -31,6 +27,10 @@ namespace ptx {
 		template <typename T=ptx::Instruction>
 		std::shared_ptr<T> fetch(size_t i = 0) const {
 			return std::dynamic_pointer_cast<T>(this->_instructions.at(i));
+		}
+		template <typename T=ptx::Instruction>
+		std::shared_ptr<T> last() const {
+			return this->fetch<T>(this->_instructions.size()-1);
 		}
 		void add(const ptx::InstructionPtr& toAdd) {
 			this->_instructions.push_back(toAdd);
