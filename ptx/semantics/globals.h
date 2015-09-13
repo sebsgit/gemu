@@ -30,7 +30,10 @@ namespace ptx {
 		CacheGlobal,
 		CacheStreaming,
 		CacheLastUse,
-		CacheVolatile
+		CacheVolatile,
+		CacheUndefined,
+		CacheWriteBack,
+		CacheWriteThrough
 	};
 }
 

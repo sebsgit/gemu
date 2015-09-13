@@ -2,6 +2,8 @@
 #define PTXPARSERUTILITIESH
 
 #include "semantics/globals.h"
+#include "semantics/Instruction.h"
+#include "Tokenizer.h"
 
 namespace ptx {
 	namespace parser {
@@ -52,6 +54,42 @@ namespace ptx {
 					}
 				}
 				return size!=0;
+			}
+			static bool parseVectorType(const std::string& token, VectorType * result) {
+				*result = VectorType::VecNone;
+				if (token == ".vec2")
+					*result = VectorType::Vec2;
+				else if (token == ".vec4")
+					*result = VectorType::Vec4;
+				return *result != VectorType::VecNone;
+			}
+			static bool parseCacheOperation(const std::string& token, CacheOperation * result) {
+				*result = CacheOperation::CacheUndefined;
+				if (token == ".ca") *result = CacheOperation::CacheAllLevels;
+				else if (token == ".cg") *result = CacheOperation::CacheGlobal;
+				else if (token == ".cs") *result = CacheOperation::CacheStreaming;
+				else if (token == ".lu") *result = CacheOperation::CacheLastUse;
+				else if (token == ".cv") *result = CacheOperation::CacheVolatile;
+				else if (token == ".wb") *result = CacheOperation::CacheWriteBack;
+				else if (token == ".wt") *result = CacheOperation::CacheWriteThrough;
+				return *result != CacheOperation::CacheUndefined;
+			}
+			static bool parseOperand(TokenList& tokens, MemoryInstructionOperand& result) {
+				TokenList temp = tokens;
+				bool isAddressed = false;
+				if (temp.peek() == "[") {
+					isAddressed = true;
+					temp.removeFirst();
+				}
+				// if (temp.peek is valid identifier)
+				std::string name = temp.peek();
+				temp.removeFirst();
+				if (isAddressed && temp.peek() == "]"){
+					temp.removeFirst();
+				}
+				tokens = temp;
+				result = MemoryInstructionOperand(name, isAddressed, 0);
+				return true;
 			}
 		};
 	}

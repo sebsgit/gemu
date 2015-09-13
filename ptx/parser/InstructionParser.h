@@ -14,13 +14,13 @@ namespace ptx {
 			bool parse(TokenList& tokens, ParserResult& result) const override {
 				bool parsedOk = false;
 				const TokenList toRevert(tokens);
-				ParserResult partialResult;
 				std::vector<std::shared_ptr<AbstractParser>> parsers;
 				parsers.push_back(std::make_shared<VariableParser>());
 				parsers.push_back(std::make_shared<LoadStoreParser>());
 				parsers.push_back(std::make_shared<MoveParser>());
 				parsers.push_back(std::make_shared<ConvertParser>());
 				for (const auto& p : parsers) {
+					ParserResult partialResult;
 					if (p->parse(tokens, partialResult)) {
 						parsedOk = true;
 						result.add(partialResult);
@@ -29,7 +29,6 @@ namespace ptx {
 				}
 				if (!parsedOk)
 					tokens = toRevert;
-				tokens.clear();
 				return parsedOk;
 			}
 		};

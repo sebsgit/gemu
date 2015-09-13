@@ -14,10 +14,10 @@ static const std::string test_source = ".version 4.2\n"
 		"\n"
 		"\n"
 		"	ld.param.u64 	%rd1, [kernel_param_0];\n"
-		"	cvta.to.global.u64 	%rd2, %rd1;\n"
-		"	mov.u32 	%r1, 5;\n"
+		// "	cvta.to.global.u64 	%rd2, %rd1;\n"
+		// "	mov.u32 	%r1, 5;\n"
 		"	st.global.u32 	[%rd2], %r1;\n"
-		"	ret;\n"
+		// "	ret;\n"
 		"}";
 
 static void test_tokenizer() {
@@ -77,6 +77,20 @@ static void test_parser(){
 	assert(kernel.parameters().variable(1).type() == ptx::Type::Signed);
 	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::Parameter);
 	assert(kernel.parameters().variable(1).size() == 32);
+	assert(kernel.empty()==false);
+	assert(kernel.fetch<ptx::VariableDeclaration>(0));
+	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().name() == "%r<2>");
+	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().size() == 32);
+	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::Register);
+	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().type() == ptx::Type::Signed);
+	assert(kernel.fetch<ptx::VariableDeclaration>(1));
+	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().name() == "%rd<3>");
+	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().size() == 64);
+	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::Register);
+	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
+	assert(kernel.fetch<ptx::Load>(2));
+	assert(kernel.fetch<ptx::Store>(3));
+
 }
 
 void test_ptx() {

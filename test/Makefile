@@ -2,7 +2,7 @@ TARGET=test
 CC=g++
 CFLAGS+=-std=c++11 -Wall
 LIBS+=
-LDFLAGS+=
+LDFLAGS+=-pg
 CORE_OBJ=
 RM=rm -f
 SOURCES=testParsePtx.cpp test.cpp
