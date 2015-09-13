@@ -14,7 +14,7 @@ static const std::string test_source = ".version 4.2\n"
 		"\n"
 		"\n"
 		"	ld.param.u64 	%rd1, [kernel_param_0];\n"
-		// "	cvta.to.global.u64 	%rd2, %rd1;\n"
+		"	cvta.to.global.u64 	%rd2, %rd1;\n"
 		"	mov.u32 	%r1, 5;\n"
 		"	st.global.u32 	[%rd2], %r1;\n"
 		"	ret;\n"
@@ -102,33 +102,34 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::Load>(2)->operands()[1].symbol() == "kernel_param_0");
 	assert(kernel.fetch<ptx::Load>(2)->operands()[1].isAddressed() == true);
 	assert(kernel.fetch<ptx::Load>(2)->operands()[1].offset() == 0);
-	assert(kernel.fetch<ptx::Move>(3));
-	assert(kernel.fetch<ptx::Move>(3)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
-	assert(kernel.fetch<ptx::Move>(3)->space() == ptx::AllocSpace::Register);
-	assert(kernel.fetch<ptx::Move>(3)->vectorized() == ptx::VectorType::VecNone);
-	assert(kernel.fetch<ptx::Move>(3)->size() == 32);
-	assert(kernel.fetch<ptx::Move>(3)->isVolatile() == false);
-	assert(kernel.fetch<ptx::Move>(3)->operands().count() == 2);
-	assert(kernel.fetch<ptx::Move>(3)->operands()[0].symbol() == "%r1");
-	assert(kernel.fetch<ptx::Move>(3)->operands()[0].isAddressed() == false);
-	assert(kernel.fetch<ptx::Move>(3)->operands()[0].offset() == 0);
-	assert(kernel.fetch<ptx::Move>(3)->operands()[1].symbol() == "5");
-	assert(kernel.fetch<ptx::Move>(3)->operands()[1].isAddressed() == false);
-	assert(kernel.fetch<ptx::Move>(3)->operands()[1].offset() == 0);
-	assert(kernel.fetch<ptx::Store>(4));
-	assert(kernel.fetch<ptx::Store>(4)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
-	assert(kernel.fetch<ptx::Store>(4)->space() == ptx::AllocSpace::Global);
-	assert(kernel.fetch<ptx::Store>(4)->type() == ptx::Type::Unsigned);
-	assert(kernel.fetch<ptx::Store>(4)->vectorized() == ptx::VectorType::VecNone);
-	assert(kernel.fetch<ptx::Store>(4)->size() == 32);
-	assert(kernel.fetch<ptx::Store>(4)->isVolatile() == false);
-	assert(kernel.fetch<ptx::Store>(4)->operands().count() == 2);
-	assert(kernel.fetch<ptx::Store>(4)->operands()[0].symbol() == "%rd2");
-	assert(kernel.fetch<ptx::Store>(4)->operands()[0].isAddressed() == true);
-	assert(kernel.fetch<ptx::Store>(4)->operands()[0].offset() == 0);
-	assert(kernel.fetch<ptx::Store>(4)->operands()[1].symbol() == "%r1");
-	assert(kernel.fetch<ptx::Store>(4)->operands()[1].isAddressed() == false);
-	assert(kernel.fetch<ptx::Store>(4)->operands()[1].offset() == 0);
+	assert(kernel.fetch<ptx::Convert>(3));
+	assert(kernel.fetch<ptx::Move>(4));
+	assert(kernel.fetch<ptx::Move>(4)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
+	assert(kernel.fetch<ptx::Move>(4)->space() == ptx::AllocSpace::Register);
+	assert(kernel.fetch<ptx::Move>(4)->vectorized() == ptx::VectorType::VecNone);
+	assert(kernel.fetch<ptx::Move>(4)->size() == 32);
+	assert(kernel.fetch<ptx::Move>(4)->isVolatile() == false);
+	assert(kernel.fetch<ptx::Move>(4)->operands().count() == 2);
+	assert(kernel.fetch<ptx::Move>(4)->operands()[0].symbol() == "%r1");
+	assert(kernel.fetch<ptx::Move>(4)->operands()[0].isAddressed() == false);
+	assert(kernel.fetch<ptx::Move>(4)->operands()[0].offset() == 0);
+	assert(kernel.fetch<ptx::Move>(4)->operands()[1].symbol() == "5");
+	assert(kernel.fetch<ptx::Move>(4)->operands()[1].isAddressed() == false);
+	assert(kernel.fetch<ptx::Move>(4)->operands()[1].offset() == 0);
+	assert(kernel.fetch<ptx::Store>(5));
+	assert(kernel.fetch<ptx::Store>(5)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
+	assert(kernel.fetch<ptx::Store>(5)->space() == ptx::AllocSpace::Global);
+	assert(kernel.fetch<ptx::Store>(5)->type() == ptx::Type::Unsigned);
+	assert(kernel.fetch<ptx::Store>(5)->vectorized() == ptx::VectorType::VecNone);
+	assert(kernel.fetch<ptx::Store>(5)->size() == 32);
+	assert(kernel.fetch<ptx::Store>(5)->isVolatile() == false);
+	assert(kernel.fetch<ptx::Store>(5)->operands().count() == 2);
+	assert(kernel.fetch<ptx::Store>(5)->operands()[0].symbol() == "%rd2");
+	assert(kernel.fetch<ptx::Store>(5)->operands()[0].isAddressed() == true);
+	assert(kernel.fetch<ptx::Store>(5)->operands()[0].offset() == 0);
+	assert(kernel.fetch<ptx::Store>(5)->operands()[1].symbol() == "%r1");
+	assert(kernel.fetch<ptx::Store>(5)->operands()[1].isAddressed() == false);
+	assert(kernel.fetch<ptx::Store>(5)->operands()[1].offset() == 0);
 	assert(kernel.last<ptx::Return>());
 	assert(kernel.last<ptx::Return>()->isDivergent());
 }
