@@ -5,6 +5,7 @@
 
 namespace ptx {
 	class ModuleDirective : public Instruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		enum Type {
 			Undefined,

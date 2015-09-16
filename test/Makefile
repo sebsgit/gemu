@@ -5,8 +5,10 @@ LIBS+=
 LDFLAGS+=-pg
 CORE_OBJ=
 RM=rm -f
-SOURCES=testParsePtx.cpp test.cpp
-HEADERS=../ptx/Parser.h \
+SOURCES=testParsePtx.cpp test.cpp	\
+		../ptx/runtime/PtxExecutionContext.cpp
+HEADERS=../arch/Device.h	\
+		../ptx/Parser.h \
 		../ptx/Tokenizer.h \
 		../ptx/semantics/Semantics.h \
 		../ptx/semantics/globals.h \

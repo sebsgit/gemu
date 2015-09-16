@@ -6,6 +6,7 @@
 
 namespace ptx {
 	class FunctionDeclaration : public Instruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		FunctionDeclaration(const ptx::Function& toDecl)
 			:_toDeclare(toDecl)

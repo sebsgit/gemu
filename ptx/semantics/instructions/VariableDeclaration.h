@@ -6,6 +6,7 @@
 
 namespace ptx {
 	class VariableDeclaration : public Instruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		VariableDeclaration(const ptx::Variable& toDecl)
 			:_toDeclare(toDecl)

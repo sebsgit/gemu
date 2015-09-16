@@ -5,6 +5,7 @@
 
 namespace ptx {
 	class Return : public ControlInstruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		Return (bool isDivergent=true)
 			:_isDivergent(isDivergent)

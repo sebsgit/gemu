@@ -5,6 +5,7 @@
 
 namespace ptx {
 	class Load : public MemoryInstruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		Load(MemoryInstruction&& other) : MemoryInstruction(std::move(other)) {}
 		std::string toString() const override {

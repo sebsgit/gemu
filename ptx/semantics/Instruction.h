@@ -4,15 +4,18 @@
 #include <memory>
 #include <sstream>
 #include "semantics/globals.h"
+#include "runtime/PtxExecutionContext.h"
+
+#define PTX_DECLARE_DISPATCH public: virtual void dispatch(exec::PtxExecutionContext& context) { context.exec(*this); }
 
 namespace ptx {
 	class Instruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		virtual ~Instruction() {};
 		virtual std::string toString() const{
 			return std::string("[not implemented]");
 		}
-	protected:
 	};
 	typedef std::shared_ptr<ptx::Instruction> InstructionPtr;
 
@@ -47,6 +50,10 @@ namespace ptx {
 			for (const auto& i : this->_instructions)
 				ss << i << "\n";
 			return ss.str();
+		}
+		void dispatch(exec::PtxExecutionContext& context) {
+			for (auto & i : this->_instructions)
+				i->dispatch(context);
 		}
 	private:
 		std::vector<ptx::InstructionPtr> _instructions;

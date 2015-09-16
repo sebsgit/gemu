@@ -5,6 +5,7 @@
 
 namespace ptx {
 	class Convert : public MemoryInstruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		Convert(MemoryInstruction&& other) : MemoryInstruction(std::move(other)) {}
 		std::string toString() const override {
