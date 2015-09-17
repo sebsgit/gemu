@@ -5,9 +5,15 @@ LIBS+=
 LDFLAGS+=-pg
 CORE_OBJ=
 RM=rm -f
-SOURCES=testParsePtx.cpp test.cpp	\
-		../ptx/runtime/PtxExecutionContext.cpp
+SOURCES=testParsePtx.cpp 	\
+		testCuda.cpp		\
+		test.cpp			\
+		../ptx/runtime/PtxExecutionContext.cpp	\
+		../drivers/cuda/cudaDriverApi.cpp
+
 HEADERS=../arch/Device.h	\
+		../drivers/cuda/cudaDefines.h	\
+		../drivers/cuda/cudaForward.h	\
 		../ptx/Parser.h \
 		../ptx/Tokenizer.h \
 		../ptx/semantics/Semantics.h \
@@ -36,7 +42,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/parser/ConvertParser.h	\
 		../ptx/parser/ReturnExitParser.h	\
 
-INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser
+INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser -I../drivers/cuda -I../drivers -I../
 
 all: test
 

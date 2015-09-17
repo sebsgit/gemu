@@ -149,6 +149,6 @@ enum CUdevice_attribute {
 };
 
 typedef int CUdevice;
-typedef unsigned int CUdeviceptr;
+typedef void * CUdeviceptr;
 
 #endif

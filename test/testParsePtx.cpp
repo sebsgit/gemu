@@ -145,8 +145,10 @@ void test_execution_context() {
 }
 
 void test_ptx() {
+	std::cout << "testing parser...\n";
 	test_variable_parser();
 	test_tokenizer();
 	test_parser();
 	test_execution_context();
+	std::cout << "done.\n";
 }

@@ -7,35 +7,25 @@
 
 namespace gemu {
 	class MemoryBlock {
-		struct free_block_t {
-			size_t start;
-			size_t size;
-			free_block_t (size_t st=0, size_t sz=0) : start(st), size(sz) {
-
-			}
-		};
 	public:
 		MemoryBlock(size_t size)
-			:_data(new char[size])
-			,_size(size)
-		{
-			this->_freeBlocks.push_back(free_block_t(0, size));
-		}
-		~MemoryBlock(){
-			delete [] _data;
-		}
-		size_t size() const {
+			:_maximumSize(size)
+		{}
+		size_t currentSize() const {
 			return this->_size;
 		}
+		size_t maximumSize() const {
+			return this->_maximumSize;
+		}
+		size_t freeSpace() const {
+			return this->maximumSize() - this->currentSize();
+		}
 		void * alloc(size_t size) {
-			for (auto& block : this->_freeBlocks) {
-				if (block.size < size) {
-					const size_t start = block.start;
-					block.start += size;
-					block.size -= size;
-					this->_allocData[this->_data + start] = size;
-					return this->_data + start;
-				}
+			if (this->_size + size <= this->_maximumSize){
+				this->_size += size;
+				void * result = malloc(size);
+				this->_allocData[result] = size;
+				return result;
 			}
 			return nullptr;
 		}
@@ -45,9 +35,9 @@ namespace gemu {
 		bool free(void * ptr) {
 			auto it = this->_allocData.find(ptr);
 			if (it != this->_allocData.end()) {
-				this->_freeBlocks.push_back(free_block_t((char*)ptr - this->_data, it->second));
+				this->_size -= it->second;
 				this->_allocData.erase(it);
-				//TODO perform merge when too many free blocks to avoid fragmentation
+				free(ptr);
 				return true;
 			}
 			return false;
@@ -56,9 +46,8 @@ namespace gemu {
 		MemoryBlock(const MemoryBlock&);
 		MemoryBlock& operator=(const MemoryBlock&);
 	private:
-		char * _data = nullptr;
+		const size_t _maximumSize;
 		size_t _size = 0;
-		std::vector<free_block_t> _freeBlocks;
 		std::unordered_map<void*, size_t> _allocData;
 	};
 	typedef std::shared_ptr<MemoryBlock> MemoryBlockPtr;
