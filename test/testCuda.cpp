@@ -1,4 +1,6 @@
 #include "cuda/cudaForward.h"
+#include "../ptx/runtime/PtxExecutionContext.h"
+#include "../arch/Device.h"
 #include <cassert>
 #include <iostream>
 
@@ -29,10 +31,28 @@ static void test_memory(){
 	assert(cuMemFree(dev_value) == CUDA_SUCCESS_);
 }
 
+static void test_module() {
+	const std::string test_source =
+	".version 4.2\n"
+	".target sm_20\n"
+	".address_size 64\n"
+	".visible .entry kernel(.param .u64 kernel_param_0) {\n"
+	".reg .s32 	%r<2>;\n"
+	".reg .s64 	%rd<3>;\n"
+	"ld.param.u64 	%rd1, [kernel_param_0];\n"
+	"cvta.to.global.u64 	%rd2, %rd1;\n"
+	"mov.u32 	%r1, 5;\n"
+	"st.global.u32 	[%rd2], %r1;\n"
+	"ret;\n"
+	"}\n";
+	
+}
+
 void test_cuda(){
 	std::cout << "testing cuda...\n";
 	assert(cuInit(0) == CUDA_SUCCESS_);
 	test_device();
 	test_memory();
+	test_module();
 	std::cout << "done.\n";
 }

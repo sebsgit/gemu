@@ -73,5 +73,6 @@ CUresult cuMemcpyHtoD ( CUdeviceptr dstDevice, const void* srcHost, size_t byteC
 	return CUDA_ERROR_INVALID_VALUE_;
 }
 
+#include "cuda/cudaDriver_moduleImpl.cpp"
 
 #endif

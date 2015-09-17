@@ -1,6 +1,4 @@
 #include "../ptx/Parser.h"
-#include "../ptx/runtime/PtxExecutionContext.h"
-#include "../arch/Device.h"
 
 static const std::string test_source = ".version 4.2\n"
 		".target sm_20 // a comment\n"
@@ -136,19 +134,10 @@ static void test_parser(){
 	assert(kernel.last<ptx::Return>()->isDivergent());
 }
 
-void test_execution_context() {
-	gemu::Device device(1024);
-	ptx::ParserResult result = ptx::Parser().parseModule(test_source);
-	assert(result.empty()==false);
-	ptx::exec::PtxExecutionContext context(device);
-	context.exec(result.fetch<ptx::FunctionDeclaration>(3)->func());
-}
-
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
 	test_tokenizer();
 	test_parser();
-	test_execution_context();
 	std::cout << "done.\n";
 }
