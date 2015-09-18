@@ -28,6 +28,8 @@ GEMU_DECLARE_EXTERN( cuModuleLoadData ( CUmodule* module, const void* image ) )
 GEMU_DECLARE_EXTERN( cuModuleLoadFatBinary ( CUmodule* module, const void* fatCubin ) )
 GEMU_DECLARE_EXTERN( cuModuleUnload ( CUmodule hmod ) )
 
+GEMU_DECLARE_EXTERN( cuLaunchKernel ( CUfunction, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CUstream, void**, void** ))
+
 #undef GEMU_DECLARE_EXTERN
 
 #endif

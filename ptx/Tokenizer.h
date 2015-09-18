@@ -67,12 +67,7 @@ namespace ptx {
 		std::vector<token_t> _tokens;
 	};
 
-	std::ostream& operator << (std::ostream& out, const TokenList& list) {
-		for (auto t : list._tokens)
-			out << t << " ";
-		out << "\n";
-		return out;
-	}
+	extern std::ostream& operator << (std::ostream& out, const TokenList& list);
 
 	class Tokenizer {
 	public:

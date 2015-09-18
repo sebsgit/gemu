@@ -4,12 +4,14 @@
 #include <cassert>
 #include <iostream>
 
+#define cu_assert(x) (assert((x) == CUDA_SUCCESS_))
+
 static void test_device() {
 	int count = -1;
 	int driverVersion = -1;
-	assert(cuDriverGetVersion(&driverVersion) == CUDA_SUCCESS_);
+	cu_assert(cuDriverGetVersion(&driverVersion));
 	assert(driverVersion > 0);
-	assert(cuDeviceGetCount(&count) == CUDA_SUCCESS_);
+	cu_assert(cuDeviceGetCount(&count));
 	assert(count > 0);
 	CUdevice devId = 0;
 	assert(cuDeviceGet(&devId, 0) == CUDA_SUCCESS_);
@@ -45,7 +47,13 @@ static void test_module() {
 	"st.global.u32 	[%rd2], %r1;\n"
 	"ret;\n"
 	"}\n";
-	
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, test_source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
+	assert(cuModuleGetFunction(&funcHandle, modId, "nosuchkernel___123") == CUDA_ERROR_NOT_FOUND_);
+	cu_assert(cuModuleUnload(modId));
+	assert(cuModuleGetFunction(&funcHandle, modId, "kernel") != CUDA_SUCCESS_);
 }
 
 void test_cuda(){

@@ -20,6 +20,13 @@ static const std::string test_source = ".version 4.2\n"
 		"	ret;\n"
 		"}";
 
+std::ostream& operator << (std::ostream& out, const ptx::TokenList& list) {
+	for (size_t i=0 ; i<list.size() ; ++i)
+		out << list[i] << " ";
+	out << "\n";
+	return out;
+}
+
 static void test_tokenizer() {
 	ptx::Tokenizer token;
 	auto result = token.tokenize(test_source);
