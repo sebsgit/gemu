@@ -52,7 +52,7 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 	for (size_t i=0 ; i<funcParams.size() ; ++i) {
 		void * address = kernelParams[i];
 		ptx::exec::param_storage_t storage;
-		memcpy(&storage, address, funcParams[i].size()/8);
+		memcpy(&storage, address, funcParams[i].size());
 		symbols.set(funcParams[i], storage);
 	}
 	gemu::cuda::ThreadGrid grid(gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),

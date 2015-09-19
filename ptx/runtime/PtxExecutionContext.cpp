@@ -56,7 +56,7 @@ static void load_impl(const MemoryInstructionOperand& to,
 {
 	param_storage_t stored;
 	param_storage_t source = symbols.get(from.symbol());
-	memcpy(&stored, &source, size / 8);
+	memcpy(&stored, &source, size);
 	symbols.set(to.symbol(), stored);
 }
 
@@ -88,7 +88,7 @@ static void move_impl(const Move& move, SymbolTable& symbols) {
 		//TODO: LITERAL
 		source.data = atoi(srcName.c_str());
 	}
-	memcpy(&dest, &source, move.size() / 8);
+	memcpy(&dest, &source, move.size());
 	symbols.set(move.operands()[0].symbol(), dest);
 }
 

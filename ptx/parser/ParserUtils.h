@@ -57,6 +57,8 @@ namespace ptx {
 						*size = atoi(sizeStr.c_str());
 						if (*size != 8 && *size!=16 && *size!=32 && *size!=64)
 							*size = 0;
+						else
+							*size /= 8;
 					}
 				}
 				if(size!=0) {

@@ -54,7 +54,7 @@ static void test_variable_parser() {
 	assert(p.parse(tokens, result));
 	assert(result.fetch<ptx::VariableDeclaration>(0));
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().name() == "kernel_param_0");
-	assert(result.fetch<ptx::VariableDeclaration>(0)->var().size() == 64);
+	assert(result.fetch<ptx::VariableDeclaration>(0)->var().size() == 8);
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::Parameter);
 	assert(result.fetch<ptx::VariableDeclaration>(0)->var().type() == ptx::Type::Unsigned);
 	tokens.clear();
@@ -62,7 +62,7 @@ static void test_variable_parser() {
 	assert(p.parse(tokens, result));
 	assert(result.fetch<ptx::VariableDeclaration>(1));
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().name() == "%p");
-	assert(result.fetch<ptx::VariableDeclaration>(1)->var().size() == 32);
+	assert(result.fetch<ptx::VariableDeclaration>(1)->var().size() == 4);
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::Register);
 	assert(result.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
 }
@@ -79,20 +79,20 @@ static void test_parser(){
 	assert(kernel.parameters().variable(0).name() == "kernel_param_0");
 	assert(kernel.parameters().variable(0).type() == ptx::Type::Unsigned);
 	assert(kernel.parameters().variable(0).space() == ptx::AllocSpace::Parameter);
-	assert(kernel.parameters().variable(0).size() == 64);
+	assert(kernel.parameters().variable(0).size() == 8);
 	assert(kernel.parameters().variable(1).name() == "kernel_param_1");
 	assert(kernel.parameters().variable(1).type() == ptx::Type::Signed);
 	assert(kernel.parameters().variable(1).space() == ptx::AllocSpace::Parameter);
-	assert(kernel.parameters().variable(1).size() == 32);
+	assert(kernel.parameters().variable(1).size() == 4);
 	assert(kernel.empty()==false);
 	assert(kernel.fetch<ptx::VariableDeclaration>(0));
 	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().name() == "%r<2>");
-	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().size() == 32);
+	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().size() == 4);
 	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().space() == ptx::AllocSpace::Register);
 	assert(kernel.fetch<ptx::VariableDeclaration>(0)->var().type() == ptx::Type::Signed);
 	assert(kernel.fetch<ptx::VariableDeclaration>(1));
 	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().name() == "%rd<3>");
-	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().size() == 64);
+	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().size() == 8);
 	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().space() == ptx::AllocSpace::Register);
 	assert(kernel.fetch<ptx::VariableDeclaration>(1)->var().type() == ptx::Type::Signed);
 	assert(kernel.fetch<ptx::Load>(2));
@@ -100,7 +100,7 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::Load>(2)->space() == ptx::AllocSpace::Parameter);
 	assert(kernel.fetch<ptx::Load>(2)->type() == ptx::Type::Unsigned);
 	assert(kernel.fetch<ptx::Load>(2)->vectorized() == ptx::VectorType::VecNone);
-	assert(kernel.fetch<ptx::Load>(2)->size() == 64);
+	assert(kernel.fetch<ptx::Load>(2)->size() == 8);
 	assert(kernel.fetch<ptx::Load>(2)->isVolatile() == false);
 	assert(kernel.fetch<ptx::Load>(2)->operands().count() == 2);
 	assert(kernel.fetch<ptx::Load>(2)->operands()[0].symbol() == "%rd1");
@@ -114,7 +114,7 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::Move>(4)->cacheMode() == ptx::CacheOperation::CacheAllLevels);
 	assert(kernel.fetch<ptx::Move>(4)->space() == ptx::AllocSpace::Register);
 	assert(kernel.fetch<ptx::Move>(4)->vectorized() == ptx::VectorType::VecNone);
-	assert(kernel.fetch<ptx::Move>(4)->size() == 32);
+	assert(kernel.fetch<ptx::Move>(4)->size() == 4);
 	assert(kernel.fetch<ptx::Move>(4)->isVolatile() == false);
 	assert(kernel.fetch<ptx::Move>(4)->operands().count() == 2);
 	assert(kernel.fetch<ptx::Move>(4)->operands()[0].symbol() == "%r1");
@@ -128,7 +128,7 @@ static void test_parser(){
 	assert(kernel.fetch<ptx::Store>(5)->space() == ptx::AllocSpace::Global);
 	assert(kernel.fetch<ptx::Store>(5)->type() == ptx::Type::Unsigned);
 	assert(kernel.fetch<ptx::Store>(5)->vectorized() == ptx::VectorType::VecNone);
-	assert(kernel.fetch<ptx::Store>(5)->size() == 32);
+	assert(kernel.fetch<ptx::Store>(5)->size() == 4);
 	assert(kernel.fetch<ptx::Store>(5)->isVolatile() == false);
 	assert(kernel.fetch<ptx::Store>(5)->operands().count() == 2);
 	assert(kernel.fetch<ptx::Store>(5)->operands()[0].symbol() == "%rd2");
