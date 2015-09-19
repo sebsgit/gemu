@@ -43,5 +43,25 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 {
 	if (kernelParams && extra)
 		return CUDA_ERROR_INVALID_VALUE_;
-	return CUDA_ERROR_NOT_SUPPORTED_;
+	//TODO sainty check on grid size
+	ptx::Function func = _driverContext->function(f);
+	if (func.isNull())
+		return CUDA_ERROR_NOT_FOUND_;
+	auto funcParams = func.parameters();
+	ptx::exec::SymbolTable symbols;
+	for (size_t i=0 ; i<funcParams.size() ; ++i) {
+		void * address = kernelParams[i];
+		ptx::exec::param_storage_t storage;
+		memcpy(&storage, address, funcParams[i].size()/8);
+		symbols.set(funcParams[i], storage);
+	}
+	gemu::cuda::ThreadGrid grid(gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
+					gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ));
+	for (size_t i=0 ; i<grid.blockCount() ; ++i) {
+		auto block = grid.block(i);
+		ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
+		if (!dispatcher.launch(func, symbols))
+			return CUDA_ERROR_UNKNOWN_;
+	}
+	return CUDA_SUCCESS_;
 }

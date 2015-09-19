@@ -140,6 +140,13 @@ namespace gemu {
 			ThreadBlockPtr block(const dim3& pos) {
 				return this->block(pos.x, pos.y, pos.z);
 			}
+			ThreadBlockPtr block(size_t i) {
+				const size_t nxy = this->_size.x * this->_size.y;
+				const size_t nz = i / nxy;
+				const size_t nx = (i - nz * nxy) % this->_size.x;
+				const size_t ny = (i - nz * nxy) / this->_size.y;
+				return this->block(nx, ny, nz);
+			}
 			const size_t blockCount() const {
 				return this->_size.x * this->_size.y * this->_size.z;
 			}

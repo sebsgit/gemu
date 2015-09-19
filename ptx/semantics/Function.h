@@ -11,6 +11,9 @@ namespace ptx {
 		ptx::Variable variable(size_t i) const{
 			return this->_data.at(i);
 		}
+		const ptx::Variable operator[](size_t i) const {
+			return this->_data.at(i);
+		}
 		ptx::Variable variable(const std::string& name) const{
 			for (const auto& v : _data)
 				if (v.name()==name)
@@ -44,6 +47,9 @@ namespace ptx {
 		}
 		void setName(const std::string& name) {
 			this->_name = name;
+		}
+		bool isNull() const {
+			return this->_name.empty();
 		}
 	private:
 		std::string _name;

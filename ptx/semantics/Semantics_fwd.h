@@ -9,4 +9,6 @@ namespace ptx {
 	class FunctionDeclaration;
 	class ModuleDirective;
 	class VariableDeclaration;
+	class Variable;
+	class Function;
 }

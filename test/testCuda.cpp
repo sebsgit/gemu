@@ -1,5 +1,4 @@
 #include "cuda/cudaForward.h"
-#include "../ptx/runtime/PtxExecutionContext.h"
 #include "../arch/Device.h"
 #include "cuda/cudaThreads.h"
 #include <cassert>
@@ -34,6 +33,9 @@ static void test_grid(){
 				}
 			}
 		}
+	}
+	for (size_t i=0 ; i<grid.blockCount() ; ++i) {
+		assert(grid.block(i));
 	}
 }
 
@@ -85,6 +87,16 @@ static void test_module() {
 	assert(cuModuleGetFunction(&funcHandle, modId, "nosuchkernel___123") == CUDA_ERROR_NOT_FOUND_);
 	cu_assert(cuModuleUnload(modId));
 	assert(cuModuleGetFunction(&funcHandle, modId, "kernel") != CUDA_SUCCESS_);
+	CUdeviceptr devValue;
+	int hostValue = 10;
+	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
+	cu_assert(cuMemcpyHtoD(devValue, &hostValue, sizeof(hostValue)));
+	void * params[] = {&devValue};
+	assert(hostValue != 5);
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	cu_assert(cuMemcpyDtoH(&hostValue, devValue, sizeof(hostValue)));
+	assert(hostValue == 5);
+	cu_assert(cuMemFree(devValue));
 }
 
 void test_cuda(){
