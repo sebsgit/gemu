@@ -8,6 +8,7 @@ class InstructionPtr;
 #include "semantics/Semantics_fwd.h"
 #include "semantics/Variable.h"
 #include <algorithm>
+#include <iostream>
 
 namespace ptx {
 	namespace exec {
@@ -32,6 +33,12 @@ namespace ptx {
 			bool has(const std::string& name) const;
 			param_storage_t get(const ptx::Variable& var) const;
 			param_storage_t get(const std::string& name) const;
+
+			void print() const{
+				for (const auto& x: _data)
+					std::cout << x.var.name() << ": " << x.data.data << "\n";
+			}
+
 		private:
 			std::vector<entry_t> _data;
 		};

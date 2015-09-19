@@ -62,7 +62,9 @@ static void load_impl(const MemoryInstructionOperand& to,
 
 void PtxExecutionContext::exec(const Load& load) {
 	// std::cout << "exec load: " << load.toString() << "\n";
+	// std::cout <<" before LOAD: "; this->_symbols.print();
 	load_impl(load.operands()[0], load.operands()[1], this->_symbols, load.size());
+	// std::cout <<" after LOAD: "; this->_symbols.print();
 }
 
 static void store_impl(const Store& store, SymbolTable& symbols) {
@@ -98,7 +100,9 @@ void PtxExecutionContext::exec(const Return& r) {
 }
 void PtxExecutionContext::exec(const Convert& conv) {
 	// std::cout << "exec conv: " << conv.toString() << "\n";
+	// std::cout <<" before CONV: "; this->_symbols.print();
 	load_impl(conv.operands()[0], conv.operands()[1], this->_symbols, conv.size());
+	// std::cout <<" after CONV: "; this->_symbols.print();
 }
 void PtxExecutionContext::exec(const FunctionDeclaration& fdecl) {
 	// std::cout << "exec func decl: " << fdecl.toString() << "\n";
@@ -122,7 +126,7 @@ static void declare_var(const ptx::Variable& var, SymbolTable& symbols) {
 	if (pos > 0 && pos2 > pos) {
 		const size_t count = atoi(name.substr(pos+1, pos2 - pos - 1).c_str());
 		const std::string baseName = name.substr(0, pos);
-		for (size_t i=0 ; i<count ; ++i) {
+		for (size_t i=1 ; i<count ; ++i) {
 			std::stringstream ss;
 			ss << baseName << i;
 			symbols.set(ptx::Variable(var.space(), var.type(), var.size(), ss.str()), param_storage_t());

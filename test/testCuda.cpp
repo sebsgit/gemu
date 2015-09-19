@@ -85,8 +85,6 @@ static void test_module() {
 	cu_assert(cuModuleLoadData(&modId, test_source.c_str()));
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
 	assert(cuModuleGetFunction(&funcHandle, modId, "nosuchkernel___123") == CUDA_ERROR_NOT_FOUND_);
-	cu_assert(cuModuleUnload(modId));
-	assert(cuModuleGetFunction(&funcHandle, modId, "kernel") != CUDA_SUCCESS_);
 	CUdeviceptr devValue;
 	int hostValue = 10;
 	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
@@ -97,6 +95,43 @@ static void test_module() {
 	cu_assert(cuMemcpyDtoH(&hostValue, devValue, sizeof(hostValue)));
 	assert(hostValue == 5);
 	cu_assert(cuMemFree(devValue));
+	cu_assert(cuModuleUnload(modId));
+}
+
+static void test_module_2() {
+	const std::string source = ".visible .entry kernel_3(\n"
+	".param .u32 kernel_3_param_0,\n"
+	".param .u64 kernel_3_param_1\n"
+	")\n"
+	"{\n"
+	".reg .s32 	%r<2>;\n"
+	".reg .s64 	%rd<3>;\n"
+	"ld.param.u32 	%r1, [kernel_3_param_0];\n"
+	"ld.param.u64 	%rd1, [kernel_3_param_1];\n"
+	"cvta.to.global.u64 	%rd2, %rd1;\n"
+	"st.global.u32 	[%rd2], %r1;\n"
+	"ret;\n"
+	"}";
+
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel_3"));
+	CUdeviceptr devValue;
+	int hostValue = 10;
+	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
+	void * params[] = {&hostValue, &devValue};
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	int result = 0;
+	cu_assert(cuMemcpyDtoH(&result, devValue, sizeof(result)));
+	assert(result == hostValue);
+	cu_assert(cuMemFree(devValue));
+	cu_assert(cuModuleUnload(modId));
+}
+
+static void test_modules() {
+	test_module();
+	test_module_2();
 }
 
 void test_cuda(){
@@ -105,6 +140,6 @@ void test_cuda(){
 	test_grid();
 	test_device();
 	test_memory();
-	test_module();
+	test_modules();
 	std::cout << "done.\n";
 }
