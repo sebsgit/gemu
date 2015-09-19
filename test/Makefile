@@ -9,11 +9,14 @@ SOURCES=testParsePtx.cpp 	\
 		testCuda.cpp		\
 		test.cpp			\
 		../ptx/runtime/PtxExecutionContext.cpp	\
-		../drivers/cuda/cudaDriverApi.cpp
+		../drivers/cuda/cudaDriverApi.cpp	\
+		../drivers/cuda/cudaDriver_moduleImpl.cpp
 
 HEADERS=../arch/Device.h	\
 		../drivers/cuda/cudaDefines.h	\
 		../drivers/cuda/cudaForward.h	\
+		../drivers/cuda/cudaDriverApi.h	\
+		../drivers/cuda/cudaThreads.h	\
 		../ptx/Parser.h \
 		../ptx/Tokenizer.h \
 		../ptx/semantics/Semantics.h \

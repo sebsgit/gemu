@@ -1,4 +1,8 @@
 #include "ptx/Parser.h"
+#include "cudaDriverApi.h"
+#include "arch/Device.h"
+#include "semantics/Function.h"
+#include "cudaThreads.h"
 
 CUresult cuModuleLoadData (CUmodule* module, const void* image) {
 	ptx::ParserResult result = ptx::Parser().parseModule(std::string(reinterpret_cast<const char*>(image)));
