@@ -9,7 +9,7 @@ namespace ptx {
 		class LoadParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "ld") {
+				if (tokens.peek() == "ld" || tokens.peek() == "ldu") {
 					tokens.removeFirst();
 					CacheOperation cacheOp = CacheOperation::CacheAllLevels;
 					AllocSpace space = AllocSpace::Undefined;

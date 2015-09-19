@@ -107,6 +107,14 @@ namespace ptx {
 				// if (temp.peek is valid identifier)
 				auto name = temp.peek();
 				temp.removeFirst();
+				if (name == "%tid") {
+					if (temp.peek() == ".x" || temp.peek() == ".y" || temp.peek() == ".z") {
+						name += temp.peek();
+						temp.removeFirst();
+					} else {
+						return false;
+					}
+				}
 				if (isAddressed && temp.peek() == "]"){
 					temp.removeFirst();
 				}
