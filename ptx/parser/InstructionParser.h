@@ -3,7 +3,8 @@
 
 #include "semantics/Instruction.h"
 #include "parser/VariableParser.h"
-#include "parser/LoadStoreParser.h"
+#include "parser/StoreParser.h"
+#include "parser/LoadParser.h"
 #include "parser/MoveParser.h"
 #include "parser/ConvertParser.h"
 #include "parser/ReturnExitParser.h"
@@ -16,7 +17,8 @@ namespace ptx {
 				bool parsedOk = false;
 				std::vector<std::shared_ptr<AbstractParser>> parsers;
 				parsers.push_back(std::make_shared<VariableParser>());
-				parsers.push_back(std::make_shared<LoadStoreParser>());
+				parsers.push_back(std::make_shared<StoreParser>());
+				parsers.push_back(std::make_shared<LoadParser>());
 				parsers.push_back(std::make_shared<MoveParser>());
 				parsers.push_back(std::make_shared<ConvertParser>());
 				parsers.push_back(std::make_shared<ReturnExitParser>());

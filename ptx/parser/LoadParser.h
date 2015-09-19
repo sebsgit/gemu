@@ -1,17 +1,15 @@
-#ifndef PTXLOADSTOREPARSERH
-#define PTXLOADSTOREPARSERH
+#ifndef LOADPARSERPTXHH
+#define LOADPARSERPTXHH
 
 #include "parser/AbstractParser.h"
 #include "semantics/instructions/memory/Load.h"
-#include "semantics/instructions/memory/Store.h"
 
 namespace ptx {
 	namespace parser {
-		class LoadStoreParser : public AbstractParser{
+		class LoadParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "ld" || tokens.peek() == "st") {
-					bool isLoad = tokens.peek()=="ld";
+				if (tokens.peek() == "ld") {
 					tokens.removeFirst();
 					CacheOperation cacheOp = CacheOperation::CacheAllLevels;
 					AllocSpace space = AllocSpace::Undefined;
@@ -38,10 +36,7 @@ namespace ptx {
 							MemoryInstructionOperands operands;
 							if (Utils::parseOperands(tokens, 2, &operands)) {
 								instr.setOperands(operands);
-								if (isLoad)
-									result.add(std::make_shared<ptx::Load>(std::move(instr)));
-								else
-									result.add(std::make_shared<ptx::Store>(std::move(instr)));
+								result.add(std::make_shared<ptx::Load>(std::move(instr)));
 								return true;
 							}
 						}

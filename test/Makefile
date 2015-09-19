@@ -40,7 +40,8 @@ HEADERS=../arch/Device.h	\
 		../ptx/parser/FunctionParser.h	\
 		../ptx/parser/VariableParser.h	\
 		../ptx/parser/InstructionParser.h	\
-		../ptx/parser/LoadStoreParser.h	\
+		../ptx/parser/LoadParser.h	\
+		../ptx/parser/StoreParser.h	\
 		../ptx/parser/MoveParser.h	\
 		../ptx/parser/ConvertParser.h	\
 		../ptx/parser/ReturnExitParser.h	\

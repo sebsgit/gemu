@@ -141,10 +141,35 @@ static void test_parser(){
 	assert(kernel.last<ptx::Return>()->isDivergent());
 }
 
+static void test_parser_2() {
+	const std::string source = ".visible .entry kernel_2( .param .u64 kernel_2_param_0, .param .u64 kernel_2_param_1 ){\n"
+	".reg .pred 	%p<2>;\n"
+	".reg .s32 	%r<5>;\n"
+	".reg .s64 	%rd<7>;\n"
+	"ld.param.u64 	%rd1, [kernel_2_param_0];\n"
+	"ld.param.u64 	%rd2, [kernel_2_param_1];\n"
+	"cvta.to.global.u64 	%rd3, %rd2;\n"
+	"ldu.global.u32 	%r2, [%rd3];\n"
+	"mov.u32 	%r1, %tid.x;\n"
+	"setp.ge.u32	%p1, %r1, %r2;\n"
+	"@%p1 bra 	BB1_2;\n"
+	"cvta.to.global.u64 	%rd4, %rd1;\n"
+	"mul.wide.u32 	%rd5, %r1, 4;\n"
+	"add.s64 	%rd6, %rd4, %rd5;\n"
+	"ld.global.u32 	%r3, [%rd6];\n"
+	"shl.b32 	%r4, %r3, 1;\n"
+	"st.global.u32 	[%rd6], %r4;\n"
+"BB1_2:\n"
+	"ret;\n }";
+	ptx::ParserResult result = ptx::Parser().parseModule(source);
+	// assert(result.empty()==false);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
 	test_tokenizer();
 	test_parser();
+	test_parser_2();
 	std::cout << "done.\n";
 }

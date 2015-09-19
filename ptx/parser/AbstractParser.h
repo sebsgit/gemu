@@ -41,7 +41,10 @@ namespace ptx {
 				Parser parser;
 				bool parsedOk = false;
 				while (!tokens.empty()) {
-					parser.parse(tokens, result);
+					if(!parser.parse(tokens, result)) {
+						std::cout << "PARSER ERROR: " << tokens.peek() << " " << tokens.peek(1) << " " << tokens.peek(2) << '\n';
+						return false;
+					}
 					if (tokens.empty()) {
 						parsedOk = true;
 						break;
