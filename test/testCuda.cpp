@@ -121,7 +121,7 @@ static void test_module_2() {
 	int hostValue = 10;
 	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
 	void * params[] = {&hostValue, &devValue};
-	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	cu_assert(cuLaunchKernel(funcHandle, 2,5,3, 8,3,2, 0,0, params, nullptr));
 	int result = 0;
 	cu_assert(cuMemcpyDtoH(&result, devValue, sizeof(result)));
 	assert(result == hostValue);

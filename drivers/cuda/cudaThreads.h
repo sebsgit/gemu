@@ -2,6 +2,7 @@
 #define GEMUCUDATHREADSH
 
 #include <vector>
+#include <iostream>
 
 namespace gemu {
 	namespace cuda {
@@ -143,8 +144,8 @@ namespace gemu {
 			ThreadBlockPtr block(size_t i) {
 				const size_t nxy = this->_size.x * this->_size.y;
 				const size_t nz = i / nxy;
-				const size_t nx = (i - nz * nxy) % this->_size.x;
-				const size_t ny = (i - nz * nxy) / this->_size.y;
+				const size_t nx = i % this->_size.x;
+				const size_t ny = (i - nz * nxy) / this->_size.x;
 				return this->block(nx, ny, nz);
 			}
 			const size_t blockCount() const {
