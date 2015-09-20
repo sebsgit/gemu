@@ -63,9 +63,12 @@ namespace ptx {
 			void exec(const FunctionDeclaration&);
 			void exec(const ModuleDirective&);
 			void exec(const VariableDeclaration&);
+			void exec(const Branch& branch);
 		private:
 			gemu::cuda::Thread& _thread;
 			SymbolTable& _symbols;
+			const InstructionList * _instr = nullptr;
+			size_t _pc = 0;
 		};
 
 		class PtxBlockDispatcher {

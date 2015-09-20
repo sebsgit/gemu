@@ -40,8 +40,10 @@ param_storage_t SymbolTable::get(const ptx::Variable& var) const {
 }
 
 void PtxExecutionContext::exec(const InstructionList& list) {
-	for (size_t i=0 ; i<list.count() ; ++i)
-		list.fetch(i)->dispatch(*this);
+	this->_instr = &list;
+	while (this->_pc < list.count())
+		list.fetch(this->_pc++)->dispatch(*this);
+	this->_instr = nullptr;
 }
 
 void PtxExecutionContext::exec(const Instruction& i) {
@@ -97,6 +99,8 @@ void PtxExecutionContext::exec(const Move& move) {
 }
 void PtxExecutionContext::exec(const Return& r) {
 	// std::cout << "exec return: " << r.toString() << "\n";
+	if (this->_instr)
+		this->_pc = this->_instr->count();
 }
 void PtxExecutionContext::exec(const Convert& conv) {
 	// std::cout << "exec conv: " << conv.toString() << "\n";
@@ -109,6 +113,12 @@ void PtxExecutionContext::exec(const FunctionDeclaration& fdecl) {
 }
 void PtxExecutionContext::exec(const ModuleDirective& d) {
 	// std::cout << "exec directive: " << d.toString() << "\n";
+}
+
+void PtxExecutionContext::exec(const Branch& branch) {
+	// std::cout << "jump to " << branch.label() << '\n';
+	if (this->_instr && this->_instr->hasLabel(branch.label()))
+		this->_pc = this->_instr->instructionIndex(branch.label());
 }
 
 static void declare_var(const ptx::Variable& var, SymbolTable& symbols) {
