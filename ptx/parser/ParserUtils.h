@@ -168,6 +168,25 @@ namespace ptx {
 				}
 				return false;
 			}
+			static bool parseLabel(TokenList& tokens, TokenList::token_t * result) {
+				if (Utils::isIdentifier(tokens.peek()) && tokens.peek(1)==":") {
+					*result = tokens.peek();
+					tokens.removeFirst(2);
+					return true;
+				}
+				return false;
+			}
+			static bool parsePredicate(TokenList& tokens, TokenList::token_t * result) {
+				const auto token = tokens.peek();
+				if (token.empty()==false) {
+					if (token[0] == '@' && isIdentifier(token.substr(1, token.length()-1))) {
+						*result = TokenList::token_t(token.substr(1, token.length()-1));
+						tokens.removeFirst();
+						return true;
+					}
+				}
+				return false;
+			}
 			static bool isIdentifier(const TokenList::token_t& token) {
 				if (token.empty()==false) {
 					size_t start = 0;

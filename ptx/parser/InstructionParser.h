@@ -27,14 +27,15 @@ namespace ptx {
 				parsers.push_back(std::make_shared<BranchParser>());
 				parsers.push_back(std::make_shared<SetpParser>());
 				std::string label;
-				if (Utils::isIdentifier(tokens.peek()) && tokens.peek(1)==":") {
-					label = tokens.peek();
-					tokens.removeFirst(2);
-				}
+				std::string predicate;
+				Utils::parseLabel(tokens, &label);
+				Utils::parsePredicate(tokens, &predicate);
 				for (const auto& p : parsers) {
 					if (p->parse(tokens, result)) {
 						if (label.empty()==false)
 							result.labelLast(label);
+						if (predicate.empty()==false)
+							result.predicateLast(predicate);
 						parsedOk = true;
 						break;
 					}
