@@ -8,6 +8,7 @@
 #include "parser/MoveParser.h"
 #include "parser/ConvertParser.h"
 #include "parser/ReturnExitParser.h"
+#include "parser/BranchParser.h"
 
 namespace ptx {
 	namespace parser {
@@ -22,6 +23,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<MoveParser>());
 				parsers.push_back(std::make_shared<ConvertParser>());
 				parsers.push_back(std::make_shared<ReturnExitParser>());
+				parsers.push_back(std::make_shared<BranchParser>());
 				for (const auto& p : parsers) {
 					if (p->parse(tokens, result)) {
 						parsedOk = true;
