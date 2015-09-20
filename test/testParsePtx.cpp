@@ -154,6 +154,10 @@ static void test_parser_branch() {
 	"BB1_2:\n"
 	"ret;\n }";
 	ptx::ParserResult result = ptx::Parser().parseModule(source);
+	assert(result.empty()==false);
+	ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(0)->func();
+	assert(kernel.hasLabel("BB1_2"));
+	assert(kernel.fetch<ptx::Return>(kernel.instructionIndex("BB1_2")));
 }
 
 static void test_parser_2() {

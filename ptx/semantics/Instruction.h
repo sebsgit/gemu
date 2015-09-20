@@ -39,8 +39,11 @@ namespace ptx {
 			this->_instructions.push_back(toAdd);
 		}
 		void add(const InstructionList& other) {
+			const size_t count = this->_instructions.size();
 			for (const auto& i : other._instructions)
 				this->add(i);
+			for (const auto& lbl : other._labels)
+				this->_labels[lbl.first] = lbl.second + count;
 		}
 		void addInto(InstructionList& other) const {
 			other.add(*this);
@@ -55,8 +58,30 @@ namespace ptx {
 			for (auto & i : this->_instructions)
 				i->dispatch(context);
 		}
+		void labelLast(const std::string& label) {
+			this->_labels[label] = _instructions.size() - 1;
+		}
+		bool hasLabel(const std::string& label) const {
+			for (const auto& lbl : this->_labels) {
+				if (lbl.first == label)
+					return true;
+			}
+			return false;
+		}
+		size_t instructionIndex(const std::string& label) const {
+			auto it = this->_labels.find(label);
+			if (it != this->_labels.end())
+				return it->second;
+			return this->_instructions.size() + 1;
+		}
+		void printLabels(){
+			for (const auto& lbl : this->_labels) {
+				std::cout << lbl.first << " " << lbl.second << "\n";
+			}
+		}
 	private:
 		std::vector<ptx::InstructionPtr> _instructions;
+		std::unordered_map<std::string, size_t> _labels;
 	};
 }
 

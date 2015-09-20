@@ -24,8 +24,15 @@ namespace ptx {
 				parsers.push_back(std::make_shared<ConvertParser>());
 				parsers.push_back(std::make_shared<ReturnExitParser>());
 				parsers.push_back(std::make_shared<BranchParser>());
+				std::string label;
+				if (Utils::isIdentifier(tokens.peek()) && tokens.peek(1)==":") {
+					label = tokens.peek();
+					tokens.removeFirst(2);
+				}
 				for (const auto& p : parsers) {
 					if (p->parse(tokens, result)) {
+						if (label.empty()==false)
+							result.labelLast(label);
 						parsedOk = true;
 						break;
 					}

@@ -104,8 +104,9 @@ namespace ptx {
 					isAddressed = true;
 					temp.removeFirst();
 				}
-				// if (temp.peek is valid identifier)
 				auto name = temp.peek();
+				if (!isIdentifier(name))
+					return false;
 				temp.removeFirst();
 				if (name == "%tid") {
 					if (temp.peek() == ".x" || temp.peek() == ".y" || temp.peek() == ".z") {
@@ -139,6 +140,22 @@ namespace ptx {
 				if (parsedOk)
 					*result = tmpResult;
 				return parsedOk;
+			}
+			static bool isIdentifier(const TokenList::token_t& token) {
+				if (token.empty()==false) {
+					if (token[0] == '%')
+						return isIdentifier(token.substr(1,token.length()-1));
+					for (size_t i=0 ; i<token.length() ; ++i) {
+						const char c = token[i];
+						if (c >= 'a' && c<='z') continue;
+						if (c >= 'A' && c<='Z') continue;
+						if (c >= '0' && c<='9') continue;
+						if (c == '$' || c=='_') continue;
+						return false;
+					}
+					return true;
+				}
+				return false;
 			}
 		};
 	}
