@@ -12,4 +12,5 @@ namespace ptx {
 	class Variable;
 	class Function;
 	class Branch;
+	class Setp;
 }

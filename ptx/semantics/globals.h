@@ -35,6 +35,21 @@ namespace ptx {
 		CacheWriteBack,
 		CacheWriteThrough
 	};
+	enum CompareOperation {
+		NotValidCompareOperation,
+		Equal,
+		NotEqual,
+		Lower,
+		Greater,
+		LowerEqual,
+		GreaterEqual
+	};
+	enum BooleanOperation {
+		NotValidBooleanOperation,
+		And,
+		Or,
+		Xor
+	};
 }
 
 #endif

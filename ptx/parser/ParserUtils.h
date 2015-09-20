@@ -141,6 +141,25 @@ namespace ptx {
 					*result = tmpResult;
 				return parsedOk;
 			}
+			static bool parseCompareOperator(TokenList& tokens, CompareOperation * result) {
+				*result = CompareOperation::NotValidCompareOperation;
+				const auto token = tokens.peek();
+				if (token == "eq") *result = CompareOperation::Equal;
+				else if (token == "ne") *result = CompareOperation::NotEqual;
+				else if (token == "gt") *result = CompareOperation::Greater;
+				else if (token == "lt") *result = CompareOperation::Lower;
+				else if (token == "ge") *result = CompareOperation::GreaterEqual;
+				else if (token == "lo") *result = CompareOperation::LowerEqual;
+				return *result != CompareOperation::NotValidCompareOperation;
+			}
+			static bool parseBooleanOperation(TokenList& tokens, BooleanOperation * result) {
+				*result = BooleanOperation::NotValidBooleanOperation;
+				const auto token = tokens.peek();
+				if (token == "and") *result = BooleanOperation::And;
+				else if (token == "or") *result = BooleanOperation::Or;
+				else if (token == "xor") *result = BooleanOperation::Xor;
+				return *result != BooleanOperation::NotValidBooleanOperation;
+			}
 			static bool isIdentifier(const TokenList::token_t& token) {
 				if (token.empty()==false) {
 					if (token[0] == '%')

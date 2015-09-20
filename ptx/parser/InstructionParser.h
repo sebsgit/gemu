@@ -9,6 +9,7 @@
 #include "parser/ConvertParser.h"
 #include "parser/ReturnExitParser.h"
 #include "parser/BranchParser.h"
+#include "parser/SetpParser.h"
 
 namespace ptx {
 	namespace parser {
@@ -24,6 +25,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<ConvertParser>());
 				parsers.push_back(std::make_shared<ReturnExitParser>());
 				parsers.push_back(std::make_shared<BranchParser>());
+				parsers.push_back(std::make_shared<SetpParser>());
 				std::string label;
 				if (Utils::isIdentifier(tokens.peek()) && tokens.peek(1)==":") {
 					label = tokens.peek();

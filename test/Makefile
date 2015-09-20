@@ -34,6 +34,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/semantics/instructions/memory/Convert.h	\
 		../ptx/semantics/instructions/control/ControlInstruction.h	\
 		../ptx/semantics/instructions/control/Return.h	\
+		../ptx/semantics/instructions/compare/Setp.h	\
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
 		../ptx/parser/ParserUtils.h	\
