@@ -42,7 +42,7 @@ namespace ptx {
 				if (str.size() > 2) {
 					if (str == ".pred") {
 						*type = Type::Predicate;
-						*size = 1;
+						*size = 8;
 					} else {
 						const char c = str[1];
 						if (c == 'u')
@@ -144,27 +144,36 @@ namespace ptx {
 			static bool parseCompareOperator(TokenList& tokens, CompareOperation * result) {
 				*result = CompareOperation::NotValidCompareOperation;
 				const auto token = tokens.peek();
-				if (token == "eq") *result = CompareOperation::Equal;
-				else if (token == "ne") *result = CompareOperation::NotEqual;
-				else if (token == "gt") *result = CompareOperation::Greater;
-				else if (token == "lt") *result = CompareOperation::Lower;
-				else if (token == "ge") *result = CompareOperation::GreaterEqual;
-				else if (token == "lo") *result = CompareOperation::LowerEqual;
-				return *result != CompareOperation::NotValidCompareOperation;
+				if (token == ".eq") *result = CompareOperation::Equal;
+				else if (token == ".ne") *result = CompareOperation::NotEqual;
+				else if (token == ".gt") *result = CompareOperation::Greater;
+				else if (token == ".lt") *result = CompareOperation::Lower;
+				else if (token == ".ge") *result = CompareOperation::GreaterEqual;
+				else if (token == ".lo") *result = CompareOperation::LowerEqual;
+				if( *result != CompareOperation::NotValidCompareOperation ){
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
 			static bool parseBooleanOperation(TokenList& tokens, BooleanOperation * result) {
 				*result = BooleanOperation::NotValidBooleanOperation;
 				const auto token = tokens.peek();
-				if (token == "and") *result = BooleanOperation::And;
-				else if (token == "or") *result = BooleanOperation::Or;
-				else if (token == "xor") *result = BooleanOperation::Xor;
-				return *result != BooleanOperation::NotValidBooleanOperation;
+				if (token == ".and") *result = BooleanOperation::And;
+				else if (token == ".or") *result = BooleanOperation::Or;
+				else if (token == ".xor") *result = BooleanOperation::Xor;
+				if (*result != BooleanOperation::NotValidBooleanOperation){
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
 			}
 			static bool isIdentifier(const TokenList::token_t& token) {
 				if (token.empty()==false) {
+					size_t start = 0;
 					if (token[0] == '%')
-						return isIdentifier(token.substr(1,token.length()-1));
-					for (size_t i=0 ; i<token.length() ; ++i) {
+						start = 1;
+					for (size_t i=start ; i<token.length() ; ++i) {
 						const char c = token[i];
 						if (c >= 'a' && c<='z') continue;
 						if (c >= 'A' && c<='Z') continue;

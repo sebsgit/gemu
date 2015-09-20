@@ -14,18 +14,20 @@ namespace ptx {
 					CompareOperation cmpOp;
 					if (Utils::parseCompareOperator(tokens, &cmpOp)) {
 						BooleanOperation boolOp = BooleanOperation::NotValidBooleanOperation;
-						if (Utils::parseBooleanOperation(tokens, &boolOp)) {
-
-						} else {
-							Type type;
-							size_t size;
-							if (Utils::parseTypeAndSize(tokens, &type, &size)) {
-								MemoryInstructionOperands operands;
-								if (Utils::parseOperands(tokens, 3, &operands)) {
-									// instr.setOperands(operands);
-									// result.add(std::make_shared<ptx::Load>(std::move(instr)));
-									return true;
-								}
+						Utils::parseBooleanOperation(tokens, &boolOp);
+						Type type;
+						size_t size;
+						if (Utils::parseTypeAndSize(tokens, &type, &size)) {
+							MemoryInstructionOperands operands;
+							if (Utils::parseOperands(tokens, 3, &operands)) {
+								CompareInstruction instr;
+								instr.setOperands(operands);
+								instr.setType(type);
+								instr.setSize(size);
+								instr.setCompare(cmpOp);
+								instr.setBoolean(boolOp);
+								result.add(std::make_shared<ptx::Setp>(std::move(instr)));
+								return true;
 							}
 						}
 					}

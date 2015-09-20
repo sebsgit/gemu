@@ -45,6 +45,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/parser/StoreParser.h	\
 		../ptx/parser/MoveParser.h	\
 		../ptx/parser/ConvertParser.h	\
+		../ptx/parser/SetpParser.h	\
 		../ptx/parser/ReturnExitParser.h	\
 
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser -I../drivers/cuda -I../drivers -I../
