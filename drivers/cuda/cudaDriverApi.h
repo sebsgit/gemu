@@ -13,6 +13,7 @@ namespace gemu {
 	namespace cuda {
 		class Module {
 		public:
+			Module():_id(nullptr) {}
 			CUmodule id() const {
 				return this->_id;
 			}

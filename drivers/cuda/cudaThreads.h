@@ -22,10 +22,10 @@ namespace gemu {
 		public:
 			Array3D(const dim3& size, T elemTemplate)
 			:_size(size)
-			{
-				_data = std::vector< std::vector<std::vector<T>> >(size.x,
+			,_data(std::vector< std::vector<std::vector<T>> >(size.x,
 							std::vector<std::vector<T>>(size.y,
-								std::vector<T>(size.z, elemTemplate)));
+								std::vector<T>(size.z, elemTemplate))))
+			{
 				for (size_t i=0 ; i<size.x ; ++i) {
 					for (size_t j=0 ; j<size.y ; ++j) {
 						for (size_t k=0 ; k<size.z ; ++k) {
