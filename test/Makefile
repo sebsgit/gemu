@@ -58,12 +58,12 @@ HEADERS=../arch/Device.h	\
 
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser -I../drivers/cuda -I../drivers -I../
 
-all: test
+all: test lib
 
 test: $(CORE_OBJ) $(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET)
 
-lib: $(CORE_OBJ) $(PTX_SOURCES) $(HEADERS)
+lib: $(PTX_SOURCES) $(LIB_NAME)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o $(LIB_NAME)
 
 clean:
