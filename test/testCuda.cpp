@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 
-#define cu_assert(x) (assert((x) == CUDA_SUCCESS_))
+#define cu_assert(x) (assert((x) == CUDA_SUCCESS))
 
 static void test_grid(){
 	using namespace gemu::cuda;
@@ -83,8 +83,8 @@ static void test_module() {
 	CUmodule modId = 0;
 	CUfunction funcHandle = 0;
 	cu_assert(cuModuleLoadData(&modId, test_source.c_str()));
+	assert(cuModuleGetFunction(&funcHandle, modId, "nosuchkernel___123") == CUDA_ERROR_NOT_FOUND);
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
-	assert(cuModuleGetFunction(&funcHandle, modId, "nosuchkernel___123") == CUDA_ERROR_NOT_FOUND_);
 	CUdeviceptr devValue;
 	int hostValue = 10;
 	cu_assert(cuMemAlloc(&devValue, sizeof(int)));

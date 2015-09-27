@@ -14,23 +14,23 @@ CUresult cuModuleLoadData (CUmodule* module, const void* image) {
 			}
 		}
 		*module = _driverContext->add(moduleData);
-		return CUDA_SUCCESS_;
+		return CUDA_SUCCESS;
 	} else {
-		return CUDA_ERROR_INVALID_IMAGE_;
+		return CUDA_ERROR_INVALID_IMAGE;
 	}
 }
 
 CUresult cuModuleUnload (CUmodule hmod) {
-	return _driverContext->remove(hmod) ? CUDA_SUCCESS_ : CUDA_ERROR_NOT_FOUND_;
+	return _driverContext->remove(hmod) ? CUDA_SUCCESS : CUDA_ERROR_NOT_FOUND;
 }
 
 CUresult cuModuleGetFunction (CUfunction* hfunc, CUmodule hmod, const char* name) {
 	CUfunction result = _driverContext->function(hmod, name);
 	if (result != reinterpret_cast<CUfunction>(-1)) {
 		*hfunc = result;
-		return CUDA_SUCCESS_;
+		return CUDA_SUCCESS;
 	}
-	return CUDA_ERROR_NOT_FOUND_;
+	return CUDA_ERROR_NOT_FOUND;
 }
 
 CUresult cuLaunchKernel ( 	CUfunction f,
@@ -42,11 +42,11 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 							void** extra )
 {
 	if (kernelParams && extra)
-		return CUDA_ERROR_INVALID_VALUE_;
+		return CUDA_ERROR_INVALID_VALUE;
 	//TODO sainty check on grid size
 	ptx::Function func = _driverContext->function(f);
 	if (func.isNull())
-		return CUDA_ERROR_NOT_FOUND_;
+		return CUDA_ERROR_NOT_FOUND;
 	auto funcParams = func.parameters();
 	ptx::exec::SymbolTable symbols;
 	for (size_t i=0 ; i<funcParams.size() ; ++i) {
@@ -61,7 +61,7 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 		auto block = grid.block(i);
 		ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
 		if (!dispatcher.launch(func, symbols))
-			return CUDA_ERROR_UNKNOWN_;
+			return CUDA_ERROR_UNKNOWN;
 	}
-	return CUDA_SUCCESS_;
+	return CUDA_SUCCESS;
 }
