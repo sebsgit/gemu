@@ -129,6 +129,80 @@ static void test_module_2() {
 	cu_assert(cuModuleUnload(modId));
 }
 
+/*
+__global__ void kernel_4(const int in, int * out){
+	*out = in + 7;
+}
+*/
+static void test_module_with_add() {
+	const std::string source = ".visible .entry kernel_4(\n"
+	".param .u32 kernel_4_param_0,\n"
+	".param .u64 kernel_4_param_1\n"
+	")\n"
+	"{\n"
+	".reg .s32 	%r<3>;\n"
+	".reg .s64 	%rd<3>;\n"
+	"ld.param.u32 	%r1, [kernel_4_param_0];\n"
+	"ld.param.u64 	%rd1, [kernel_4_param_1];\n"
+	"cvta.to.global.u64 	%rd2, %rd1;\n"
+	"add.s32 	%r2, %r1, 7;\n"
+	"st.global.u32 	[%rd2], %r2;\n"
+	"ret;\n"
+	"}";
+
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel_4"));
+	CUdeviceptr devValue;
+	int hostValue = 10;
+	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
+	void * params[] = {&hostValue, &devValue};
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	int result = 0;
+	cu_assert(cuMemcpyDtoH(&result, devValue, sizeof(result)));
+	assert(result == hostValue + 7);
+	cu_assert(cuMemFree(devValue));
+	cu_assert(cuModuleUnload(modId));
+}
+
+/*
+__global__ void kernel_4(const int in, int * out){
+	*out = in * 31;
+}
+*/
+static void test_module_with_mul() {
+	const std::string source = ".visible .entry kernel_4(\n"
+	".param .u32 kernel_4_param_0,\n"
+	".param .u64 kernel_4_param_1\n"
+	")\n"
+	"{\n"
+	".reg .s32 	%r<3>;\n"
+	".reg .s64 	%rd<3>;\n"
+	"ld.param.u32 	%r1, [kernel_4_param_0];\n"
+	"ld.param.u64 	%rd1, [kernel_4_param_1];\n"
+	"cvta.to.global.u64 	%rd2, %rd1;\n"
+	"mul.wide.s32 	%r2, %r1, 31;\n"
+	"st.global.u32 	[%rd2], %r2;\n"
+	"ret;\n"
+	"}";
+
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel_4"));
+	CUdeviceptr devValue;
+	int hostValue = 10;
+	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
+	void * params[] = {&hostValue, &devValue};
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	int result = 0;
+	cu_assert(cuMemcpyDtoH(&result, devValue, sizeof(result)));
+	assert(result == hostValue * 31);
+	cu_assert(cuMemFree(devValue));
+	cu_assert(cuModuleUnload(modId));
+}
+
 static void test_module_with_branch() {
 	const std::string test_source =
 	".version 4.2\n"
@@ -160,10 +234,39 @@ static void test_module_with_branch() {
 	cu_assert(cuModuleUnload(modId));
 }
 
+static void test_module_with_arithm() {
+	const std::string source = ".visible .entry kernel( .param .u64 kernel_2_param_0, .param .u64 kernel_2_param_1 ){\n"
+	".reg .pred 	%p<2>;\n"
+	".reg .s32 	%r<5>;\n"
+	".reg .s64 	%rd<7>;\n"
+	"ld.param.u64 	%rd1, [kernel_2_param_0];\n"
+	"ld.param.u64 	%rd2, [kernel_2_param_1];\n"
+	"cvta.to.global.u64 	%rd3, %rd2;\n"
+	"ldu.global.u32 	%r2, [%rd3];\n"
+	"mov.u32 	%r1, %tid.x;\n"
+	"setp.ge.u32	%p1, %r1, %r2;\n"
+	"@%p1 bra 	BB1_2;\n"
+	"cvta.to.global.u64 	%rd4, %rd1;\n"
+	"mul.wide.u32 	%rd5, %r1, 4;\n"
+	"add.s64 	%rd6, %rd4, %rd5;\n"
+	"ld.global.u32 	%r3, [%rd6];\n"
+	"shl.b32 	%r4, %r3, 1;\n"
+	"st.global.u32 	[%rd6], %r4;\n"
+"BB1_2:\n"
+	"ret;\n }";
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
+}
+
 static void test_modules() {
 	test_module();
 	test_module_2();
 	test_module_with_branch();
+	test_module_with_add();
+	test_module_with_mul();
+	test_module_with_arithm();
 }
 
 void test_cuda(){

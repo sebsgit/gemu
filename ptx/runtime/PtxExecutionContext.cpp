@@ -22,7 +22,10 @@ param_storage_t SymbolTable::get(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end())
 		return it->data;
-	return param_storage_t();
+	//TODO literal
+	param_storage_t result;
+	result.data = atoi(name.c_str());
+	return result;
 }
 void SymbolTable::set(const ptx::Variable& var, const param_storage_t& storage) {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
@@ -148,6 +151,48 @@ static void declare_var(const ptx::Variable& var, SymbolTable& symbols) {
 void PtxExecutionContext::exec(const VariableDeclaration& var) {
 	// std::cout << "exec var decl: " << var.toString() << "\n";
 	declare_var(var.var(), this->_symbols);
+}
+
+static void add_impl(const Add& add, SymbolTable& symbols) {
+	param_storage_t dest = symbols.get(add.operands()[0].symbol());
+	const param_storage_t src1 = symbols.get(add.operands()[1].symbol());
+	const param_storage_t src2 = symbols.get(add.operands()[2].symbol());
+	switch (add.type()) {
+	case Type::Signed:
+		dest.data = (int)src1.data + (int)src2.data;
+		break;
+	case Type::Unsigned:
+		dest.data = (unsigned)src1.data + (unsigned)src2.data;
+		break;
+	default:
+		break;
+	}
+	symbols.set(add.operands()[0].symbol(), dest);
+}
+
+void PtxExecutionContext::exec(const Add& add) {
+	add_impl(add, this->_symbols);
+}
+
+static void mul_impl(const Mul& mul, SymbolTable& symbols) {
+	param_storage_t dest = symbols.get(mul.operands()[0].symbol());
+	const param_storage_t src1 = symbols.get(mul.operands()[1].symbol());
+	const param_storage_t src2 = symbols.get(mul.operands()[2].symbol());
+	switch (mul.type()) {
+	case Type::Signed:
+		dest.data = (int)src1.data * (int)src2.data;
+		break;
+	case Type::Unsigned:
+		dest.data = (unsigned)src1.data * (unsigned)src2.data;
+		break;
+	default:
+		break;
+	}
+	symbols.set(mul.operands()[0].symbol(), dest);
+}
+
+void PtxExecutionContext::exec(const Mul& mul) {
+	mul_impl(mul, this->_symbols);
 }
 
 
