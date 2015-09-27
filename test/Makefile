@@ -15,7 +15,7 @@ SOURCES=testParsePtx.cpp 	\
 
 HEADERS=../arch/Device.h	\
 		../drivers/cuda/cudaDefines.h	\
-		../drivers/cuda/cudaForward.h	\
+		../drivers/cuda/cuda.h	\
 		../drivers/cuda/cudaDriverApi.h	\
 		../drivers/cuda/cudaThreads.h	\
 		../ptx/Parser.h \

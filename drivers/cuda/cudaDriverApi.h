@@ -2,7 +2,7 @@
 #define GEMUCUDADRIVERAPIH
 
 #include "cudaDefines.h"
-#include "cudaForward.h"
+#include "drivers/cuda/cuda.h"
 #include "arch/Device.h"
 #include "semantics/Function.h"
 #include <cstring>
