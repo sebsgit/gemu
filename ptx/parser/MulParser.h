@@ -11,7 +11,7 @@ namespace ptx {
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				if (tokens.peek() == "mul") {
 					tokens.removeFirst();
-					if (tokens.peek() == ".wide") {
+					if (tokens.peek() == ".wide" || tokens.peek() == ".lo") {
 						//TODO
 						tokens.removeFirst();
 					}
