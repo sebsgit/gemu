@@ -5,6 +5,7 @@ LIBS+=
 LDFLAGS+=-pg
 CORE_OBJ=
 RM=rm -f
+LIB_NAME=cuda_lib/libcuda.so.1
 PTX_SOURCES=../ptx/runtime/PtxExecutionContext.cpp	\
 			../drivers/cuda/cudaDriverApi.cpp	\
 			../drivers/cuda/cudaDriver_moduleImpl.cpp
@@ -63,10 +64,11 @@ test: $(CORE_OBJ) $(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET)
 
 lib: $(CORE_OBJ) $(PTX_SOURCES) $(HEADERS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o cuda_lib/libcuda.so.1
+	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o $(LIB_NAME)
 
 clean:
 	$(RM) $(CORE_OBJ) 2>/dev/null
 distclean:
 	$(RM) $(CORE_OBJ) 2>/dev/null
 	$(RM) $(TARGET) 2>/dev/null
+	$(RM) $(LIB_NAME) 2>/dev/null
