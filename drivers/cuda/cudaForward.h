@@ -22,6 +22,11 @@ GEMU_DECLARE_EXTERN( cuMemFree ( CUdeviceptr ) )
 GEMU_DECLARE_EXTERN( cuMemcpyDtoH ( void*, CUdeviceptr, size_t ) )
 GEMU_DECLARE_EXTERN( cuMemcpyHtoD ( CUdeviceptr, const void*, size_t ) )
 
+GEMU_DECLARE_EXTERN( cuMemAlloc_v2 ( CUdeviceptr*, size_t ) )
+GEMU_DECLARE_EXTERN( cuMemFree_v2 ( CUdeviceptr ) )
+GEMU_DECLARE_EXTERN( cuMemcpyDtoH_v2 ( void*, CUdeviceptr, size_t ) )
+GEMU_DECLARE_EXTERN( cuMemcpyHtoD_v2 ( CUdeviceptr, const void*, size_t ) )
+
 GEMU_DECLARE_EXTERN( cuModuleGetFunction ( CUfunction* hfunc, CUmodule hmod, const char* name ) )
 GEMU_DECLARE_EXTERN( cuModuleGetGlobal ( CUdeviceptr* dptr, size_t* bytes, CUmodule hmod, const char* name ) )
 GEMU_DECLARE_EXTERN( cuModuleGetSurfRef ( CUsurfref* pSurfRef, CUmodule hmod, const char* name ) )

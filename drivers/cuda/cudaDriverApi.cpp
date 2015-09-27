@@ -76,3 +76,8 @@ CUresult cuMemcpyHtoD ( CUdeviceptr dstDevice, const void* srcHost, size_t byteC
 	}
 	return CUDA_ERROR_INVALID_VALUE;
 }
+
+CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
+CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
+CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }
+CUresult cuMemcpyHtoD_v2 ( CUdeviceptr dstDevice, const void* srcHost, size_t byteCount ) { return cuMemcpyHtoD(dstDevice,srcHost,byteCount); }

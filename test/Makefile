@@ -5,12 +5,13 @@ LIBS+=
 LDFLAGS+=-pg
 CORE_OBJ=
 RM=rm -f
+PTX_SOURCES=../ptx/runtime/PtxExecutionContext.cpp	\
+			../drivers/cuda/cudaDriverApi.cpp	\
+			../drivers/cuda/cudaDriver_moduleImpl.cpp
 SOURCES=testParsePtx.cpp 	\
 		testCuda.cpp		\
 		test.cpp			\
-		../ptx/runtime/PtxExecutionContext.cpp	\
-		../drivers/cuda/cudaDriverApi.cpp	\
-		../drivers/cuda/cudaDriver_moduleImpl.cpp
+		$(PTX_SOURCES)
 
 HEADERS=../arch/Device.h	\
 		../drivers/cuda/cudaDefines.h	\
@@ -60,6 +61,9 @@ all: test
 
 test: $(CORE_OBJ) $(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET)
+
+lib: $(CORE_OBJ) $(PTX_SOURCES) $(HEADERS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o cuda_lib/libcuda.so.1
 
 clean:
 	$(RM) $(CORE_OBJ) 2>/dev/null
