@@ -12,6 +12,14 @@ CUresult cuInit (unsigned int flags) {
 	return CUDA_SUCCESS;
 }
 
+CUresult cuCtxCreate(CUcontext*, unsigned int, CUdevice) {
+	return CUDA_SUCCESS;
+}
+
+CUresult cuCtxDestroy(CUcontext) {
+	return CUDA_SUCCESS;
+}
+
 CUresult cuDriverGetVersion (int* driverVersion) {
 	*driverVersion = 1;
 	return CUDA_SUCCESS;

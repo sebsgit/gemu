@@ -150,6 +150,7 @@ enum CUdevice_attribute {
 
 typedef int CUdevice;
 typedef void * CUdeviceptr;
+typedef struct CUctx_st * CUcontext;
 typedef struct CUstream_st * CUstream;
 typedef struct CUmod_st * CUmodule;
 typedef struct CUfunc_st * CUfunction;
