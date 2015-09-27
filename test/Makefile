@@ -35,6 +35,9 @@ HEADERS=../arch/Device.h	\
 		../ptx/semantics/instructions/control/ControlInstruction.h	\
 		../ptx/semantics/instructions/control/Return.h	\
 		../ptx/semantics/instructions/compare/Setp.h	\
+		../ptx/semantics/instructions/int/Add.h	\
+		../ptx/semantics/instructions/int/Shl.h	\
+		../ptx/semantics/instructions/int/Mul.h	\
 		../ptx/parser/ParserResult.h	\
 		../ptx/parser/AbstractParser.h	\
 		../ptx/parser/ParserUtils.h	\
@@ -46,6 +49,9 @@ HEADERS=../arch/Device.h	\
 		../ptx/parser/MoveParser.h	\
 		../ptx/parser/ConvertParser.h	\
 		../ptx/parser/SetpParser.h	\
+		../ptx/parser/MulParser.h	\
+		../ptx/parser/AddParser.h	\
+		../ptx/parser/ShlParser.h	\
 		../ptx/parser/ReturnExitParser.h	\
 
 INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser -I../drivers/cuda -I../drivers -I../

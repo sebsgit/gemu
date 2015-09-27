@@ -13,4 +13,7 @@ namespace ptx {
 	class Function;
 	class Branch;
 	class Setp;
+	class Add;
+	class Mul;
+	class Shl;
 }

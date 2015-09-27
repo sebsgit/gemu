@@ -158,6 +158,12 @@ static void test_parser_branch() {
 	ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(0)->func();
 	assert(kernel.hasLabel("BB1_2"));
 	assert(kernel.fetch<ptx::Return>(kernel.instructionIndex("BB1_2")));
+	assert(kernel.fetch<ptx::VariableDeclaration>(0));
+	assert(kernel.fetch<ptx::VariableDeclaration>(1));
+	assert(kernel.fetch<ptx::VariableDeclaration>(2));
+	assert(kernel.fetch<ptx::Load>(3));
+	assert(kernel.fetch<ptx::Load>(4));
+	assert(kernel.fetch<ptx::Branch>(5));
 }
 
 static void test_parser_2() {
@@ -181,7 +187,27 @@ static void test_parser_2() {
 "BB1_2:\n"
 	"ret;\n }";
 	ptx::ParserResult result = ptx::Parser().parseModule(source);
-	// assert(result.empty()==false);
+	assert(result.empty()==false);
+	ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(0)->func();
+	assert(kernel.hasLabel("BB1_2"));
+	assert(kernel.fetch<ptx::Return>(kernel.instructionIndex("BB1_2")));
+	assert(kernel.fetch<ptx::VariableDeclaration>(0));
+	assert(kernel.fetch<ptx::VariableDeclaration>(1));
+	assert(kernel.fetch<ptx::VariableDeclaration>(2));
+	assert(kernel.fetch<ptx::Load>(3));
+	assert(kernel.fetch<ptx::Load>(4));
+	assert(kernel.fetch<ptx::Convert>(5));
+	assert(kernel.fetch<ptx::Load>(6));
+	assert(kernel.fetch<ptx::Move>(7));
+	assert(kernel.fetch<ptx::Setp>(8));
+	assert(kernel.fetch<ptx::Branch>(9));
+	assert(kernel.fetch<ptx::Convert>(10));
+	assert(kernel.fetch<ptx::Mul>(11));
+	assert(kernel.fetch<ptx::Add>(12));
+	assert(kernel.fetch<ptx::Load>(13));
+	assert(kernel.fetch<ptx::Shl>(14));
+	assert(kernel.fetch<ptx::Store>(15));
+	assert(kernel.fetch<ptx::Return>(16));
 }
 
 void test_ptx() {
