@@ -192,6 +192,8 @@ namespace ptx {
 					size_t start = 0;
 					if (token[0] == '%')
 						start = 1;
+					else if(token[0] == '-')
+						start = 1;
 					for (size_t i=start ; i<token.length() ; ++i) {
 						const char c = token[i];
 						if (c >= 'a' && c<='z') continue;

@@ -2,6 +2,7 @@
 #define PTXSEMANTICSMEMORYINSTRUCTIONBASEH
 
 #include "semantics/Instruction.h"
+#include "semantics/SymbolTable.h"
 
 namespace ptx {
 	class MemoryInstructionOperand {
@@ -34,6 +35,7 @@ namespace ptx {
 	};
 
 	class MemoryInstruction : public Instruction {
+		PTX_DECLARE_DISPATCH
 	public:
 		MemoryInstructionOperands operands() const { return this->_operands; }
 		CacheOperation cacheMode() const { return this->_cacheMode; }
@@ -59,6 +61,9 @@ namespace ptx {
 		void setVectorized(VectorType vec) { this->_vectorType = vec; }
 		void setSize(const size_t s) { this->_size = s; }
 		void setVolatile(bool v=true) { this->_isVolatile = v; }
+		virtual void resolve(SymbolTable& table) const{
+			std::cout << "[mem instr] resolve default\n";
+		}
 	protected:
 		MemoryInstructionOperands _operands;
 		CacheOperation _cacheMode = CacheOperation::CacheAllLevels;

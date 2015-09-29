@@ -48,10 +48,10 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 	if (func.isNull())
 		return CUDA_ERROR_NOT_FOUND;
 	auto funcParams = func.parameters();
-	ptx::exec::SymbolTable symbols;
+	ptx::SymbolTable symbols;
 	for (size_t i=0 ; i<funcParams.size() ; ++i) {
 		void * address = kernelParams[i];
-		ptx::exec::param_storage_t storage;
+		ptx::param_storage_t storage;
 		memcpy(&storage, address, funcParams[i].size());
 		symbols.set(funcParams[i], storage);
 	}

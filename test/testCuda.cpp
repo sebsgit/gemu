@@ -76,7 +76,7 @@ static void test_module() {
 	".reg .s64 	%rd<3>;\n"
 	"ld.param.u64 	%rd1, [kernel_param_0];\n"
 	"cvta.to.global.u64 	%rd2, %rd1;\n"
-	"mov.u32 	%r1, 5;\n"
+	"mov.u32 	%r1, -5;\n"
 	"st.global.u32 	[%rd2], %r1;\n"
 	"ret;\n"
 	"}\n";
@@ -93,7 +93,7 @@ static void test_module() {
 	assert(hostValue != 5);
 	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
 	cu_assert(cuMemcpyDtoH(&hostValue, devValue, sizeof(hostValue)));
-	assert(hostValue == 5);
+	assert(hostValue == -5);
 	cu_assert(cuMemFree(devValue));
 	cu_assert(cuModuleUnload(modId));
 }

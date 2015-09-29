@@ -2,6 +2,7 @@ namespace ptx {
 	class Load;
 	class Store;
 	class Instruction;
+	class MemoryInstruction;
 	class InstructionList;
 	class Move;
 	class Return;

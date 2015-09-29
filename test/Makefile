@@ -26,6 +26,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/semantics/Variable.h	\
 		../ptx/semantics/Function.h	\
 		../ptx/semantics/Instruction.h	\
+		../ptx/semantics/SymbolTable.h	\
 		../ptx/semantics/instructions/ModuleDirective.h	\
 		../ptx/semantics/instructions/VariableDeclaration.h	\
 		../ptx/semantics/instructions/FunctionDeclaration.h	\
@@ -63,7 +64,7 @@ all: test lib
 test: $(CORE_OBJ) $(SOURCES) $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET)
 
-lib: $(PTX_SOURCES) $(LIB_NAME)
+lib: $(PTX_SOURCES)
 	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o $(LIB_NAME)
 
 clean:
