@@ -17,13 +17,13 @@ namespace ptx {
 			const param_storage_t src2 = symbols.get(this->_operands[2].symbol());
 			switch (this->type()) {
 			case Type::Signed:
-				dest.data = (int)src1.data + (int)src2.data;
+				dest.i = src1.i + src2.i;
 				break;
 			case Type::Unsigned:
-				dest.data = (unsigned)src1.data + (unsigned)src2.data;
+				dest.u = src1.u + src2.u;
 				break;
 			case Type::Float:
-				dest.data = (float)src1.data + (float)src2.data;
+				dest.f = src1.f + src2.f;
 				break;
 			default:
 				break;

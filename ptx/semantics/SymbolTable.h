@@ -5,8 +5,13 @@
 #include <vector>
 
 namespace ptx {
-	struct param_storage_t {
+	union param_storage_t {
 		unsigned long long data = 0;
+		float f;
+		int i;
+		unsigned u;
+		double d;
+		bool b;
 	};
 
 	class SymbolTable {

@@ -4,8 +4,10 @@
 #include <cassert>
 #include <iostream>
 #include <cuda.h>
+#include <cmath>
 
 #define cu_assert(x) (assert((x) == CUDA_SUCCESS))
+#define assert_float_eq(x,y) (assert(fabs(x-y) < 0.001f))
 
 void init_test() {
 	cuInit(0);
