@@ -14,14 +14,7 @@ namespace ptx {
 		}
         void resolve(SymbolTable& symbols) const override {
             param_storage_t dest = symbols.get(this->_operands[0].symbol());
-            param_storage_t source;
-            const std::string srcName = this->_operands[1].symbol();
-            if (symbols.has(srcName)) {
-                source = symbols.get(srcName);
-            } else {
-                //TODO: LITERAL
-                source.data = atoi(srcName.c_str());
-            }
+            const param_storage_t source = symbols.get(this->_operands[1].symbol());
             memcpy(&dest, &source, this->size());
             symbols.set(this->_operands[0].symbol(), dest);
         }
