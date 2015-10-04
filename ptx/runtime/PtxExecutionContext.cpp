@@ -91,34 +91,28 @@ PtxBlockDispatcher::PtxBlockDispatcher(gemu::Device& device, gemu::cuda::ThreadB
 
 }
 
-static void set_grid_data(SymbolTable& symbols, const ThreadGrid& grid){
+static void alloc_constant(SymbolTable& symbols, const std::string& name, const int value) {
     param_storage_t tmp;
-    tmp.i = grid.size().x;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.x"),tmp);
-    tmp.i = grid.size().y;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.y"),tmp);
-    tmp.i = grid.size().z;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.z"),tmp);
+    tmp.i = value;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),name),tmp);
+}
+
+static void set_grid_data(SymbolTable& symbols, const ThreadGrid& grid){
+    alloc_constant(symbols, "%nctaid.x", grid.size().x);
+    alloc_constant(symbols, "%nctaid.y", grid.size().y);
+    alloc_constant(symbols, "%nctaid.z", grid.size().z);
 }
 
 static void set_block_data(SymbolTable& symbols, const ThreadBlock& block){
-    param_storage_t tmp;
-    tmp.i = block.size().x;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.x"),tmp);
-    tmp.i = block.size().y;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.y"),tmp);
-    tmp.i = block.size().z;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.z"),tmp);
+    alloc_constant(symbols, "%ntid.x", block.size().x);
+    alloc_constant(symbols, "%ntid.y", block.size().y);
+    alloc_constant(symbols, "%ntid.z", block.size().z);
 }
 
 static void set_thread_data(SymbolTable& symbols, int x, int y, int z) {
-    param_storage_t tmp;
-    tmp.i = x;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.x"),tmp);
-    tmp.i = y;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.y"),tmp);
-    tmp.i = z;
-    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.z"),tmp);
+    alloc_constant(symbols, "%tid.x", x);
+    alloc_constant(symbols, "%tid.y", y);
+    alloc_constant(symbols, "%tid.z", z);
 }
 
 bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
