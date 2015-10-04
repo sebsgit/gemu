@@ -12,7 +12,7 @@ namespace ptx {
 	class Instruction {
 		PTX_DECLARE_DISPATCH
 	public:
-		virtual ~Instruction() {};
+        virtual ~Instruction() {}
 		virtual std::string toString() const{
 			return std::string("[not implemented]");
 		}

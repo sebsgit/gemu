@@ -1,9 +1,5 @@
 #include "runtime/PtxExecutionContext.h"
 #include "semantics/Semantics.h"
-#include <sstream>
-#include <string>
-#include <cstring>
-#include <iostream>
 
 using namespace ptx;
 using namespace exec;
@@ -58,62 +54,10 @@ void PtxExecutionContext::exec(const MemoryInstruction& i) {
 	i.resolve(this->_symbols);
 }
 
-static void load_impl(const MemoryInstructionOperand& to,
-					  const MemoryInstructionOperand& from,
-					  SymbolTable& symbols,
-				  	  const size_t size)
-{
-	param_storage_t stored;
-	param_storage_t source = symbols.get(from.symbol());
-	memcpy(&stored, &source, size);
-	symbols.set(to.symbol(), stored);
-}
-
-void PtxExecutionContext::exec(const Load& load) {
-	// std::cout << "exec load: " << load.toString() << "\n";
-	// std::cout <<" before LOAD: "; this->_symbols.print();
-	load_impl(load.operands()[0], load.operands()[1], this->_symbols, load.size());
-	// std::cout <<" after LOAD: "; this->_symbols.print();
-}
-
-static void store_impl(const Store& store, SymbolTable& symbols) {
-	const param_storage_t dest = symbols.get(store.operands()[0].symbol());
-	const param_storage_t source = symbols.get(store.operands()[1].symbol());;
-	*(reinterpret_cast<unsigned int *>(dest.data)) = source.data;
-}
-
-void PtxExecutionContext::exec(const Store& store) {
-	// std::cout << "exec store: " << store.toString() << "\n";
-	store_impl(store, this->_symbols);
-}
-
-static void move_impl(const Move& move, SymbolTable& symbols) {
-	param_storage_t dest = symbols.get(move.operands()[0].symbol());
-	param_storage_t source;
-	const std::string srcName = move.operands()[1].symbol();
-	if (symbols.has(srcName)) {
-		source = symbols.get(srcName);
-	} else {
-		//TODO: LITERAL
-		source.data = atoi(srcName.c_str());
-	}
-	memcpy(&dest, &source, move.size());
-	symbols.set(move.operands()[0].symbol(), dest);
-}
-
-void PtxExecutionContext::exec(const Move& move) {
-	move_impl(move, this->_symbols);
-}
 void PtxExecutionContext::exec(const Return& r) {
 	// std::cout << "exec return: " << r.toString() << "\n";
 	if (this->_instr)
 		this->_pc = this->_instr->count();
-}
-void PtxExecutionContext::exec(const Convert& conv) {
-	// std::cout << "exec conv: " << conv.toString() << "\n";
-	// std::cout <<" before CONV: "; this->_symbols.print();
-	load_impl(conv.operands()[0], conv.operands()[1], this->_symbols, conv.size());
-	// std::cout <<" after CONV: "; this->_symbols.print();
 }
 void PtxExecutionContext::exec(const FunctionDeclaration& fdecl) {
 	// std::cout << "exec func decl: " << fdecl.toString() << "\n";
@@ -127,34 +71,8 @@ void PtxExecutionContext::exec(const Branch& branch) {
 	if (this->_instr && this->_instr->hasLabel(branch.label()))
 		this->_pc = this->_instr->instructionIndex(branch.label());
 }
-
-static void declare_var(const ptx::Variable& var, SymbolTable& symbols) {
-	int pos = -1;
-	int pos2 = -1;
-	const std::string name = var.name();
-	for (size_t i=0 ; i<name.length() ; ++i) {
-		if (name[i] == '<') {
-			pos = i;
-		} else if (name[i] == '>') {
-			pos2 = i;
-			break;
-		}
-	}
-	if (pos > 0 && pos2 > pos) {
-		const size_t count = atoi(name.substr(pos+1, pos2 - pos - 1).c_str());
-		const std::string baseName = name.substr(0, pos);
-		for (size_t i=1 ; i<count ; ++i) {
-			std::stringstream ss;
-			ss << baseName << i;
-			symbols.set(ptx::Variable(var.space(), var.type(), var.size(), ss.str()), param_storage_t());
-		}
-	} else {
-		symbols.set(var, param_storage_t());
-	}
-}
 void PtxExecutionContext::exec(const VariableDeclaration& var) {
-	// std::cout << "exec var decl: " << var.toString() << "\n";
-	declare_var(var.var(), this->_symbols);
+    var.declare(this->_symbols);
 }
 
 using namespace gemu;

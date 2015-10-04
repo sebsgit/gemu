@@ -25,11 +25,7 @@ namespace ptx {
 			void exec(const InstructionList& list);
 			void exec(const Instruction& i);
 			void exec(const MemoryInstruction& i);
-			void exec(const Load& load);
-			void exec(const Store& store);
-			void exec(const Move& move);
 			void exec(const Return&);
-			void exec(const Convert&);
 			void exec(const FunctionDeclaration&);
 			void exec(const ModuleDirective&);
 			void exec(const VariableDeclaration&);
