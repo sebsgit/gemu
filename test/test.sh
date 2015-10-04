@@ -10,13 +10,15 @@ if [[ $? -ne 0 ]]; then
 	exit
 fi
 cd 'cases'
+index=$((0))
 ls | grep cpp | while read -r fname; do
 	rm 1.out &>/dev/null
 	rm 2.out &>/dev/null
 	LD_PRELOAD=
 	export LD_PRELOAD
 	base_name=$(echo "$fname" | sed s/.cpp//)
-	echo "$base_name ..."
+	echo "$index - $base_name ..."
+	index=$(($index+1))
 	g++ -std=c++11 $fname -o $base_name -lcuda
 	./$base_name > 1.out
 	if [[ $? -ne 0 ]]; then
