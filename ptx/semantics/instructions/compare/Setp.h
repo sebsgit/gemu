@@ -19,6 +19,18 @@ namespace ptx {
             case CompareOperation::NotEqual:
                 this->dispatchArithmetic<NotEqualOperator>(symbols);
                 break;
+            case CompareOperation::Greater:
+                this->dispatchArithmetic<GreaterThanOperator>(symbols);
+                break;
+            case CompareOperation::Lower:
+                this->dispatchArithmetic<LessThanOperator>(symbols);
+                break;
+            case CompareOperation::GreaterEqual:
+                this->dispatchArithmetic<GreaterEqualOperator>(symbols);
+                break;
+            case CompareOperation::LowerEqual:
+                this->dispatchArithmetic<LessEqualOperator>(symbols);
+                break;
             default:
                 break;
             }
