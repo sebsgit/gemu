@@ -11,6 +11,9 @@ namespace ptx {
 			:_label(label)
 			,_isDivergent(isDivergent)
 		{}
+        std::string toString() const override {
+            return "<branch> " + this->label();
+        }
 		bool isDivergent() const { return this->_isDivergent; }
 		std::string label() const { return this->_label; }
 	private:

@@ -62,6 +62,21 @@ namespace ptx {
             return left / right;
         }
     };
+    template <typename T>
+    class EqualOperator {
+    public:
+       T operator()(const T left, const T right) const {
+           return left == right;
+       }
+    };
+    template <typename T>
+    class NotEqualOperator {
+    public:
+       T operator()(const T left, const T right) const {
+           return left != right;
+       }
+    };
+
     template < template<typename T> class Operator>
     void dispatchOperator(Type type,
                           const size_t size,

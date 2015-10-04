@@ -68,6 +68,12 @@ void PtxExecutionContext::exec(const ModuleDirective& d) {
 
 void PtxExecutionContext::exec(const Branch& branch) {
 	// std::cout << "jump to " << branch.label() << '\n';
+    if (branch.hasPredicate()) {
+        const param_storage_t value = this->_symbols.get(branch.predicate());
+        if (value.b == false) {
+            return;
+        }
+    }
 	if (this->_instr && this->_instr->hasLabel(branch.label()))
 		this->_pc = this->_instr->instructionIndex(branch.label());
 }
@@ -93,12 +99,16 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				for (size_t z=0 ; z<size.z ; ++z) {
 					Thread thread = this->_block.thread(x,y,z);
 					SymbolTable symTab = symbols;
+                    param_storage_t tmp;
+                    tmp.i = x;
+                    symTab.set(ptx::Variable(AllocSpace::Local,Type::Signed,sizeof(int),"%tid.x"),tmp);
 					PtxExecutionContext context(this->_device, thread, symTab);
 					context.exec(func);
 				}
 			}
 		}
 	} catch (const std::exception& exc) {
+        std::cout << exc.what() << '\n';
 		return false;
 	}
 	return true;

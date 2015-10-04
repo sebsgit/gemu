@@ -67,7 +67,7 @@ namespace ptx {
 			this->_labels[label] = _instructions.size() - 1;
 		}
 		void predicateLast(const std::string& p) {
-			this->_instructions[this->_instructions.size()-1]->setPredicate(p);
+            this->_instructions[this->_instructions.size()-1]->setPredicate(p);
 		}
 		bool hasLabel(const std::string& label) const {
 			for (const auto& lbl : this->_labels) {

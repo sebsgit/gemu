@@ -3,6 +3,7 @@ namespace ptx {
 	class Store;
 	class Instruction;
 	class MemoryInstruction;
+    class ControlInstruction;
 	class InstructionList;
 	class Move;
 	class Return;
