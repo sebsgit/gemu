@@ -108,7 +108,7 @@ namespace ptx {
 				if (!isIdentifier(name))
 					return false;
 				temp.removeFirst();
-				if (name == "%tid") {
+                if (name == "%tid" || name == "%ntid" || name == "%nctaid") {
 					if (temp.peek() == ".x" || temp.peek() == ".y" || temp.peek() == ".z") {
 						name += temp.peek();
 						temp.removeFirst();

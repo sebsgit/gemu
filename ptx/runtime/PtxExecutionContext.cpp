@@ -91,17 +91,47 @@ PtxBlockDispatcher::PtxBlockDispatcher(gemu::Device& device, gemu::cuda::ThreadB
 
 }
 
+static void set_grid_data(SymbolTable& symbols, const ThreadGrid& grid){
+    param_storage_t tmp;
+    tmp.i = grid.size().x;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.x"),tmp);
+    tmp.i = grid.size().y;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.y"),tmp);
+    tmp.i = grid.size().z;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%nctaid.z"),tmp);
+}
+
+static void set_block_data(SymbolTable& symbols, const ThreadBlock& block){
+    param_storage_t tmp;
+    tmp.i = block.size().x;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.x"),tmp);
+    tmp.i = block.size().y;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.y"),tmp);
+    tmp.i = block.size().z;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%ntid.z"),tmp);
+}
+
+static void set_thread_data(SymbolTable& symbols, int x, int y, int z) {
+    param_storage_t tmp;
+    tmp.i = x;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.x"),tmp);
+    tmp.i = y;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.y"),tmp);
+    tmp.i = z;
+    symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),"%tid.z"),tmp);
+}
+
 bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 	const dim3 size(this->_block.size());
 	try {
+        set_grid_data(symbols, this->_block.grid());
+        set_block_data(symbols, this->_block);
 		for (size_t x=0 ; x<size.x ; ++x) {
 			for (size_t y=0 ; y<size.y ; ++y) {
 				for (size_t z=0 ; z<size.z ; ++z) {
 					Thread thread = this->_block.thread(x,y,z);
 					SymbolTable symTab = symbols;
-                    param_storage_t tmp;
-                    tmp.i = x;
-                    symTab.set(ptx::Variable(AllocSpace::Local,Type::Signed,sizeof(int),"%tid.x"),tmp);
+                    set_thread_data(symTab, x, y, z);
 					PtxExecutionContext context(this->_device, thread, symTab);
 					context.exec(func);
 				}

@@ -6,7 +6,7 @@
 #include <cuda.h>
 #include <cmath>
 
-#define cu_assert(x) (assert((x) == CUDA_SUCCESS))
+#define cu_assert(x) {auto t = (x); if (t != CUDA_SUCCESS)std::cout << t << '\n'; (assert((t) == CUDA_SUCCESS));}
 #define assert_float_eq(x,y) (assert(fabs(x-y) < 0.001f))
 
 void init_test() {
