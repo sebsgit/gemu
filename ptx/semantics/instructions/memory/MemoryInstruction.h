@@ -34,6 +34,61 @@ namespace ptx {
 		std::vector<MemoryInstructionOperand> _operands;
 	};
 
+    template <typename T>
+    class Addition {
+    public:
+        T operator()(const T left, const T right) const {
+            return left + right;
+        }
+    };
+    template <typename T>
+    class Subtraction {
+    public:
+        T operator()(const T left, const T right) const {
+            return left - right;
+        }
+    };
+    template <typename T>
+    class Multiplication {
+    public:
+        T operator()(const T left, const T right) const {
+            return left * right;
+        }
+    };
+    template <typename T>
+    class Division {
+    public:
+        T operator()(const T left, const T right) const {
+            return left / right;
+        }
+    };
+    template < template<typename T> class Operator>
+    void dispatchOperator(Type type,
+                          const size_t size,
+                          SymbolTable& symbols,
+                          const MemoryInstructionOperand& result,
+                          const MemoryInstructionOperand& sourceLeft,
+                          const MemoryInstructionOperand& sourceRight)
+    {
+        param_storage_t dest = symbols.get(result.symbol());
+        const param_storage_t left = symbols.get(sourceLeft.symbol());
+        const param_storage_t right = symbols.get(sourceRight.symbol());
+        switch (type) {
+        case Type::Signed:
+            dest.i = Operator<int>()(left.i, right.i);
+            break;
+        case Type::Unsigned:
+            dest.u = Operator<unsigned>()(left.u, right.u);
+            break;
+        case Type::Float:
+            dest.f = Operator<float>()(right.f, right.f);
+            break;
+        default:
+            break;
+        }
+        symbols.set(result.symbol(), dest);
+    }
+
 	class MemoryInstruction : public Instruction {
 		PTX_DECLARE_DISPATCH
 	public:
@@ -64,6 +119,13 @@ namespace ptx {
 		virtual void resolve(SymbolTable& table) const{
 			std::cout << "[mem instr] resolve default\n";
 		}
+    protected:
+        template <template <typename T> class Operator>
+        void dispatchArithmetic(SymbolTable& symbols) const{
+            dispatchOperator<Operator>(this->type(), this->size(), symbols,
+                                    this->_operands[0],this->_operands[1],this->_operands[2]);
+        }
+
 	protected:
 		MemoryInstructionOperands _operands;
 		CacheOperation _cacheMode = CacheOperation::CacheAllLevels;

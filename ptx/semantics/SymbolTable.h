@@ -7,11 +7,15 @@
 namespace ptx {
 	union param_storage_t {
 		unsigned long long data = 0;
-		float f;
-		int i;
+        bool b;
+        int i;
+        long l;
+        long long ll;
+        float f;
+        double d;
 		unsigned u;
-		double d;
-		bool b;
+        unsigned long ul;
+        unsigned long long ull;
 	};
 
 	class SymbolTable {
