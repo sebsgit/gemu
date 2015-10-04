@@ -16,7 +16,7 @@ int main(){
 	"ld.param.u32 	%r1, [kernel_4_param_0];\n"
 	"ld.param.u64 	%rd1, [kernel_4_param_1];\n"
 	"cvta.to.global.u64 	%rd2, %rd1;\n"
-    "mul.lo.s32 	%r2, %r1, 31;\n"
+    "div.s32 	%r2, %r1, 3;\n"
 	"st.global.u32 	[%rd2], %r2;\n"
 	"ret;\n"
 	"}";
@@ -26,13 +26,13 @@ int main(){
 	cu_assert(cuModuleLoadData(&modId, source.c_str()));
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel_4"));
 	CUdeviceptr devValue;
-    int hostValue = 10;
+    int hostValue = 66;
 	cu_assert(cuMemAlloc(&devValue, sizeof(int)));
 	void * params[] = {&hostValue, &devValue};
 	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
 	int result = 0;
 	cu_assert(cuMemcpyDtoH(&result, devValue, sizeof(result)));
-    assert(result == hostValue * 31);
+    assert(result == hostValue / 3);
 	std::cout << result << "\n";
 	cu_assert(cuMemFree(devValue));
 	cu_assert(cuModuleUnload(modId));

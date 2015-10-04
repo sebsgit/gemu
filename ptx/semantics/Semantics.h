@@ -13,6 +13,7 @@
 #include "semantics/instructions/int/Add.h"
 #include "semantics/instructions/int/Mul.h"
 #include "semantics/instructions/int/Shl.h"
+#include "semantics/instructions/int/Div.h"
 #include "semantics/instructions/VariableDeclaration.h"
 #include "semantics/instructions/FunctionDeclaration.h"
 #include "semantics/instructions/ModuleDirective.h"

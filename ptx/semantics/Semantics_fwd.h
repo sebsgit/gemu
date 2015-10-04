@@ -17,5 +17,6 @@ namespace ptx {
 	class Setp;
 	class Add;
 	class Mul;
+    class Div;
 	class Shl;
 }

@@ -12,6 +12,7 @@
 #include "parser/SetpParser.h"
 #include "parser/MulParser.h"
 #include "parser/AddParser.h"
+#include "parser/DivParser.h"
 #include "parser/SubParser.h"
 #include "parser/ShlParser.h"
 
@@ -31,6 +32,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<BranchParser>());
 				parsers.push_back(std::make_shared<SetpParser>());
 				parsers.push_back(std::make_shared<MulParser>());
+                parsers.push_back(std::make_shared<DivParser>());
 				parsers.push_back(std::make_shared<AddParser>());
                 parsers.push_back(std::make_shared<SubParser>());
 				parsers.push_back(std::make_shared<ShlParser>());
