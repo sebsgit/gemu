@@ -14,6 +14,9 @@ GEMU_DECLARE_EXTERN( cuDeviceGetCount ( int* ) )
 GEMU_DECLARE_EXTERN( cuDeviceGetName ( char*, int , CUdevice ) )
 GEMU_DECLARE_EXTERN( cuDeviceTotalMem ( size_t*, CUdevice ) )
 
+GEMU_DECLARE_EXTERN( cuGetErrorName(CUresult, const char**) )
+GEMU_DECLARE_EXTERN( cuGetErrorString(CUresult, const char**) )
+
 GEMU_DECLARE_EXTERN( cuCtxCreate(CUcontext*, unsigned int, CUdevice) )
 GEMU_DECLARE_EXTERN( cuCtxDestroy(CUcontext) )
 
