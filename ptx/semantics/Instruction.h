@@ -16,11 +16,16 @@ namespace ptx {
 		virtual std::string toString() const{
 			return std::string("[not implemented]");
 		}
-		void setPredicate(const std::string& p){this->_predicate = p;}
+		void setPredicate(const std::string& p, bool isNegated){
+			this->_predicate = p;
+			this->_predicateNegated = isNegated;
+		}
 		bool hasPredicate() const {return this->_predicate.empty()==false;}
 		std::string predicate() const {return this->_predicate;}
+		bool predicateNegated() const {return this->_predicateNegated; }
 	protected:
 		std::string _predicate;
+		bool _predicateNegated = false;
 	};
 	typedef std::shared_ptr<ptx::Instruction> InstructionPtr;
 
@@ -66,8 +71,8 @@ namespace ptx {
 		void labelLast(const std::string& label) {
 			this->_labels[label] = _instructions.size() - 1;
 		}
-		void predicateLast(const std::string& p) {
-            this->_instructions[this->_instructions.size()-1]->setPredicate(p);
+		void predicateLast(const std::string& p, bool isNegated) {
+            this->_instructions[this->_instructions.size()-1]->setPredicate(p, isNegated);
 		}
 		bool hasLabel(const std::string& label) const {
 			for (const auto& lbl : this->_labels) {

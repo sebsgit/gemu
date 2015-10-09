@@ -104,6 +104,13 @@ namespace ptx {
            return left <= right;
        }
     };
+	template <typename T>
+    class BitwiseAnd {
+    public:
+       bool operator()(const T left, const T right) const {
+           return (unsigned long)left & (unsigned long)right;
+       }
+    };
 
     template < template<typename T> class Operator>
     void dispatchOperator(Type type,

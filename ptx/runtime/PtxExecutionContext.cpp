@@ -70,7 +70,7 @@ void PtxExecutionContext::exec(const Branch& branch) {
 	// std::cout << "jump to " << branch.label() << '\n';
     if (branch.hasPredicate()) {
         const param_storage_t value = this->_symbols.get(branch.predicate());
-        if (value.b == false) {
+        if (value.b == branch.predicateNegated()) {
             return;
         }
     }
