@@ -42,7 +42,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<ShlParser>());
 				std::string label;
 				std::string predicate;
-				bool predicateNegated;
+				bool predicateNegated=false;
 				Utils::parseLabel(tokens, &label);
 				Utils::parsePredicate(tokens, &predicate, &predicateNegated);
 				for (const auto& p : parsers) {

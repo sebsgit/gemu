@@ -50,8 +50,19 @@ void PtxExecutionContext::exec(const Instruction& i) {
 	exit(0);
 }
 
+static bool test_predicate(const Instruction& i, const SymbolTable& symbols) {
+	if (i.hasPredicate()) {
+        const param_storage_t value = symbols.get(i.predicate());
+        if (value.b == i.predicateNegated()) {
+            return true;
+        }
+    }
+	return false;
+}
+
 void PtxExecutionContext::exec(const MemoryInstruction& i) {
-	i.resolve(this->_symbols);
+	if (!test_predicate(i, this->_symbols))
+		i.resolve(this->_symbols);
 }
 
 void PtxExecutionContext::exec(const Return& r) {
@@ -68,13 +79,7 @@ void PtxExecutionContext::exec(const ModuleDirective& d) {
 
 void PtxExecutionContext::exec(const Branch& branch) {
 	// std::cout << "jump to " << branch.label() << '\n';
-    if (branch.hasPredicate()) {
-        const param_storage_t value = this->_symbols.get(branch.predicate());
-        if (value.b == branch.predicateNegated()) {
-            return;
-        }
-    }
-	if (this->_instr && this->_instr->hasLabel(branch.label()))
+	if (!test_predicate(branch, this->_symbols) && this->_instr && this->_instr->hasLabel(branch.label()))
 		this->_pc = this->_instr->instructionIndex(branch.label());
 }
 void PtxExecutionContext::exec(const VariableDeclaration& var) {
