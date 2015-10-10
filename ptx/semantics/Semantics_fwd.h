@@ -21,4 +21,5 @@ namespace ptx {
 	class Mul;
     class Div;
 	class Shl;
+	class Barrier;
 }

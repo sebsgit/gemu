@@ -209,6 +209,32 @@ namespace ptx {
 				}
 				return false;
 			}
+			static bool parseBarrierType(TokenList& tokens, BarrierType * result) {
+				if (tokens.peek() == ".sync") {
+					tokens.removeFirst();
+					*result = BarrierType::BarSync;
+					return true;
+				} else if (tokens.peek() == ".arrive") {
+					tokens.removeFirst();
+					*result = BarrierType::BarArrive;
+					return true;
+				} else if (tokens.peek() == ".red") {
+					tokens.removeFirst();
+					*result = BarrierType::BarReduction;
+					return true;
+				}
+				return false;
+			}
+			static bool parseUint(TokenList& tokens, int min, int max, int * result) {
+				const auto str = tokens.peek();
+				int tmp = atoi(str.c_str());
+				if (tmp >= min && tmp <= max) {
+					*result = tmp;
+					tokens.removeFirst();
+					return true;
+				}
+				return false;
+			}
 		};
 	}
 }

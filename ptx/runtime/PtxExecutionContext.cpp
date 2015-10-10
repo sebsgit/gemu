@@ -86,6 +86,10 @@ void PtxExecutionContext::exec(const VariableDeclaration& var) {
     var.declare(this->_symbols);
 }
 
+void PtxExecutionContext::exec(const Barrier& barrier) {
+	//TODO implement barriers
+}
+
 using namespace gemu;
 using namespace cuda;
 

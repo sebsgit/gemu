@@ -30,6 +30,7 @@ namespace ptx {
 			void exec(const ModuleDirective&);
 			void exec(const VariableDeclaration&);
 			void exec(const Branch& branch);
+			void exec(const Barrier& barrier);
 		private:
 			gemu::cuda::Thread& _thread;
 			SymbolTable& _symbols;

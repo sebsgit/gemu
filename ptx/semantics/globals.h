@@ -50,6 +50,11 @@ namespace ptx {
 		Or,
 		Xor
 	};
+	enum BarrierType {
+		BarSync,
+		BarArrive,
+		BarReduction
+	};
 }
 
 #endif

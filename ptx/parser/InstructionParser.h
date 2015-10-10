@@ -17,6 +17,7 @@
 #include "parser/DivParser.h"
 #include "parser/SubParser.h"
 #include "parser/ShlParser.h"
+#include "parser/BarrierParser.h"
 
 namespace ptx {
 	namespace parser {
@@ -40,6 +41,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<MadParser>());
                 parsers.push_back(std::make_shared<SubParser>());
 				parsers.push_back(std::make_shared<ShlParser>());
+				parsers.push_back(std::make_shared<BarrierParser>());
 				std::string label;
 				std::string predicate;
 				bool predicateNegated=false;

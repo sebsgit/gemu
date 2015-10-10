@@ -260,6 +260,67 @@ static void test_module_with_arithm() {
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
 }
 
+static void test_module_with_sync() {
+	const std::string source =
+	".version 4.2\n"
+	".target sm_20\n"
+	".address_size 64\n"
+	".visible .entry kernel(\n"
+	".param .u64 _Z6kernelPii_param_0,\n"
+	".param .u32 _Z6kernelPii_param_1 ) {\n"
+	".reg .pred 	%p<5>;\n"
+	".reg .s32 	%r<19>;\n"
+	".reg .s64 	%rd<3>;\n"
+	".shared .u32 _Z6kernelPii$__cuda_local_var_41819_30_non_const_counter;\n"
+	"ld.param.u64 	%rd1, [_Z6kernelPii_param_0];\n"
+	"ld.param.u32 	%r7, [_Z6kernelPii_param_1];\n"
+	"mov.u32 	%r1, %tid.x;\n"
+	"setp.ne.s32	%p1, %r1, 0;\n"
+	"@%p1 bra 	BB0_2;\n"
+	"mov.u32 	%r8, 0;\n"
+	"st.shared.u32 	[_Z6kernelPii$__cuda_local_var_41819_30_non_const_counter], %r8;\n"
+	"BB0_2:\n"
+	"bar.sync 	0;\n"
+	"mov.u32 	%r17, 0;\n"
+	"mov.u32 	%r18, %r17;\n"
+	"mov.u32 	%r15, %r17;\n"
+	"setp.lt.s32	%p2, %r7, 1;\n"
+	"@%p2 bra 	BB0_4;\n"
+	"BB0_3:\n"
+	"add.s32 	%r18, %r15, %r18;\n"
+	"add.s32 	%r15, %r15, 1;\n"
+	"setp.lt.s32	%p3, %r15, %r7;\n"
+	"mov.u32 	%r17, %r18;\n"
+	"@%p3 bra 	BB0_3;\n"
+	"BB0_4:\n"
+	"bar.sync 	0;\n"
+	"ld.shared.u32 	%r12, [_Z6kernelPii$__cuda_local_var_41819_30_non_const_counter];\n"
+	"add.s32 	%r13, %r12, %r17;\n"
+	"st.shared.u32 	[_Z6kernelPii$__cuda_local_var_41819_30_non_const_counter], %r13;\n"
+	"bar.sync 	0;\n"
+	"@%p1 bra 	BB0_6;\n"
+	"cvta.to.global.u64 	%rd2, %rd1;\n"
+	"ld.shared.u32 	%r14, [_Z6kernelPii$__cuda_local_var_41819_30_non_const_counter];\n"
+	"st.global.u32 	[%rd2], %r14;\n"
+	"BB0_6:\n"
+	"ret;\n"
+	"}";
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "kernel"));
+	CUdeviceptr devResult;
+	cu_assert(cuMemAlloc(&devResult, sizeof(int)));
+	int count = 12;
+	void * params[] = {&devResult, &count};
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+	int result = 0;
+	cu_assert(cuMemcpyDtoH(&result, devResult, sizeof(result)));
+	cu_assert(cuMemFree(devResult));
+	cu_assert(cuModuleUnload(modId));
+	assert(result == 66);
+}
+
 static void test_modules() {
 	test_module();
 	test_module_2();
@@ -267,6 +328,7 @@ static void test_modules() {
 	test_module_with_add();
 	test_module_with_mul();
 	test_module_with_arithm();
+	test_module_with_sync();
 }
 
 void test_cuda(){
