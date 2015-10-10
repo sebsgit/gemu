@@ -225,16 +225,6 @@ namespace ptx {
 				}
 				return false;
 			}
-			static bool parseUint(TokenList& tokens, int min, int max, int * result) {
-				const auto str = tokens.peek();
-				int tmp = atoi(str.c_str());
-				if (tmp >= min && tmp <= max) {
-					*result = tmp;
-					tokens.removeFirst();
-					return true;
-				}
-				return false;
-			}
 		};
 	}
 }

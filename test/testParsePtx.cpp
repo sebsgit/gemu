@@ -44,6 +44,8 @@ static void test_tokenizer() {
 	sublist.removeFirst(2);
 	assert(sublist.size() == 5);
 	assert(sublist[0] == "kernel_param_0");
+	result = token.tokenize("cvt.rn.f32.u32	%f1, %r1;");
+	assert(result.size() == 8);
 }
 
 static void test_variable_parser() {

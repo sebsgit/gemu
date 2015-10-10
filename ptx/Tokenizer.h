@@ -85,7 +85,10 @@ namespace ptx {
 			this->strip_singleline_comment(line);
 			// std::cout << "parsing line: " << line << "\n";
 			std::string token;
-			for (const char c : line) {
+			for (size_t i=0 ; i<line.size() ; ++i) {
+				const char previous = i > 0 ? line[i-1] : 0;
+				const char c = line[i];
+				const char next = i < line.size() - 1 ? line[i+1] : 0;
 				if (std::isspace(c)){
 					if (!token.empty()){
 						result << token;
@@ -100,8 +103,10 @@ namespace ptx {
 					} else if (c == ';') {
 						PUSHT
 						result << ";";
-					} else if (c == '.' && !(!token.empty() && std::isdigit(token[token.size()-1]))) {
-						PUSHT
+					} else if (c == '.') {
+						if (!std::isdigit(next) || !std::isdigit(previous)){
+							PUSHT
+						}
 						token.push_back(c);
 					} else {
 						token.push_back(c);

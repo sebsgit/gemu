@@ -131,7 +131,7 @@ namespace ptx {
             dest.u = Operator<unsigned>()(left.u, right.u);
             break;
         case Type::Float:
-            dest.f = Operator<float>()(right.f, right.f);
+            dest.f = Operator<float>()(left.f, right.f);
             break;
         default:
             break;

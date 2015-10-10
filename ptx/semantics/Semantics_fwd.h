@@ -8,6 +8,7 @@ namespace ptx {
 	class Move;
 	class Return;
 	class Convert;
+	class ConvertValue;
 	class FunctionDeclaration;
 	class ModuleDirective;
 	class VariableDeclaration;
