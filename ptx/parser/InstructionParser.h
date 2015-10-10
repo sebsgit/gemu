@@ -12,6 +12,8 @@
 #include "parser/SetpParser.h"
 #include "parser/MulParser.h"
 #include "parser/AddParser.h"
+#include "parser/AndParser.h"
+#include "parser/MadParser.h"
 #include "parser/DivParser.h"
 #include "parser/SubParser.h"
 #include "parser/ShlParser.h"
@@ -34,18 +36,21 @@ namespace ptx {
 				parsers.push_back(std::make_shared<MulParser>());
                 parsers.push_back(std::make_shared<DivParser>());
 				parsers.push_back(std::make_shared<AddParser>());
+				parsers.push_back(std::make_shared<AndParser>());
+				parsers.push_back(std::make_shared<MadParser>());
                 parsers.push_back(std::make_shared<SubParser>());
 				parsers.push_back(std::make_shared<ShlParser>());
 				std::string label;
 				std::string predicate;
+				bool predicateNegated=false;
 				Utils::parseLabel(tokens, &label);
-				Utils::parsePredicate(tokens, &predicate);
+				Utils::parsePredicate(tokens, &predicate, &predicateNegated);
 				for (const auto& p : parsers) {
 					if (p->parse(tokens, result)) {
 						if (label.empty()==false)
 							result.labelLast(label);
 						if (predicate.empty()==false)
-							result.predicateLast(predicate);
+							result.predicateLast(predicate, predicateNegated);
 						parsedOk = true;
 						break;
 					}

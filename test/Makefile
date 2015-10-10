@@ -40,6 +40,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/semantics/instructions/control/Return.h	\
 		../ptx/semantics/instructions/compare/Setp.h	\
 		../ptx/semantics/instructions/int/Add.h	\
+		../ptx/semantics/instructions/int/And.h	\
 		../ptx/semantics/instructions/int/Shl.h	\
 		../ptx/semantics/instructions/int/Mul.h	\
 		../ptx/parser/ParserResult.h	\
@@ -55,6 +56,7 @@ HEADERS=../arch/Device.h	\
 		../ptx/parser/SetpParser.h	\
 		../ptx/parser/MulParser.h	\
 		../ptx/parser/AddParser.h	\
+		../ptx/parser/AndParser.h	\
 		../ptx/parser/ShlParser.h	\
 		../ptx/parser/ReturnExitParser.h	\
 

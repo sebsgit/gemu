@@ -210,6 +210,53 @@ static void test_parser_2() {
 	assert(kernel.fetch<ptx::Return>(16));
 }
 
+static void test_parser_matrix(){
+	const std::string source =
+	".version 4.2\n"
+	".target sm_20\n"
+	".address_size 64\n"
+	".visible .entry matrix_add(\n"
+	".param .u64 matrix_add_param_0,\n"
+	".param .u64 matrix_add_param_1,\n"
+	".param .u64 matrix_add_param_2,\n"
+	".param .u32 matrix_add_param_3,\n"
+	".param .u32 matrix_add_param_4 ){\n"
+	".reg .pred 	%p<4>;\n"
+	".reg .f32 	%f<4>;\n"
+	".reg .s32 	%r<6>;\n"
+	".reg .s64 	%rd<11>;\n"
+	"ld.param.u64 	%rd1, [matrix_add_param_0];\n"
+	"ld.param.u64 	%rd2, [matrix_add_param_1];\n"
+	"ld.param.u64 	%rd3, [matrix_add_param_2];\n"
+	"ld.param.u32 	%r4, [matrix_add_param_3];\n"
+	"ld.param.u32 	%r3, [matrix_add_param_4];\n"
+	"mov.u32 	%r1, %tid.x;\n"
+	"mov.u32 	%r2, %tid.y;\n"
+	"setp.lt.u32	%p1, %r2, %r3;\n"
+	"setp.lt.u32	%p2, %r1, %r4;\n"
+	"and.pred  	%p3, %p1, %p2;\n"
+	"@!%p3 bra 	BB0_2;\n"
+	"bra.uni 	BB0_1;\n"
+	"BB0_1:\n"
+	"cvta.to.global.u64 	%rd4, %rd2;\n"
+	"mad.lo.s32 	%r5, %r1, %r3, %r2;\n"
+	"mul.wide.u32 	%rd5, %r5, 4;\n"
+	"add.s64 	%rd6, %rd4, %rd5;\n"
+	"cvta.to.global.u64 	%rd7, %rd3;\n"
+	"add.s64 	%rd8, %rd7, %rd5;\n"
+	"ld.global.f32 	%f1, [%rd8];\n"
+	"ld.global.f32 	%f2, [%rd6];\n"
+	"add.f32 	%f3, %f2, %f1;\n"
+	"cvta.to.global.u64 	%rd9, %rd1;\n"
+	"add.s64 	%rd10, %rd9, %rd5;\n"
+	"st.global.f32 	[%rd10], %f3;\n"
+	"BB0_2:\n"
+	"ret;\n"
+	"}";
+	ptx::ParserResult result = ptx::Parser().parseModule(source);
+	assert(result.empty()==false);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
@@ -217,5 +264,6 @@ void test_ptx() {
 	test_parser();
 	test_parser_branch();
 	test_parser_2();
+	test_parser_matrix();
 	std::cout << "done.\n";
 }

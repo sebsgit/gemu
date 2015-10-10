@@ -16,6 +16,8 @@ namespace ptx {
 	class Branch;
 	class Setp;
 	class Add;
+	class Mad;
+	class BitAnd;
 	class Mul;
     class Div;
 	class Shl;

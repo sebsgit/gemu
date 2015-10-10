@@ -176,11 +176,14 @@ namespace ptx {
 				}
 				return false;
 			}
-			static bool parsePredicate(TokenList& tokens, TokenList::token_t * result) {
+			static bool parsePredicate(TokenList& tokens, TokenList::token_t * result, bool * isNegated) {
 				const auto token = tokens.peek();
-				if (token.empty()==false) {
-					if (token[0] == '@' && isIdentifier(token.substr(1, token.length()-1))) {
-						*result = TokenList::token_t(token.substr(1, token.length()-1));
+				if (token.empty()==false && token[0] == '@') {
+					*isNegated = (token[1] == '!');
+					const size_t start = 1 + *isNegated;
+					const auto name = token.substr(start, token.length()-start);
+					if (isIdentifier(name)) {
+						*result = TokenList::token_t(name);
 						tokens.removeFirst();
 						return true;
 					}
