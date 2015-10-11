@@ -51,7 +51,7 @@ int main(){
 		for (int j=1 ; j<10 ; ++j)
 			for (int k=1 ; k<10 ; ++k) {
 				int result = launch_kernel(i,j,k);
-				assert(result = i*j+k);
+				assert(result == i*j+k);
 				std::cout << result << '\n';
 			}
 	return 0;

@@ -22,8 +22,8 @@ param_storage_t SymbolTable::get(const std::string& name) const {
 	param_storage_t result;
 	if (name.size() > 2 && name[0]=='0' && name[1] == 'f'){
 		const auto number = name.substr(2, name.size()-2);
-		int i = strtol(number.c_str(), 0, 16);
-		result.f = *(float*)(&i);
+		const int i = strtol(number.c_str(), 0, 16);
+		result.f = *reinterpret_cast<const float*>(&i);
 	} else {
 		result.data = atoi(name.c_str());
 	}
