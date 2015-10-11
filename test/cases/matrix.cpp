@@ -3,7 +3,7 @@
 
 int main(){
 	init_test();
-	const std::string source = 
+	const std::string source =
 	".version 4.2\n"
 	".target sm_20\n"
 	".address_size 64\n"
@@ -50,7 +50,7 @@ int main(){
 	cu_assert(cuModuleLoadData(&modId, source.c_str()));
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "matrix_add"));
 	unsigned width = 3;
-	unsigned height = 2;
+	unsigned height = 4;
 	const unsigned size = width * height;
     float *result, *source1, *source2;
     result = (float*)malloc(size * sizeof(result[0]));
@@ -67,18 +67,18 @@ int main(){
 	cu_assert(cuMemAlloc(&source2Dev, sizeof(result[0]) * size));
 	cu_assert(cuMemcpyHtoD(source1Dev, source1, sizeof(result[0]) * size));
 	cu_assert(cuMemcpyHtoD(source2Dev, source2, sizeof(result[0]) * size));
-	
+
 	memset(source1, 0, size * sizeof(source1[0]));
 	cu_assert(cuMemcpyDtoH(source1, source1Dev, sizeof(result[0]) * size));
-	for (unsigned i=0 ; i<size ; ++i)
-		std::cout << source1[i] << '\n';
-	
 	void * params[] = {&resultDev, &source1Dev, &source2Dev, &width, &height};
 	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, width,height,1, 0,0, params, nullptr));
 	cu_assert(cuMemcpyDtoH(result, resultDev, sizeof(result[0]) * size));
-    for (unsigned i=0 ; i<size ; ++i)
-		std::cout << result[i] << '\n';
-	
+    for (unsigned i=0 ; i<height ; ++i) {
+		for (unsigned j=0 ; j<width ; ++j)
+			std::cout << result[i*width+j] << ' ';
+		std::cout << "\n";
+	}
+
 	cu_assert(cuMemFree(resultDev));
 	cu_assert(cuMemFree(source1Dev));
 	cu_assert(cuMemFree(source2Dev));

@@ -12,7 +12,9 @@ namespace ptx {
 			return "<bit_and> " + MemoryInstruction::toString();
 		}
 		void resolve(SymbolTable& symbols) const override {
-            this->dispatchArithmetic<BitwiseAnd>(symbols);
+            param_storage_t result;
+			result.data = symbols.get(this->_operands[1].symbol()).data & symbols.get(this->_operands[2].symbol()).data;
+			symbols.set(this->_operands[0].symbol(), result);
 		}
 	};
 }
