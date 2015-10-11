@@ -15,7 +15,12 @@ namespace ptx {
         void resolve(SymbolTable& symbols) const override {
             param_storage_t stored;
             param_storage_t source = symbols.get(this->_operands[1].symbol());
-            memcpy(&stored, &source, this->size());
+			if (this->space() == AllocSpace::Global) {
+				unsigned long long * address = reinterpret_cast<unsigned long long*>(source.data);
+				stored.data = *address;
+			} else {
+            	memcpy(&stored, &source, this->size());
+			}
             symbols.set(this->_operands[0].symbol(), stored);
         }
 	};

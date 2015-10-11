@@ -49,8 +49,8 @@ int main(){
 	CUfunction funcHandle = 0;
 	cu_assert(cuModuleLoadData(&modId, source.c_str()));
 	cu_assert(cuModuleGetFunction(&funcHandle, modId, "matrix_add"));
-	unsigned width = 3;
-	unsigned height = 4;
+	unsigned width = 32;
+	unsigned height = 32;
 	const unsigned size = width * height;
     float *result, *source1, *source2;
     result = (float*)malloc(size * sizeof(result[0]));
@@ -58,7 +58,7 @@ int main(){
     source2 = (float*)malloc(size * sizeof(result[0]));
     memset(result, 0, size * sizeof(result[0]));
     for (unsigned i=0 ; i<size ; ++i) {
-		source1[i] = 1.5f * i;
+		source1[i] = 1.3f * i;
 		source2[i] = 2.5f * i;
 	}
     CUdeviceptr resultDev, source1Dev, source2Dev;
