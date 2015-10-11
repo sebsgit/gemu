@@ -308,6 +308,49 @@ static void test_parse_sync(){
 	assert(result.empty()==false);
 }
 
+static void test_parse_atomic(){
+	const std::string source =
+	".version 4.2\n"
+	".target sm_20\n"
+	".address_size 64\n"
+	".visible .entry _Z6kernelPi("
+	"	.param .u64 _Z6kernelPi_param_0"
+	")"
+	"{"
+	"	.reg .pred 	%p<3>;"
+	"	.reg .s32 	%r<5>;"
+	"	.reg .s64 	%rd<4>;"
+	"	.shared .u32 _Z6kernelPi$__cuda_local_var_41819_30_non_const_count;"
+	""
+	"	ld.param.u64 	%rd1, [_Z6kernelPi_param_0];"
+	"	mov.u32 	%r1, %tid.x;"
+	"	setp.ne.s32	%p2, %r1, 0;"
+	"	@%p2 bra 	BB0_2;"
+	""
+	"	mov.u32 	%r2, 0;"
+	"	st.shared.u32 	[_Z6kernelPi$__cuda_local_var_41819_30_non_const_count], %r2;"
+	""
+	"BB0_2:"
+	"	setp.eq.s32	%p1, %r1, 0;"
+	"	bar.sync 	0;"
+	"	mov.u64 	%rd2, _Z6kernelPi$__cuda_local_var_41819_30_non_const_count;"
+	"	atom.shared.add.u32 	%r3, [%rd2], 1;"
+	"	bar.sync 	0;"
+	"	@!%p1 bra 	BB0_4;"
+	"	bra.uni 	BB0_3;"
+	""
+	"BB0_3:"
+	"	cvta.to.global.u64 	%rd3, %rd1;"
+	"	ld.shared.u32 	%r4, [_Z6kernelPi$__cuda_local_var_41819_30_non_const_count];"
+	"	st.global.u32 	[%rd3], %r4;"
+	""
+	"BB0_4:"
+	"	ret;"
+	"}";
+	ptx::ParserResult result = ptx::Parser().parseModule(source);
+	assert(result.empty()==false);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
@@ -317,5 +360,6 @@ void test_ptx() {
 	test_parser_2();
 	test_parser_matrix();
 	test_parse_sync();
+	test_parse_atomic();
 	std::cout << "done.\n";
 }

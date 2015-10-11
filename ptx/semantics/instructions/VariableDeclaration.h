@@ -43,8 +43,9 @@ namespace ptx {
                                               ss.str()),
                                 param_storage_t());
                 }
-            } else {
-                symbols.set(this->_toDeclare, param_storage_t());
+            } else{
+				if (!symbols.has(this->_toDeclare))
+                	symbols.set(this->_toDeclare, param_storage_t());
             }
         }
 	private:

@@ -62,7 +62,15 @@ namespace gemu {
 
 		class Thread {
 		public:
-			Thread(ThreadBlock& block): _block(block){}
+			Thread(){}
+			Thread(ThreadBlock& block){}
+			Thread(const Thread& other)
+			:_pos(other._pos)
+			{}
+			Thread& operator=(const Thread& other){
+				this->_pos = other._pos;
+				return *this;
+			}
 			void setPos(size_t x, size_t y, size_t z=0) {
 				this->_pos = dim3(x,y,z);
 			}
@@ -71,7 +79,6 @@ namespace gemu {
 			}
 		private:
 			dim3 _pos;
-			ThreadBlock& _block;
 			friend class ThreadBlock;
 		};
 

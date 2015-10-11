@@ -12,6 +12,12 @@ class InstructionPtr;
 
 namespace ptx {
 	namespace exec {
+
+		enum ExecResult {
+			ThreadExited,
+			ThreadSuspended
+		};
+
 		class PtxExecutionContext : public gemu::AbstractExecutionContext {
 		public:
 			PtxExecutionContext (gemu::Device& device,
@@ -22,6 +28,8 @@ namespace ptx {
 				,_symbols(symbols)
 			{}
 			~PtxExecutionContext(){}
+			void setProgramCounter(size_t pc);
+			size_t programCounter() const;
 			void exec(const InstructionList& list);
 			void exec(const Instruction& i);
 			void exec(const MemoryInstruction& i);
@@ -31,11 +39,13 @@ namespace ptx {
 			void exec(const VariableDeclaration&);
 			void exec(const Branch& branch);
 			void exec(const Barrier& barrier);
+			ExecResult result() const;
 		private:
 			gemu::cuda::Thread& _thread;
 			SymbolTable& _symbols;
 			const InstructionList * _instr = nullptr;
 			size_t _pc = 0;
+			bool _barrierWait=false;
 		};
 
 		class PtxBlockDispatcher {

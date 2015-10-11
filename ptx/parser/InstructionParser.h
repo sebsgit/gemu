@@ -18,6 +18,7 @@
 #include "parser/SubParser.h"
 #include "parser/ShlParser.h"
 #include "parser/BarrierParser.h"
+#include "parser/AtomicParser.h"
 
 namespace ptx {
 	namespace parser {
@@ -42,6 +43,7 @@ namespace ptx {
 				parsers.push_back(std::make_shared<SubParser>());
 				parsers.push_back(std::make_shared<ShlParser>());
 				parsers.push_back(std::make_shared<BarrierParser>());
+				parsers.push_back(std::make_shared<AtomicParser>());
 			}
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {

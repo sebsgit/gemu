@@ -20,6 +20,7 @@ namespace ptx {
 	};
 
 	class SymbolTable {
+	public:
 		struct entry_t {
 			ptx::Variable var;
 			param_storage_t data;
@@ -35,6 +36,11 @@ namespace ptx {
 		bool has(const std::string& name) const;
 		param_storage_t get(const ptx::Variable& var) const;
 		param_storage_t get(const std::string& name) const;
+		unsigned long long address(const std::string& name) const;
+		ptx::Variable variable(const std::string& name) const;
+
+		std::vector<entry_t> sharedSection() const;
+		void setSharedSection(const std::vector<entry_t>& values);
 
 		void print() const{
 			for (const auto& x: _data)
