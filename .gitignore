@@ -1,0 +1,9 @@
+gemuStats.smproj
+gemuqtcreat.config
+gemuqtcreat.creator
+gemuqtcreat.creator.user
+gemuqtcreat.files
+gemuqtcreat.includes
+test/cuda_lib/
+test/gmon.out
+test/test
