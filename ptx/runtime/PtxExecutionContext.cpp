@@ -1,28 +1,30 @@
 #include "runtime/PtxExecutionContext.h"
 #include "semantics/Semantics.h"
+#include <thread>
+#include <mutex>
 
 using namespace ptx;
 using namespace exec;
 
-void SymbolTable::set(const std::string& name, const param_storage_t& storage) {
+void SymbolStorage::set(const std::string& name, const param_storage_t& storage) {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end()) {
 		it->data = storage;
 	}
 }
-bool SymbolTable::has(const std::string& name) const {
+bool SymbolStorage::has(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	return it != _data.end();
 }
 
-ptx::Variable SymbolTable::variable(const std::string& name) const {
+ptx::Variable SymbolStorage::variable(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end())
 		return it->var;
 	return ptx::Variable();
 }
 
-unsigned long long SymbolTable::address(const std::string& name) const{
+unsigned long long SymbolStorage::address(const std::string& name) const{
 	for (size_t i=0 ; i<this->_data.size() ; ++i){
 		if (this->_data[i].var.name() == name) {
 			return reinterpret_cast<unsigned long long>(&this->_data[i].data);
@@ -31,7 +33,7 @@ unsigned long long SymbolTable::address(const std::string& name) const{
 	return 0;
 }
 
-param_storage_t SymbolTable::get(const std::string& name) const {
+param_storage_t SymbolStorage::get(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end())
 		return it->data;
@@ -46,7 +48,7 @@ param_storage_t SymbolTable::get(const std::string& name) const {
 	}
 	return result;
 }
-void SymbolTable::set(const ptx::Variable& var, const param_storage_t& storage) {
+void SymbolStorage::set(const ptx::Variable& var, const param_storage_t& storage) {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
 	if (it != _data.end()) {
 		it->data = storage;
@@ -54,24 +56,15 @@ void SymbolTable::set(const ptx::Variable& var, const param_storage_t& storage) 
 		_data.push_back(entry_t(var, storage));
 	}
 }
-bool SymbolTable::has(const ptx::Variable& var) const {
+bool SymbolStorage::has(const ptx::Variable& var) const {
 	return this->has(var.name());
 }
-param_storage_t SymbolTable::get(const ptx::Variable& var) const {
+param_storage_t SymbolStorage::get(const ptx::Variable& var) const {
 	return this->get(var.name());
 }
-std::vector<SymbolTable::entry_t> SymbolTable::sharedSection() const{
-	std::vector<entry_t> result;
-	for (const auto& d : this->_data)
-		if (d.var.space() == AllocSpace::Shared) {
-			result.push_back(d);
-		}
-	return result;
-}
-void SymbolTable::setSharedSection(const std::vector<SymbolTable::entry_t>& values){
-	for (auto & d : values){
-		this->set(d.var,d.data);
-	}
+
+void SymbolTable::setSharedSection(ProtectedStoragePtr sharedData){
+	this->_sharedData = sharedData;
 }
 
 void PtxExecutionContext::setProgramCounter(size_t pc) {
@@ -187,8 +180,9 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 	try {
         set_grid_data(symbols, this->_block.grid());
         set_block_data(symbols, this->_block);
-		std::vector<SymbolTable::entry_t> shared;
+		ProtectedStoragePtr shared(std::make_shared<ProtectedStorage>());
 		std::vector<thread_launch_data_t> launchData;
+		std::vector<thread_launch_data_t> suspendedData;
 		for (size_t x=0 ; x<size.x ; ++x) {
 			for (size_t y=0 ; y<size.y ; ++y) {
 				for (size_t z=0 ; z<size.z ; ++z) {
@@ -204,22 +198,64 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				}
 			}
 		}
-		while (launchData.empty()==false) {
-			thread_launch_data_t data = launchData[0];
-			launchData.erase(launchData.begin());
-			data.symbols.setSharedSection(shared);
-			PtxExecutionContext context(this->_device, data.thread, data.symbols);
-			context.setProgramCounter(data.pc);
-			context.exec(func);
-			shared = data.symbols.sharedSection();
-			if (context.result() == ExecResult::ThreadSuspended) {
-				thread_launch_data_t d;
-				d.pc = context.programCounter();
-				d.symbols = data.symbols;
-				d.thread = data.thread;
-				launchData.push_back(d);
-			}
+		std::mutex mutex;
+		std::vector<std::thread*> threads;
+		for (int i=0 ; i<16 ; ++i){
+			threads.push_back(new std::thread([&](){
+				thread_launch_data_t data;
+				bool isEmpty=false;
+				while (!isEmpty){
+					mutex.lock();
+					isEmpty = launchData.empty();
+					if (!isEmpty){
+						data = launchData[0];
+						launchData.erase(launchData.begin());
+					}
+					mutex.unlock();
+					if (!isEmpty) {
+						data.symbols.setSharedSection(shared);
+						PtxExecutionContext context(this->_device, data.thread, data.symbols);
+						context.setProgramCounter(data.pc);
+						context.exec(func);
+						if (context.result() == ExecResult::ThreadSuspended) {
+							thread_launch_data_t d;
+							d.pc = context.programCounter();
+							d.symbols = data.symbols;
+							d.thread = data.thread;
+							mutex.lock();
+							suspendedData.push_back(d);
+							mutex.unlock();
+						}
+					} else {
+						bool waitForSuspended = false;
+						mutex.lock();
+						if (suspendedData.empty()==false) {
+							if (suspendedData.size() == this->_block.threadCount()) {
+								std::swap(suspendedData, launchData);
+								isEmpty = false;
+							} else {
+								waitForSuspended = true;
+							}
+						}
+						mutex.unlock();
+						if (waitForSuspended) {
+							bool allThreadsArrived = false;
+							while (!allThreadsArrived){
+								mutex.lock();
+								allThreadsArrived = suspendedData.empty();
+								mutex.unlock();
+								std::this_thread::yield();
+							}
+						}
+					}
+				}
+			 }));
 		}
+		for (std::thread * th : threads){
+			th->join();
+			delete th;
+		}
+
 	} catch (const std::exception& exc) {
         std::cout << exc.what() << '\n';
 		return false;

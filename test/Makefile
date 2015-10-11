@@ -65,10 +65,10 @@ INCLUDES=-I../ptx -I../ptx/semantics -I../ptx/parser -I../drivers/cuda -I../driv
 all: test lib
 
 test: $(CORE_OBJ) $(SOURCES) $(HEADERS)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET)
+	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(LDFLAGS) $(CORE_OBJ) $(SOURCES) -o $(TARGET) -pthread
 
 lib: $(PTX_SOURCES)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o $(LIB_NAME)
+	$(CC) $(CFLAGS) $(INCLUDES) $(LIBS) $(PTX_SOURCES) -shared -fPIC -o $(LIB_NAME) -pthread
 
 clean:
 	$(RM) $(CORE_OBJ) 2>/dev/null
