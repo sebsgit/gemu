@@ -19,7 +19,7 @@ ls | grep cpp | while read -r fname; do
 	base_name=$(echo "$fname" | sed s/.cpp//)
 	echo "$index - $base_name ..."
 	index=$(($index+1))
-	g++ -std=c++11 $fname -o $base_name -lcuda
+	g++ -std=c++11 $fname -o $base_name -lcuda -pthread
 	./$base_name > 1.out
 	if [[ $? -ne 0 ]]; then
 		exit;

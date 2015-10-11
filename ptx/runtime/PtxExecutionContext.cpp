@@ -1,5 +1,7 @@
 #include "runtime/PtxExecutionContext.h"
 #include "semantics/Semantics.h"
+#include <thread>
+#include <mutex>
 
 using namespace ptx;
 using namespace exec;
@@ -204,22 +206,60 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				}
 			}
 		}
-		while (launchData.empty()==false) {
-			thread_launch_data_t data = launchData[0];
-			launchData.erase(launchData.begin());
-			data.symbols.setSharedSection(shared);
-			PtxExecutionContext context(this->_device, data.thread, data.symbols);
-			context.setProgramCounter(data.pc);
-			context.exec(func);
-			shared = data.symbols.sharedSection();
-			if (context.result() == ExecResult::ThreadSuspended) {
-				thread_launch_data_t d;
-				d.pc = context.programCounter();
-				d.symbols = data.symbols;
-				d.thread = data.thread;
-				launchData.push_back(d);
-			}
+		// while (launchData.empty()==false) {
+		// 	thread_launch_data_t data = launchData[0];
+		// 	launchData.erase(launchData.begin());
+		// 	data.symbols.setSharedSection(shared);
+		// 	PtxExecutionContext context(this->_device, data.thread, data.symbols);
+		// 	context.setProgramCounter(data.pc);
+		// 	context.exec(func);
+		// 	shared = data.symbols.sharedSection();
+		// 	if (context.result() == ExecResult::ThreadSuspended) {
+		// 		thread_launch_data_t d;
+		// 		d.pc = context.programCounter();
+		// 		d.symbols = data.symbols;
+		// 		d.thread = data.thread;
+		// 		launchData.push_back(d);
+		// 	}
+		// }
+		std::mutex mutex;
+		std::vector<std::thread*> threads;
+		for (int i=0 ; i<1 ; ++i){
+			threads.push_back(new std::thread([&](){
+				thread_launch_data_t data;
+				bool isEmpty=false;
+				while (!isEmpty){
+					mutex.lock();
+					isEmpty = launchData.empty();
+					if (!isEmpty){
+						data = launchData[0];
+						launchData.erase(launchData.begin());
+					}
+					mutex.unlock();
+					if (!isEmpty) {
+						data.symbols.setSharedSection(shared);
+						PtxExecutionContext context(this->_device, data.thread, data.symbols);
+						context.setProgramCounter(data.pc);
+						context.exec(func);
+						shared = data.symbols.sharedSection();
+						if (context.result() == ExecResult::ThreadSuspended) {
+							thread_launch_data_t d;
+							d.pc = context.programCounter();
+							d.symbols = data.symbols;
+							d.thread = data.thread;
+							mutex.lock();
+							launchData.push_back(d);
+							mutex.unlock();
+						}
+					}
+				}
+			 }));
 		}
+		for (std::thread * th : threads){
+			th->join();
+			delete th;
+		}
+
 	} catch (const std::exception& exc) {
         std::cout << exc.what() << '\n';
 		return false;
