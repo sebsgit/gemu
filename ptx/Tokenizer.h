@@ -45,6 +45,34 @@ namespace ptx {
 		TokenList sublist(const token_t& endToken) const {
 			return this->sublist(this->_tokens.at(0), endToken);
 		}
+        TokenList bracketBody() const {
+            TokenList result;
+            int i=1;
+            int bracketBalance = this->peek() == "{";
+            while (bracketBalance != 0) {
+                if (this->_tokens[i] == "{")
+                    ++bracketBalance;
+                else if (this->_tokens[i] == "}")
+                    --bracketBalance;
+                if (bracketBalance == 0)
+                    break;
+                result._tokens.push_back(this->_tokens[i]);
+                ++i;
+            }
+            return result;
+        }
+        void removeBracketBody() {
+            int bracketBalance = this->peek()=="{";
+            while (bracketBalance){
+                this->removeFirst();
+                if (this->peek() == "{")
+                    ++bracketBalance;
+                else if (this->peek() == "}")
+                    --bracketBalance;
+            }
+            if(this->peek() == "}")
+                this->removeFirst();
+        }
 		void removeFirst(const size_t count = 1) {
 			if (count <= this->size())
 				this->_tokens.erase(this->_tokens.begin(), this->_tokens.begin() + count);
@@ -62,6 +90,11 @@ namespace ptx {
 		void clear() {
 			this->_tokens.clear();
 		}
+        void print() const{
+            for(const auto & t : _tokens)
+                std::cout << '"' << t << "\" ";
+            std::cout << '\n';
+        }
 		friend std::ostream& operator << (std::ostream& out, const TokenList& list);
 	private:
 		std::vector<token_t> _tokens;

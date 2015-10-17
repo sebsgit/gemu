@@ -48,11 +48,11 @@ namespace ptx {
 						}
 					}
 					if (toReturn) {
-						TokenList body = tokens.sublist("{", "}");
+                        TokenList body = tokens.bracketBody();
 						ParserResult bodyResult;
 						if (body.empty()==false) {
 							if (InstructionBlockParser().parse(body, bodyResult)) {
-								tokens.removeUntilWith("}");
+                                tokens.removeBracketBody();
 								function.add(bodyResult);
 							} else {
 								toReturn = false;

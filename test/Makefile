@@ -9,7 +9,8 @@ LIB_NAME=cuda_lib/libcuda.so.1
 PTX_SOURCES=../ptx/runtime/PtxExecutionContext.cpp	\
 			../drivers/cuda/cudaDriverApi.cpp	\
 			../drivers/cuda/cudaDriver_moduleImpl.cpp	\
-			../drivers/cuda/cudaError.cpp
+			../drivers/cuda/cudaError.cpp	\
+			../ptx/parser/InstructionParser.cpp
 SOURCES=testParsePtx.cpp 	\
 		testCuda.cpp		\
 		test.cpp			\

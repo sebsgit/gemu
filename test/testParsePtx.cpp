@@ -1,4 +1,6 @@
 #include "../ptx/Parser.h"
+#include "../ptx/parser/CallParser.h"
+#include "../ptx/semantics/instructions/control/Call.h"
 
 static const std::string test_source = ".version 4.2\n"
 		".target sm_20 // a comment\n"
@@ -318,8 +320,8 @@ static void test_parse_sync(){
 }
 
 static void test_parse_atomic(){
-	const std::string source =
-	".version 4.2\n"
+    const std::string source =
+    ".version 4.2\n"
 	".target sm_20\n"
 	".address_size 64\n"
 	".visible .entry _Z6kernelPi("
@@ -347,7 +349,7 @@ static void test_parse_atomic(){
 	"	bar.sync 	0;"
 	"	@!%p1 bra 	BB0_4;"
 	"	bra.uni 	BB0_3;"
-	""
+    ""
 	"BB0_3:"
 	"	cvta.to.global.u64 	%rd3, %rd1;"
 	"	ld.shared.u32 	%r4, [_Z6kernelPi$__cuda_local_var_41819_30_non_const_count];"
@@ -378,7 +380,7 @@ static void test_parse_two_functions() {
    "	st.param.b32	[func_retval0+0], %r3;"
    "	ret;"
    "}"
-   /*".visible .entry _Z6kernelPiii("
+   ".visible .entry _Z6kernelPiii("
    "	.param .u64 _Z6kernelPiii_param_0,"
    "	.param .u32 _Z6kernelPiii_param_1,"
    "	.param .u32 _Z6kernelPiii_param_2"
@@ -409,9 +411,30 @@ static void test_parse_two_functions() {
    "	}"
    "	st.global.u32 	[%rd2], %r3;"
    "	ret;"
-   "}"*/;
+   "}";
     ptx::ParserResult result = ptx::Parser().parseModule(source);
     assert(result.empty()==false);
+}
+
+static void test_call_parser() {
+    const std::string source =    "	call.uni (retval0), "
+                                  "	_Z4funcii, "
+                                  "	("
+                                  "	param0, "
+                                  "	param1"
+                                  "	);";
+    ptx::parser::CallParser parser;
+    ptx::ParserResult result;
+    auto tokens = ptx::Tokenizer().tokenize(source);
+    assert(parser.parse(tokens, result));
+    auto call = result.fetch<ptx::Call>(0);
+    assert(call);
+    assert(call->isDivergent() == false);
+    assert(call->target() == "_Z4funcii");
+    assert(call->result() == "retval0");
+    assert(call->parameterCount() == 2);
+    assert(call->parameter(0) == "param0");
+    assert(call->parameter(1) == "param1");
 }
 
 void test_ptx() {
@@ -425,5 +448,6 @@ void test_ptx() {
 	test_parse_sync();
 	test_parse_atomic();
     test_parse_two_functions();
+    test_call_parser();
 	std::cout << "done.\n";
 }
