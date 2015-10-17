@@ -21,9 +21,20 @@ namespace ptx {
 					function.setAllocSpace(AllocSpace::Shared);
 					tokens.removeFirst();
 				}
-				if (tokens.peek() == ".entry") {
-					function.setName(tokens.peek(1));
-					tokens.removeFirst(2);
+                if (tokens.peek() == ".entry" || tokens.peek() == ".func") {
+                    tokens.removeFirst();
+                    if (tokens.peek() == "(") {
+                        tokens.removeFirst();
+                        ParserResult var;
+                        if (VariableParser().parse(tokens,var) && tokens.peek() == ")") {
+                            tokens.removeFirst();
+                            if (var.fetch<ptx::VariableDeclaration>(0)) {
+                                function.setReturnVariable(var.fetch<ptx::VariableDeclaration>(0)->var());
+                            }
+                        }
+                    }
+                    function.setName(tokens.peek(0));
+                    tokens.removeFirst();
 					TokenList varDecl = tokens.sublist("(", ")");
 					if (varDecl.empty() == false) {
 						ParserResult vars;

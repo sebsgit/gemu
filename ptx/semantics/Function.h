@@ -36,6 +36,7 @@ namespace ptx {
 		std::string name() const { return this->_name; }
 		AllocSpace space() const { return this->_space; }
 		FunctionParameters parameters() const { return this->_parameters; }
+        Variable returnVariable() const { return this->_returnVariable; }
 		void addParameter(const ptx::Variable& var){
 			this->_parameters._data.push_back(var);
 		}
@@ -48,12 +49,17 @@ namespace ptx {
 		void setName(const std::string& name) {
 			this->_name = name;
 		}
+        void setReturnVariable(const ptx::Variable& var) {
+            this->_returnVariable = var;
+        }
+
 		bool isNull() const {
 			return this->_name.empty();
 		}
 	private:
 		std::string _name;
 		FunctionParameters _parameters;
+        Variable _returnVariable;
 		AllocSpace _space = Undefined;
 	};
 }

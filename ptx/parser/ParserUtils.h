@@ -100,6 +100,7 @@ namespace ptx {
 					return false;
 				TokenList temp = tokens;
 				bool isAddressed = false;
+                size_t offset = 0;
 				if (temp.peek() == "[") {
 					isAddressed = true;
 					temp.removeFirst();
@@ -116,11 +117,19 @@ namespace ptx {
 						return false;
 					}
 				}
-				if (isAddressed && temp.peek() == "]"){
-					temp.removeFirst();
+                if (isAddressed){
+                    if (temp.peek() == "+") {
+                        temp.removeFirst();
+                        offset = atoi(temp.peek().c_str());
+                        temp.removeFirst();
+                    }
+                    if (temp.peek() == "]")
+                        temp.removeFirst();
+                    else
+                        return false;
 				}
 				tokens = temp;
-				*result = MemoryInstructionOperand(name, isAddressed, 0);
+                *result = MemoryInstructionOperand(name, isAddressed, offset);
 				return true;
 			}
 			static bool parseOperands(TokenList& tokens, size_t requiredCount, MemoryInstructionOperands * result) {

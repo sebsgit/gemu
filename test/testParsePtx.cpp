@@ -46,6 +46,8 @@ static void test_tokenizer() {
 	assert(sublist[0] == "kernel_param_0");
 	result = token.tokenize("cvt.rn.f32.u32	%f1, %r1;");
 	assert(result.size() == 8);
+    result = token.tokenize("st.param.b32	[func_retval0+0], %r3;");
+    assert(result.size() == 11);
 }
 
 static void test_variable_parser() {
@@ -358,6 +360,60 @@ static void test_parse_atomic(){
 	assert(result.empty()==false);
 }
 
+static void test_parse_two_functions() {
+    const std::string source = ".version 4.2\n"
+   ".target sm_20\n"
+   ".address_size 64\n"
+   ".visible .func  (.param .b32 func_retval0) _Z4funcii("
+   "	.param .b32 _Z4funcii_param_0,"
+   "	.param .b32 _Z4funcii_param_1"
+   ")"
+   "{"
+   "	.reg .s32 	%r<4>;"
+   ""
+   ""
+   "	ld.param.u32 	%r1, [_Z4funcii_param_0];"
+   "	ld.param.u32 	%r2, [_Z4funcii_param_1];"
+   "	add.s32 	%r3, %r2, %r1;"
+   "	st.param.b32	[func_retval0+0], %r3;"
+   "	ret;"
+   "}"
+   /*".visible .entry _Z6kernelPiii("
+   "	.param .u64 _Z6kernelPiii_param_0,"
+   "	.param .u32 _Z6kernelPiii_param_1,"
+   "	.param .u32 _Z6kernelPiii_param_2"
+   ")"
+   "{"
+   "	.reg .s32 	%r<4>;"
+   "	.reg .s64 	%rd<3>;"
+   ""
+   ""
+   "	ld.param.u64 	%rd1, [_Z6kernelPiii_param_0];"
+   "	ld.param.u32 	%r1, [_Z6kernelPiii_param_1];"
+   "	ld.param.u32 	%r2, [_Z6kernelPiii_param_2];"
+   "	cvta.to.global.u64 	%rd2, %rd1;"
+   "	{"
+   "	.reg .b32 temp_param_reg;"
+   "	.param .b32 param0;"
+   "	st.param.b32	[param0+0], %r1;"
+   "	.param .b32 param1;"
+   "	st.param.b32	[param1+0], %r2;"
+   "	.param .b32 retval0;"
+   "	call.uni (retval0), "
+   "	_Z4funcii, "
+   "	("
+   "	param0, "
+   "	param1"
+   "	);"
+   "	ld.param.b32	%r3, [retval0+0];"
+   "	}"
+   "	st.global.u32 	[%rd2], %r3;"
+   "	ret;"
+   "}"*/;
+    ptx::ParserResult result = ptx::Parser().parseModule(source);
+    assert(result.empty()==false);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
@@ -368,5 +424,6 @@ void test_ptx() {
 	test_parser_matrix();
 	test_parse_sync();
 	test_parse_atomic();
+    test_parse_two_functions();
 	std::cout << "done.\n";
 }

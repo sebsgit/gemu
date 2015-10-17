@@ -96,7 +96,7 @@ namespace ptx {
 						continue;
 					}
 				} else {
-					if (is_bracket(c) || c==',' || c==':') {
+                    if (is_bracket(c) || c==',' || c==':' || c=='+') {
 						PUSHT
 						token.push_back(c);
 						PUSHT
