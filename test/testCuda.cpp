@@ -318,7 +318,7 @@ static void test_module_with_sync() {
 	cu_assert(cuMemcpyDtoH(&result, devResult, sizeof(result)));
 	cu_assert(cuMemFree(devResult));
 	cu_assert(cuModuleUnload(modId));
-	// assert(result == 66); TODO
+    assert(result == 66);
 }
 
 static void test_modules() {

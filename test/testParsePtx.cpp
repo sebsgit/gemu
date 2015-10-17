@@ -257,6 +257,13 @@ static void test_parser_matrix(){
 	"}";
 	ptx::ParserResult result = ptx::Parser().parseModule(source);
 	assert(result.empty()==false);
+    ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(3)->func();
+    assert(kernel.name() == "matrix_add");
+    assert(kernel.parameters().size() == 5);
+    assert(kernel.hasLabel("BB0_1"));
+    assert(kernel.fetch<ptx::Convert>(kernel.instructionIndex("BB0_1")));
+    assert(kernel.hasLabel("BB0_2"));
+    assert(kernel.fetch<ptx::Return>(kernel.instructionIndex("BB0_2")));
 }
 
 static void test_parse_sync(){
