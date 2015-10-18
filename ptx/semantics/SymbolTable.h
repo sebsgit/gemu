@@ -41,7 +41,7 @@ namespace ptx {
 		ptx::Variable variable(const std::string& name) const;
 		void print() const{
 			for (const auto& x: _data)
-				std::cout << x.var.name() << ": " << x.data.data << "\n";
+                std::cout << x.var.name() << ": " << x.data.i << "\n";
 		}
 
 	private:
@@ -115,6 +115,9 @@ namespace ptx {
 			}
 			this->unlockSharedSection();
 		}
+        void print() const {
+            this->_data.print();
+        }
 	};
 
 }

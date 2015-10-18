@@ -15,7 +15,9 @@ namespace ptx {
             const param_storage_t source = symbols.get(this->_operands[1].symbol());
 			if (this->space() == AllocSpace::Shared) {
 				symbols.set(this->_operands[0].symbol(), source);
-			} else {
+            } else if (this->space() == AllocSpace::Parameter) {
+                symbols.set(this->_operands[0].symbol(), source);
+            } else {
 				const param_storage_t dest = symbols.get(this->_operands[0].symbol());
             	*(reinterpret_cast<unsigned int *>(dest.data)) = source.data;
 			}

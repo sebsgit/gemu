@@ -1,5 +1,6 @@
 #include "runtime/PtxExecutionContext.h"
 #include "semantics/Semantics.h"
+#include "../drivers/cuda/cudaDriverApi.h"
 #include <thread>
 #include <mutex>
 
@@ -127,8 +128,22 @@ void PtxExecutionContext::exec(const VariableDeclaration& var) {
 }
 
 void PtxExecutionContext::exec(const Barrier& barrier) {
-	//TODO implement barriers
 	this->_barrierWait = true;
+}
+
+void PtxExecutionContext::exec(const Call &call) {
+    ptx::Function func = _driverContext->function(call.target());
+    SymbolTable table;
+    table.setSharedSection(this->_symbols.sharedSection());
+    table.set(func.returnVariable(), param_storage_t());
+    for (size_t i=0 ; i<call.parameterCount() ; ++i) {
+        const auto callParam = this->_symbols.get(call.parameter(i));
+        table.set(func.parameters()[i], callParam);
+    }
+    PtxExecutionContext context(this->_device, this->_thread, table);
+    context.exec(func);
+    const auto result = table.get(func.returnVariable().name());
+    this->_symbols.set(func.returnVariable().renamed(call.result()), result);
 }
 
 ExecResult PtxExecutionContext::result() const{

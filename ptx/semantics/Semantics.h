@@ -9,6 +9,7 @@
 #include "semantics/instructions/memory/Convert.h"
 #include "semantics/instructions/control/Return.h"
 #include "semantics/instructions/control/Branch.h"
+#include "semantics/instructions/control/Call.h"
 #include "semantics/instructions/compare/Setp.h"
 #include "semantics/instructions/int/Add.h"
 #include "semantics/instructions/int/Mul.h"

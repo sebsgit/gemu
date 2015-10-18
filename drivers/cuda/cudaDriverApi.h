@@ -61,10 +61,21 @@ namespace gemu {
 			ptx::Function function(CUfunction fhandle) const {
 				return this->_funcCache.find(fhandle) != this->_funcCache.end() ? this->_funcCache.find(fhandle)->second : ptx::Function();
 			}
+            ptx::Function function(const std::string& name) const {
+                for (const auto& m : this->_modules) {
+                    for (const auto& f : m._functions){
+                        if (f.name() == name)
+                            return f;
+                    }
+                }
+                return ptx::Function();
+            }
 		private:
 			std::vector<Module> _modules;
 			std::unordered_map<CUfunction, ptx::Function> _funcCache;
 			unsigned long long _nextModuleId = 0;
+
+            friend class PtxExecutionContext;
 		};
 	}
 }

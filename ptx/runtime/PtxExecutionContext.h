@@ -39,6 +39,7 @@ namespace ptx {
 			void exec(const VariableDeclaration&);
 			void exec(const Branch& branch);
 			void exec(const Barrier& barrier);
+            void exec(const Call& call);
 			ExecResult result() const;
 		private:
 			gemu::cuda::Thread& _thread;

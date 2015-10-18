@@ -32,6 +32,9 @@ namespace ptx {
 		std::string name() const {
 			return this->_name;
 		}
+        ptx::Variable renamed(const std::string& name) const {
+            return ptx::Variable(this->space(), this->type(), this->size(), name);
+        }
 	};
 }
 
