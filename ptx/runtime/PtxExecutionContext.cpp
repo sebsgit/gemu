@@ -13,6 +13,22 @@ void SymbolStorage::set(const std::string& name, const param_storage_t& storage)
 		it->data = storage;
 	}
 }
+bool SymbolStorage::setIfExists(const std::string& name, const param_storage_t& storage) {
+    auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
+    if (it != _data.end()) {
+        it->data = storage;
+        return true;
+    }
+    return false;
+}
+bool SymbolStorage::getIfExists(const std::string& name, param_storage_t& storage) const {
+    auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
+    if (it != _data.end()) {
+        storage = it->data;
+        return true;
+    }
+    return false;
+}
 bool SymbolStorage::has(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	return it != _data.end();
@@ -56,6 +72,20 @@ void SymbolStorage::set(const ptx::Variable& var, const param_storage_t& storage
 	} else {
 		_data.push_back(entry_t(var, storage));
 	}
+}
+void SymbolStorage::declare(const Variable &var){
+    auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
+    if (it == _data.end())
+        _data.push_back(entry_t(var, param_storage_t()));
+}
+
+bool SymbolStorage::setIfExists(const ptx::Variable& var, const param_storage_t& storage) {
+    auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
+    if (it != _data.end()) {
+        it->data = storage;
+        return true;
+    }
+    return false;
 }
 bool SymbolStorage::has(const ptx::Variable& var) const {
 	return this->has(var.name());

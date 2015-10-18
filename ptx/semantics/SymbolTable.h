@@ -33,8 +33,12 @@ namespace ptx {
 	public:
 		void set(const ptx::Variable& var, const param_storage_t& storage);
 		void set(const std::string& name, const param_storage_t& storage);
+        bool setIfExists(const ptx::Variable& var, const param_storage_t& storage);
+        bool setIfExists(const std::string& name, const param_storage_t& storage);
+        void declare(const ptx::Variable& var);
 		bool has(const ptx::Variable& var) const;
 		bool has(const std::string& name) const;
+        bool getIfExists(const std::string& name, param_storage_t& storage) const;
 		param_storage_t get(const ptx::Variable& var) const;
 		param_storage_t get(const std::string& name) const;
 		unsigned long long address(const std::string& name) const;
@@ -70,16 +74,8 @@ namespace ptx {
 			}
 		}
 		void set(const std::string& name, const param_storage_t& storage) {
-			if (this->_data.has(name))
-				this->_data.set(name, storage);
-			else if (this->_sharedData->data.has(name))
-				this->_sharedData->data.set(name, storage);
-		}
-		bool has(const ptx::Variable& var) const{
-			return this->_data.has(var) || this->_sharedData->data.has(var);
-		}
-		bool has(const std::string& name) const {
-			return this->_data.has(name) || this->_sharedData->data.has(name);
+            if (this->_data.setIfExists(name, storage) == false)
+                this->_sharedData->data.setIfExists(name, storage);
 		}
 		param_storage_t get(const ptx::Variable& var) const {
 			if (var.space() == AllocSpace::Shared)
@@ -88,8 +84,9 @@ namespace ptx {
 				return this->_data.get(var);
 		}
 		param_storage_t get(const std::string& name) const {
-			if (this->_data.has(name))
-				return this->_data.get(name);
+            param_storage_t tmp;
+            if (this->_data.getIfExists(name, tmp))
+                return tmp;
 			return this->_sharedData->data.get(name);
 		}
 		unsigned long long address(const std::string& name) const {
@@ -115,6 +112,9 @@ namespace ptx {
 			}
 			this->unlockSharedSection();
 		}
+        void declare(const ptx::Variable& var) {
+            this->_data.declare(var);
+        }
         void print() const {
             this->_data.print();
         }

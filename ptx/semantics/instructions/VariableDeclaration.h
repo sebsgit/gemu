@@ -46,8 +46,9 @@ namespace ptx {
             } else{
 				if (this->_toDeclare.space() == AllocSpace::Shared) {
 					symbols.declareShared(this->_toDeclare);
-				} else if (!symbols.has(this->_toDeclare))
-                	symbols.set(this->_toDeclare, param_storage_t());
+                } else {
+                    symbols.declare(this->_toDeclare);
+                }
             }
         }
 	private:
