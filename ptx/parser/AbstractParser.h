@@ -48,8 +48,7 @@ namespace ptx {
 					if (tokens.empty()) {
 						parsedOk = true;
 						break;
-					} else if (tokens.peek() == this->_separator) {
-						tokens.removeFirst();
+                    } else if (tokens.poll(this->_separator)) {
 						if (tokens.empty()) {
 							parsedOk = true;
 							break;

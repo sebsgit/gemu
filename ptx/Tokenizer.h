@@ -30,6 +30,13 @@ namespace ptx {
 		const token_t peek(size_t i=0) const {
 			return i < this->_tokens.size() ? this->_tokens.at(i) : token_t();
 		}
+        bool poll(const token_t& token) {
+            if (this->peek() == token){
+                this->removeFirst();
+                return true;
+            }
+            return false;
+        }
 		TokenList sublist(const token_t& startToken, const token_t& endToken) const {
 			TokenList result;
 			auto start = std::find(this->_tokens.begin(), this->_tokens.end(), startToken);
@@ -72,6 +79,11 @@ namespace ptx {
             }
             if(this->peek() == "}")
                 this->removeFirst();
+        }
+        const token_t takeFirst() {
+            const auto result = this->peek();
+            this->removeFirst();
+            return result;
         }
 		void removeFirst(const size_t count = 1) {
 			if (count <= this->size())

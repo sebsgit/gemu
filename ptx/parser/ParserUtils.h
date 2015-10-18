@@ -69,15 +69,11 @@ namespace ptx {
 			}
 			static bool parseVectorType(TokenList& tokens, VectorType * result) {
 				*result = VectorType::VecNone;
-				if (tokens.peek() == ".vec2")
+                if (tokens.poll(".vec2"))
 					*result = VectorType::Vec2;
-				else if (tokens.peek() == ".vec4")
+                else if (tokens.poll(".vec4"))
 					*result = VectorType::Vec4;
-				if(*result != VectorType::VecNone){
-					tokens.removeFirst();
-					return true;
-				}
-				return false;
+                return *result != VectorType::VecNone;
 			}
 			static bool parseCacheOperation(TokenList& tokens, CacheOperation * result) {
 				*result = CacheOperation::CacheUndefined;
@@ -99,33 +95,25 @@ namespace ptx {
 				if (tokens.empty())
 					return false;
 				TokenList temp = tokens;
-				bool isAddressed = false;
+                const bool isAddressed = temp.poll("[");
                 size_t offset = 0;
-				if (temp.peek() == "[") {
-					isAddressed = true;
-					temp.removeFirst();
-				}
 				auto name = temp.peek();
 				if (!isIdentifier(name))
 					return false;
 				temp.removeFirst();
                 if (name == "%tid" || name == "%ntid" || name == "%nctaid") {
 					if (temp.peek() == ".x" || temp.peek() == ".y" || temp.peek() == ".z") {
-						name += temp.peek();
-						temp.removeFirst();
+                        name += temp.takeFirst();
 					} else {
 						return false;
 					}
 				}
                 if (isAddressed){
-                    if (temp.peek() == "+") {
-                        temp.removeFirst();
+                    if (temp.poll("+")) {
                         offset = atoi(temp.peek().c_str());
                         temp.removeFirst();
                     }
-                    if (temp.peek() == "]")
-                        temp.removeFirst();
-                    else
+                    if (!temp.poll("]"))
                         return false;
 				}
 				tokens = temp;
@@ -219,16 +207,13 @@ namespace ptx {
 				return false;
 			}
 			static bool parseBarrierType(TokenList& tokens, BarrierType * result) {
-				if (tokens.peek() == ".sync") {
-					tokens.removeFirst();
+                if (tokens.poll(".sync")) {
 					*result = BarrierType::BarSync;
 					return true;
-				} else if (tokens.peek() == ".arrive") {
-					tokens.removeFirst();
+                } else if (tokens.poll(".arrive")) {
 					*result = BarrierType::BarArrive;
 					return true;
-				} else if (tokens.peek() == ".red") {
-					tokens.removeFirst();
+                } else if (tokens.poll(".red")) {
 					*result = BarrierType::BarReduction;
 					return true;
 				}

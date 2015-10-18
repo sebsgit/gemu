@@ -9,11 +9,9 @@ namespace ptx {
 		class MulParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "mul") {
-					tokens.removeFirst();
-					if (tokens.peek() == ".wide" || tokens.peek() == ".lo") {
+                if (tokens.poll("mul")) {
+                    if (tokens.poll(".wide") || tokens.poll(".lo")) {
 						//TODO
-						tokens.removeFirst();
 					}
 					Type type;
 					size_t size;

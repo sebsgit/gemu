@@ -9,8 +9,7 @@ namespace ptx {
 		class AddParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "add") {
-					tokens.removeFirst();
+                if (tokens.poll("add")) {
 					if (tokens.peek() == ".sat") {
 						//TODO
 					} else {

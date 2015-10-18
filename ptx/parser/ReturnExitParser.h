@@ -9,13 +9,8 @@ namespace ptx {
 		class ReturnExitParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "ret") {
-					bool isDivergent = true;
-					tokens.removeFirst();
-					if (tokens.peek() == ".uni") {
-						tokens.removeFirst();
-						isDivergent = false;
-					}
+                if (tokens.poll("ret")) {
+                    const bool isDivergent = !tokens.poll(".uni");
 					result.add(std::make_shared<ptx::Return>(isDivergent));
 					return true;
 				}

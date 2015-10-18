@@ -9,8 +9,7 @@ namespace ptx {
         class DivParser : public AbstractParser{
         protected:
             bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-                if (tokens.peek() == "div") {
-                    tokens.removeFirst();
+                if (tokens.poll("div")) {
                     Type type;
                     size_t size;
                     if (Utils::parseTypeAndSize(tokens, &type, &size)) {

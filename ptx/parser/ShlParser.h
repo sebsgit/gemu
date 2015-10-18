@@ -9,8 +9,7 @@ namespace ptx {
 		class ShlParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "shl") {
-					tokens.removeFirst();
+                if (tokens.poll("shl")) {
 					Type type;
 					size_t size;
 					if (Utils::parseTypeAndSize(tokens, &type, &size)) {

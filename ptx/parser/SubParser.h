@@ -9,9 +9,8 @@ namespace ptx {
         class SubParser : public AbstractParser{
         protected:
             bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-                if (tokens.peek() == "sub") {
-                    tokens.removeFirst();
-                    if (tokens.peek() == ".sat") {
+                if (tokens.poll("sub")) {
+                    if (tokens.poll(".sat")) {
                         //TODO
                     } else {
                         Type type;

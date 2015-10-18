@@ -9,8 +9,7 @@ namespace ptx {
 		class BarrierParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "bar") {
-					tokens.removeFirst();
+				if (tokens.poll("bar")) {
 					BarrierType type;
 					if (Utils::parseBarrierType(tokens, &type)){
 						MemoryInstructionOperands operands;

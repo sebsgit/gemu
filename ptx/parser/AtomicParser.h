@@ -9,13 +9,11 @@ namespace ptx {
 		class AtomicParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "atom") {
-					tokens.removeFirst();
+				if (tokens.poll("atom")) {
 					AllocSpace space;
 					if (Utils::parseAllocSpace(tokens,&space) && (space==AllocSpace::Shared || space==AllocSpace::Global)){
 						//TODO other atomics
-						if (tokens.peek() == ".add") {
-							tokens.removeFirst();
+						if (tokens.poll(".add")) {
 							Type type;
 							size_t size;
 							if (Utils::parseTypeAndSize(tokens, &type, &size)) {

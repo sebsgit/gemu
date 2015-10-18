@@ -9,10 +9,9 @@ namespace ptx {
 		class MoveParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "mov") {
+                if (tokens.poll("mov")) {
 					Type type = Type::Unknown;
 					size_t size = 0;
-					tokens.removeFirst();
 					if (Utils::parseTypeAndSize(tokens, &type, &size)) {
 						MemoryInstructionOperands operands;
 						if (Utils::parseOperands(tokens, 2, &operands)){

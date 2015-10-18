@@ -9,8 +9,7 @@ namespace ptx {
 		class AndParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "and") {
-					tokens.removeFirst();
+				if (tokens.poll("and")) {
 					Type type;
 					size_t size;
 					if (Utils::parseTypeAndSize(tokens, &type, &size)) {

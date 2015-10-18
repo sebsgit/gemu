@@ -9,11 +9,9 @@ namespace ptx {
 		class ConvertParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "cvta") {
-					tokens.removeFirst();
-					if (tokens.peek() == ".to") {
+                if (tokens.poll("cvta")) {
+                    if (tokens.poll(".to")) {
 						//TODO
-						tokens.removeFirst();
 					}
 					AllocSpace space = AllocSpace::Undefined;
 					Type type = Type::Unknown;
@@ -30,11 +28,9 @@ namespace ptx {
 							return true;
 						}
 					}
-				} else if (tokens.peek() == "cvt") {
-					tokens.removeFirst();
+                } else if (tokens.poll("cvt")) {
 					//TODO implement rounding modes
-					if (tokens.peek() == ".rn") {
-						tokens.removeFirst();
+                    if (tokens.poll(".rn")) {
 						Type type;
 						size_t size;
 						if (Utils::parseTypeAndSize(tokens, &type, &size) && Utils::parseTypeAndSize(tokens, &type, &size)) {

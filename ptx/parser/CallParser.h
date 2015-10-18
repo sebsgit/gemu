@@ -9,40 +9,30 @@ namespace ptx {
         class CallParser : public AbstractParser{
         protected:
             bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-                if (tokens.peek() == "call") {
+                if (tokens.poll("call")) {
                     bool isDivergent = true;
                     std::string callResult;
                     std::string callTarget;
                     std::vector<std::string> callParameters;
-                    tokens.removeFirst();
-                    if (tokens.peek() == ".uni") {
-                        tokens.removeFirst();
+                    if (tokens.poll(".uni")) {
                         isDivergent = false;
                     }
-                    if (tokens.peek() == "(") {
-                        tokens.removeFirst();
+                    if (tokens.poll("(")) {
                         if (Utils::isIdentifier(tokens.peek())) {
-                            callResult = tokens.peek();
-                            tokens.removeFirst();
+                            callResult = tokens.takeFirst();
                             if (tokens.peek() == ")" && tokens.peek(1) == ",") {
                                 tokens.removeFirst(2);
                             }
                         }
                     }
                     if (Utils::isIdentifier(tokens.peek())) {
-                        callTarget = tokens.peek();
-                        tokens.removeFirst();
-                        if (tokens.peek() == ",") {
-                            tokens.removeFirst();
-                            if (tokens.peek() == "(") {
-                                tokens.removeFirst();
+                        callTarget = tokens.takeFirst();
+                        if (tokens.poll(",")) {
+                            if (tokens.poll("(")) {
                                 while (tokens.peek() != ")"){
                                     if (Utils::isIdentifier(tokens.peek())){
-                                        callParameters.push_back(tokens.peek());
-                                        tokens.removeFirst();
-                                        if (tokens.peek() == ","){
-                                            tokens.removeFirst();
-                                        }
+                                        callParameters.push_back(tokens.takeFirst());
+                                        tokens.poll(",");
                                     }
                                 }
                                 tokens.removeFirst();

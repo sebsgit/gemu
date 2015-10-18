@@ -17,24 +17,19 @@ namespace ptx {
 				bool toReturn = true;
 				Function function;
 				function.setAllocSpace(AllocSpace::Local);
-				if (tokens.peek() == ".visible") {
+                if (tokens.poll(".visible")) {
 					function.setAllocSpace(AllocSpace::Shared);
-					tokens.removeFirst();
 				}
-                if (tokens.peek() == ".entry" || tokens.peek() == ".func") {
-                    tokens.removeFirst();
-                    if (tokens.peek() == "(") {
-                        tokens.removeFirst();
+                if (tokens.poll(".entry") || tokens.poll(".func")) {
+                    if (tokens.poll("(")) {
                         ParserResult var;
-                        if (VariableParser().parse(tokens,var) && tokens.peek() == ")") {
-                            tokens.removeFirst();
+                        if (VariableParser().parse(tokens,var) && tokens.poll(")")) {
                             if (var.fetch<ptx::VariableDeclaration>(0)) {
                                 function.setReturnVariable(var.fetch<ptx::VariableDeclaration>(0)->var());
                             }
                         }
                     }
-                    function.setName(tokens.peek(0));
-                    tokens.removeFirst();
+                    function.setName(tokens.takeFirst());
 					TokenList varDecl = tokens.sublist("(", ")");
 					if (varDecl.empty() == false) {
 						ParserResult vars;

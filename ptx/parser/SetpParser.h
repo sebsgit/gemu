@@ -9,8 +9,7 @@ namespace ptx {
 		class SetpParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "setp") {
-					tokens.removeFirst();
+                if (tokens.poll("setp")) {
 					CompareOperation cmpOp;
 					if (Utils::parseCompareOperator(tokens, &cmpOp)) {
 						BooleanOperation boolOp = BooleanOperation::NotValidBooleanOperation;

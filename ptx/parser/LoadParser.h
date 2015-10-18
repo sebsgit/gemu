@@ -9,16 +9,14 @@ namespace ptx {
 		class LoadParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "ld" || tokens.peek() == "ldu") {
-					tokens.removeFirst();
+                if (tokens.poll("ld") || tokens.poll("ldu")) {
 					CacheOperation cacheOp = CacheOperation::CacheAllLevels;
 					AllocSpace space = AllocSpace::Undefined;
 					Type type = Type::Unknown;
 					VectorType vecType = VectorType::VecNone;
 					size_t size=0;
 					MemoryInstruction instr;
-					if  (tokens.peek(1) == ".volatile"){
-						tokens.removeFirst();
+                    if  (tokens.poll(".volatile")){
 						instr.setVolatile();
 					}
 					if (Utils::parseAllocSpace(tokens, &space)){

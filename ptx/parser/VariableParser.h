@@ -15,11 +15,9 @@ namespace ptx {
 					ptx::Type type;
 					size_t size = 0;
 					if  (Utils::parseTypeAndSize(tokens, &type, &size)) {
-						std::string name = tokens.peek();
-						tokens.removeFirst();
+                        const std::string name = tokens.takeFirst();
 						result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name)));
-						if (tokens.peek() == ";")
-							tokens.removeFirst();
+                        tokens.poll(";");
 						return true;
 					}
 				}

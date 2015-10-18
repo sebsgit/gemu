@@ -9,13 +9,11 @@ namespace ptx {
 		class MadParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-				if (tokens.peek() == "mad") {
-					tokens.removeFirst();
+				if (tokens.poll("mad")) {
 					Type type;
 					size_t size;
-					if (tokens.peek() == ".wide" || tokens.peek() == ".lo" || tokens.peek() == ".hi") {
+					if (tokens.poll(".wide") || tokens.poll(".lo") || tokens.poll(".hi")) {
 						//TODO
-						tokens.removeFirst();
 					}
 					if (Utils::parseTypeAndSize(tokens, &type, &size)) {
 						MemoryInstructionOperands operands;
