@@ -29,16 +29,14 @@ bool SymbolStorage::getIfExists(const std::string& name, param_storage_t& storag
     }
     return false;
 }
-bool SymbolStorage::has(const std::string& name) const {
-	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
-	return it != _data.end();
-}
 
-ptx::Variable SymbolStorage::variable(const std::string& name) const {
-	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
-	if (it != _data.end())
-		return it->var;
-	return ptx::Variable();
+bool SymbolStorage::getIfExists(const std::string& name, ptx::Variable& var) const {
+    auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
+    if (it != _data.end()) {
+        var = it->var;
+        return true;
+    }
+    return false;
 }
 
 unsigned long long SymbolStorage::address(const std::string& name) const{
@@ -86,9 +84,6 @@ bool SymbolStorage::setIfExists(const ptx::Variable& var, const param_storage_t&
         return true;
     }
     return false;
-}
-bool SymbolStorage::has(const ptx::Variable& var) const {
-	return this->has(var.name());
 }
 param_storage_t SymbolStorage::get(const ptx::Variable& var) const {
 	return this->get(var.name());

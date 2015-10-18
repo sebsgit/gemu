@@ -36,13 +36,11 @@ namespace ptx {
         bool setIfExists(const ptx::Variable& var, const param_storage_t& storage);
         bool setIfExists(const std::string& name, const param_storage_t& storage);
         void declare(const ptx::Variable& var);
-		bool has(const ptx::Variable& var) const;
-		bool has(const std::string& name) const;
         bool getIfExists(const std::string& name, param_storage_t& storage) const;
+        bool getIfExists(const std::string& name, ptx::Variable& var) const;
 		param_storage_t get(const ptx::Variable& var) const;
 		param_storage_t get(const std::string& name) const;
 		unsigned long long address(const std::string& name) const;
-		ptx::Variable variable(const std::string& name) const;
 		void print() const{
 			for (const auto& x: _data)
                 std::cout << x.var.name() << ": " << x.data.i << "\n";
@@ -90,14 +88,16 @@ namespace ptx {
 			return this->_sharedData->data.get(name);
 		}
 		unsigned long long address(const std::string& name) const {
-			if (this->_sharedData->data.has(name))
-				return this->_sharedData->data.address(name);
-			return this->_data.address(name);
+            unsigned long long result = this->_data.address(name);
+            if (result == 0)
+                result = this->_sharedData->data.address(name);
+            return result;
 		}
 		ptx::Variable variable(const std::string& name) const {
-			if (this->_sharedData->data.has(name))
-				return this->_sharedData->data.variable(name);
-			return this->_data.variable(name);
+            ptx::Variable result;
+            if (this->_data.getIfExists(name, result) == false)
+                this->_sharedData->data.getIfExists(name, result);
+            return result;
 		}
 		void lockSharedSection(){
 			this->_sharedData->mutex.lock();
@@ -107,9 +107,7 @@ namespace ptx {
 		}
 		void declareShared(const ptx::Variable& var) {
 			this->lockSharedSection();
-			if (!this->_sharedData->data.has(var)) {
-				this->_sharedData->data.set(var, param_storage_t());
-			}
+            this->_sharedData->data.declare(var);
 			this->unlockSharedSection();
 		}
         void declare(const ptx::Variable& var) {
