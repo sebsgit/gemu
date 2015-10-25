@@ -17,6 +17,7 @@
 #include "parser/BarrierParser.h"
 #include "parser/AtomicParser.h"
 #include "parser/CallParser.h"
+#include "parser/RemParser.h"
 
 namespace ptx {
     namespace parser {
@@ -34,6 +35,7 @@ namespace ptx {
             parsers.push_back(std::make_shared<AddParser>());
             parsers.push_back(std::make_shared<AndParser>());
             parsers.push_back(std::make_shared<MadParser>());
+            parsers.push_back(std::make_shared<RemParser>());
             parsers.push_back(std::make_shared<SubParser>());
             parsers.push_back(std::make_shared<ShlParser>());
             parsers.push_back(std::make_shared<BarrierParser>());

@@ -63,6 +63,13 @@ namespace ptx {
         }
     };
     template <typename T>
+    class Remainder {
+    public:
+        T operator()(const T left, const T right) const {
+            return (int)left % (int)right;
+        }
+    };
+    template <typename T>
     class EqualOperator {
     public:
        T operator()(const T left, const T right) const {

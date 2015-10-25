@@ -24,4 +24,5 @@ namespace ptx {
 	class Shl;
 	class Barrier;
     class Call;
+    class Rem;
 }

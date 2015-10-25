@@ -30,6 +30,7 @@ ls | grep cpp | while read -r fname; do
 	diff 1.out 2.out &>/dev/null
 	if [[ $? -ne 0 ]]; then
 		echo " failed !"
+		exit
 	else
 		rm 1.out &>/dev/null
 		rm 2.out &>/dev/null
