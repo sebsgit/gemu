@@ -28,7 +28,15 @@ ls | grep cpp | while read -r fname; do
 	export LD_PRELOAD
 	./$base_name > 2.out
 	diff 1.out 2.out &>/dev/null
-	if [[ $? -ne 0 ]]; then
+	diff_result=$?
+	if [[ $base_name == "verify" ]]; then
+		if [[ $diff_result -ne 1 ]]; then
+			echo "gemu library not used!"
+			exit
+		fi
+		diff_result=0
+	fi
+	if [[ $diff_result -ne 0 ]]; then
 		echo " failed !"
 		exit
 	else
