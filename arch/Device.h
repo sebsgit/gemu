@@ -4,6 +4,9 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
+#ifdef __linux__
+#include <sys/mman.h>
+#endif
 
 namespace gemu {
 	class MemoryBlock {
@@ -42,6 +45,42 @@ namespace gemu {
 			}
 			return false;
 		}
+        void * allocLocked(size_t size) {
+            if (this->_size + size <= this->_maximumSize){
+                void * result = malloc(size);
+                if (lock_mem(result, size)) {
+                    this->_allocData[result] = size;
+                    this->_size += size;
+                } else {
+                    free(result);
+                    result = nullptr;
+                }
+                return result;
+            }
+            return nullptr;
+        }
+        bool freeLocked(void * ptr) {
+            auto it = this->_allocData.find(ptr);
+            if (it != this->_allocData.end()) {
+                this->_size -= it->second;
+                const bool result = unlock_mem(ptr, it->second);
+                this->_allocData.erase(it);
+                free(ptr);
+                return result;
+            }
+            return false;
+        }
+    private:
+        static bool lock_mem(const void* ptr, size_t len) {
+            #ifdef __linux__
+            return mlock(ptr, len) == 0;
+            #endif
+        }
+        static bool unlock_mem(const void * ptr, size_t len) {
+            #ifdef __linux__
+            return munlock(ptr, len) == 0;
+            #endif
+        }
 	private:
 		MemoryBlock(const MemoryBlock&);
 		MemoryBlock& operator=(const MemoryBlock&);

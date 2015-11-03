@@ -77,7 +77,19 @@ CUresult cuMemcpyHtoD ( CUdeviceptr dstDevice, const void* srcHost, size_t byteC
 	return CUDA_ERROR_INVALID_VALUE;
 }
 
+CUresult cuMemAllocHost ( void** dptr, size_t bytesize ) {
+    void * memory = _default_cuda_device->memory()->allocLocked(bytesize);
+    if (memory)
+        *dptr = reinterpret_cast<CUdeviceptr>(memory);
+    return memory ? CUDA_SUCCESS : CUDA_ERROR_OUT_OF_MEMORY;
+}
+
+CUresult cuMemFreeHost ( void* dptr ) {
+    return _default_cuda_device->memory()->freeLocked(dptr) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_VALUE;
+}
+
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
 CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
 CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }
 CUresult cuMemcpyHtoD_v2 ( CUdeviceptr dstDevice, const void* srcHost, size_t byteCount ) { return cuMemcpyHtoD(dstDevice,srcHost,byteCount); }
+CUresult cuMemAllocHost_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAllocHost(dptr, bytesize); }
