@@ -24,7 +24,7 @@ namespace ptx {
 	            dest.u = left.u * right.u + add.u;
 	            break;
 			case Type::Float:
-				dest.u = left.f * right.f + add.f;
+                dest.f = left.f * right.f + add.f;
 				break;
 	        default:
 	            break;
