@@ -11,7 +11,11 @@ if [[ $? -ne 0 ]]; then
 fi
 cd 'cases'
 index=$((0))
-ls | grep cpp | while read -r fname; do
+CASES="."
+if [[ $# -eq 1 ]]; then
+	CASES=$@
+fi
+ls | grep cpp | grep $CASES | while read -r fname; do
 	rm 1.out &>/dev/null
 	rm 2.out &>/dev/null
 	LD_PRELOAD=
