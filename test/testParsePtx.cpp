@@ -499,6 +499,55 @@ static void test_parse_3dgrid() {
     assert(result.empty()==false);
 }
 
+static void test_with_short() {
+    const std::string source =
+        ".visible .entry kernel(\n"
+        "	.param .u64 _Z6kernelPsS_S__param_0,\n"
+        "	.param .u64 _Z6kernelPsS_S__param_1,\n"
+        "	.param .u64 _Z6kernelPsS_S__param_2\n"
+        ")\n"
+        "{\n"
+        "	.reg .b32 	%r<4>;\n"
+        "	.reg .b64 	%rd<7>;\n"
+        "\n"
+        "\n"
+        "	ld.param.u64 	%rd1, [_Z6kernelPsS_S__param_0];\n"
+        "	ld.param.u64 	%rd2, [_Z6kernelPsS_S__param_1];\n"
+        "	ld.param.u64 	%rd3, [_Z6kernelPsS_S__param_2];\n"
+        "	cvta.to.global.u64 	%rd4, %rd3;\n"
+        "	cvta.to.global.u64 	%rd5, %rd2;\n"
+        "	cvta.to.global.u64 	%rd6, %rd1;\n"
+        "	ld.global.u16 	%r1, [%rd6];\n"
+        "	ld.global.u16 	%r2, [%rd5];\n"
+        "	add.s32 	%r3, %r2, %r1;\n"
+        "	st.global.u16 	[%rd4], %r3;\n"
+        "	ret;\n"
+        "}\n"
+        "\n"
+        "\n"
+    ;
+    ptx::ParserResult result = ptx::Parser().parseModule(source);
+    assert(result.empty()==false);
+    ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(0)->func();
+    assert(kernel.fetch<ptx::VariableDeclaration>(0));
+    assert(kernel.fetch<ptx::VariableDeclaration>(1));
+
+    assert(kernel.fetch<ptx::Load>(2));
+    assert(kernel.fetch<ptx::Load>(3));
+    assert(kernel.fetch<ptx::Load>(4));
+
+    assert(kernel.fetch<ptx::Convert>(5));
+    assert(kernel.fetch<ptx::Convert>(6));
+    assert(kernel.fetch<ptx::Convert>(7));
+
+    assert(kernel.fetch<ptx::Load>(8));
+    assert(kernel.fetch<ptx::Load>(9));
+
+    assert(kernel.fetch<ptx::Add>(10));
+    assert(kernel.fetch<ptx::Store>(11));
+    assert(kernel.fetch<ptx::Return>(12));
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
 	test_variable_parser();
@@ -512,5 +561,6 @@ void test_ptx() {
     test_parse_two_functions();
     test_call_parser();
     test_parse_3dgrid();
+    test_with_short();
 	std::cout << "done.\n";
 }

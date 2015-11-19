@@ -5,9 +5,11 @@ fi
 if [[ ! -f cuda_lib/libcuda.so.1 ]]; then
 	make lib
 fi
-./test
-if [[ $? -ne 0 ]]; then
-	exit
+if [[ $# -eq 0 ]]; then
+	./test
+	if [[ $? -ne 0 ]]; then
+		exit
+	fi
 fi
 cd 'cases'
 index=$((0))
