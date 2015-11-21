@@ -13,10 +13,17 @@ class InstructionPtr;
 namespace ptx {
 	namespace exec {
 
-		enum ExecResult {
+        enum ThreadExecResult {
 			ThreadExited,
 			ThreadSuspended
 		};
+
+        enum BlockExecResult {
+            BlockNotRunning,
+            BlockRunning,
+            BlockError,
+            BlockOk
+        };
 
 		class PtxExecutionContext : public gemu::AbstractExecutionContext {
 		public:
@@ -40,7 +47,7 @@ namespace ptx {
 			void exec(const Branch& branch);
 			void exec(const Barrier& barrier);
             void exec(const Call& call);
-			ExecResult result() const;
+            ThreadExecResult result() const;
 		private:
 			gemu::cuda::Thread& _thread;
 			SymbolTable& _symbols;
@@ -56,6 +63,7 @@ namespace ptx {
 		private:
 			gemu::Device& _device;
 			gemu::cuda::ThreadBlock& _block;
+            BlockExecResult _result = BlockExecResult::BlockNotRunning;
 		};
 	}
 }

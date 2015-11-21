@@ -171,8 +171,8 @@ void PtxExecutionContext::exec(const Call &call) {
     this->_symbols.set(func.returnVariable().renamed(call.result()), result);
 }
 
-ExecResult PtxExecutionContext::result() const{
-	return this->_barrierWait ? ExecResult::ThreadSuspended : ExecResult::ThreadExited;
+ThreadExecResult PtxExecutionContext::result() const{
+    return this->_barrierWait ? ThreadExecResult::ThreadSuspended : ThreadExecResult::ThreadExited;
 }
 
 using namespace gemu;
@@ -257,7 +257,7 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 						PtxExecutionContext context(this->_device, data.thread, data.symbols);
 						context.setProgramCounter(data.pc);
 						context.exec(func);
-						if (context.result() == ExecResult::ThreadSuspended) {
+                        if (context.result() == ThreadExecResult::ThreadSuspended) {
 							thread_launch_data_t d;
 							d.pc = context.programCounter();
 							d.symbols = data.symbols;
