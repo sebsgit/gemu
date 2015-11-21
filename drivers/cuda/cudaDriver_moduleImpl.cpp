@@ -60,7 +60,9 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 	for (size_t i=0 ; i<grid.blockCount() ; ++i) {
 		auto block = grid.block(i);
 		ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
-		if (!dispatcher.launch(func, symbols))
+        dispatcher.launch(func, symbols);
+        dispatcher.synchronize();
+        if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk)
 			return CUDA_ERROR_UNKNOWN;
 	}
 	return CUDA_SUCCESS;

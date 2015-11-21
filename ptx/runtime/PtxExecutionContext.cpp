@@ -178,11 +178,30 @@ ThreadExecResult PtxExecutionContext::result() const{
 using namespace gemu;
 using namespace cuda;
 
+typedef struct {
+    size_t pc;
+    SymbolTable symbols;
+    Thread thread;
+} thread_launch_data_t;
+
+struct PtxBlockDispatcher::Data {
+    std::mutex mutex;
+    std::vector<std::thread*> threads;
+    ProtectedStoragePtr shared = std::make_shared<ProtectedStorage>();
+    std::vector<thread_launch_data_t> launchData;
+    std::vector<thread_launch_data_t> suspendedData;
+};
+
 PtxBlockDispatcher::PtxBlockDispatcher(gemu::Device& device, gemu::cuda::ThreadBlock& block)
 :_device(device)
 ,_block(block)
+,_data(new Data)
 {
 
+}
+
+PtxBlockDispatcher::~PtxBlockDispatcher(){
+    delete _data;
 }
 
 static void alloc_constant(SymbolTable& symbols, const std::string& name, const int value) {
@@ -209,51 +228,41 @@ static void set_thread_data(SymbolTable& symbols, int x, int y, int z) {
     alloc_constant(symbols, "%tid.z", z);
 }
 
-typedef struct {
-	size_t pc;
-	SymbolTable symbols;
-	Thread thread;
-} thread_launch_data_t;
-
-bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
+void PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 	const dim3 size(this->_block.size());
+    this->_result = BlockExecResult::BlockRunning;
 	try {
         set_grid_data(symbols, this->_block.grid());
         set_block_data(symbols, this->_block);
-		ProtectedStoragePtr shared(std::make_shared<ProtectedStorage>());
-		std::vector<thread_launch_data_t> launchData;
-		std::vector<thread_launch_data_t> suspendedData;
 		for (size_t x=0 ; x<size.x ; ++x) {
 			for (size_t y=0 ; y<size.y ; ++y) {
 				for (size_t z=0 ; z<size.z ; ++z) {
 					Thread thread = this->_block.thread(x,y,z);
 					SymbolTable symTab = symbols;
-					symTab.setSharedSection(shared);
+                    symTab.setSharedSection(this->_data->shared);
                     set_thread_data(symTab, x, y, z);
 					thread_launch_data_t d;
 					d.pc = 0;
 					d.symbols = symTab;
 					d.thread = thread;
-					launchData.push_back(d);
+                    this->_data->launchData.push_back(d);
 				}
 			}
 		}
-		std::mutex mutex;
-		std::vector<std::thread*> threads;
 		for (int i=0 ; i<16 ; ++i){
-			threads.push_back(new std::thread([&](){
+            this->_data->threads.push_back(new std::thread([&](){
 				thread_launch_data_t data;
 				bool isEmpty=false;
 				while (!isEmpty){
-					mutex.lock();
-					isEmpty = launchData.empty();
+                    this->_data->mutex.lock();
+                    isEmpty = this->_data->launchData.empty();
 					if (!isEmpty){
-						data = launchData[0];
-						launchData.erase(launchData.begin());
+                        data = this->_data->launchData[0];
+                        this->_data->launchData.erase(this->_data->launchData.begin());
 					}
-					mutex.unlock();
+                    this->_data->mutex.unlock();
 					if (!isEmpty) {
-						data.symbols.setSharedSection(shared);
+                        data.symbols.setSharedSection(this->_data->shared);
 						PtxExecutionContext context(this->_device, data.thread, data.symbols);
 						context.setProgramCounter(data.pc);
 						context.exec(func);
@@ -262,28 +271,28 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 							d.pc = context.programCounter();
 							d.symbols = data.symbols;
 							d.thread = data.thread;
-							mutex.lock();
-							suspendedData.push_back(d);
-							mutex.unlock();
+                            this->_data->mutex.lock();
+                            this->_data->suspendedData.push_back(d);
+                            this->_data->mutex.unlock();
 						}
 					} else {
 						bool waitForSuspended = false;
-						mutex.lock();
-						if (suspendedData.empty()==false) {
-							if (suspendedData.size() == this->_block.threadCount()) {
-								std::swap(suspendedData, launchData);
+                        this->_data->mutex.lock();
+                        if (this->_data->suspendedData.empty()==false) {
+                            if (this->_data->suspendedData.size() == this->_block.threadCount()) {
+                                std::swap(this->_data->suspendedData, this->_data->launchData);
 								isEmpty = false;
 							} else {
 								waitForSuspended = true;
 							}
 						}
-						mutex.unlock();
+                        this->_data->mutex.unlock();
 						if (waitForSuspended) {
 							bool allThreadsArrived = false;
 							while (!allThreadsArrived){
-								mutex.lock();
-								allThreadsArrived = suspendedData.empty();
-								mutex.unlock();
+                                this->_data->mutex.lock();
+                                allThreadsArrived = this->_data->suspendedData.empty();
+                                this->_data->mutex.unlock();
 								std::this_thread::yield();
 							}
 						}
@@ -291,14 +300,17 @@ bool PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				}
 			 }));
 		}
-		for (std::thread * th : threads){
-			th->join();
-			delete th;
-		}
-
 	} catch (const std::exception& exc) {
         std::cout << exc.what() << '\n';
-		return false;
+        this->_result = BlockExecResult::BlockError;
 	}
-	return true;
+}
+
+void PtxBlockDispatcher::synchronize(){
+    for (std::thread * th : this->_data->threads){
+        th->join();
+        delete th;
+    }
+    if (this->_result == BlockExecResult::BlockRunning)
+        this->_result = BlockExecResult::BlockOk;
 }

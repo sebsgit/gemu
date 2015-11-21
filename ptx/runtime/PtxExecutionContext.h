@@ -57,13 +57,18 @@ namespace ptx {
 		};
 
 		class PtxBlockDispatcher {
+            struct Data;
 		public:
 			PtxBlockDispatcher(gemu::Device& device, gemu::cuda::ThreadBlock& block);
-			bool launch(ptx::Function& func, SymbolTable& symbols);
+            ~PtxBlockDispatcher();
+            void launch(ptx::Function& func, SymbolTable& symbols);
+            void synchronize();
+            BlockExecResult result() const { return this->_result; }
 		private:
 			gemu::Device& _device;
 			gemu::cuda::ThreadBlock& _block;
             BlockExecResult _result = BlockExecResult::BlockNotRunning;
+            Data* _data;
 		};
 	}
 }
