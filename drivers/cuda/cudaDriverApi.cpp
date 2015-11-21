@@ -3,11 +3,13 @@
 gemu::cuda::GlobalContext * _driverContext = nullptr;
 gemu::Device * _default_cuda_device = nullptr;
 const CUdevice _default_cuda_device_id = 1;
+gemu::cuda::Stream * _default_cuda_stream = nullptr;
 
 CUresult cuInit (unsigned int flags) {
 	if (!_default_cuda_device) {
 		_default_cuda_device = new gemu::Device(1024 * 1024 * 1024);
 		_driverContext = new gemu::cuda::GlobalContext();
+        _default_cuda_stream = new gemu::cuda::Stream(*_default_cuda_device,0);
 	}
 	return CUDA_SUCCESS;
 }

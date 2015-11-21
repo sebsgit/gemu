@@ -1,8 +1,6 @@
 #include "ptx/Parser.h"
 #include "cudaDriverApi.h"
 #include "arch/Device.h"
-#include "semantics/Function.h"
-#include "cudaThreads.h"
 
 CUresult cuModuleLoadData (CUmodule* module, const void* image) {
 	ptx::ParserResult result = ptx::Parser().parseModule(std::string(reinterpret_cast<const char*>(image)));
@@ -41,29 +39,10 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 							void** kernelParams,
 							void** extra )
 {
-	if (kernelParams && extra)
-		return CUDA_ERROR_INVALID_VALUE;
-	//TODO sainty check on grid size
-	ptx::Function func = _driverContext->function(f);
-	if (func.isNull())
-		return CUDA_ERROR_NOT_FOUND;
-	auto funcParams = func.parameters();
-	ptx::SymbolTable symbols;
-	for (size_t i=0 ; i<funcParams.size() ; ++i) {
-		void * address = kernelParams[i];
-		ptx::param_storage_t storage;
-		memcpy(&storage, address, funcParams[i].size());
-		symbols.set(funcParams[i], storage);
-	}
-	gemu::cuda::ThreadGrid grid(gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
-					gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ));
-	for (size_t i=0 ; i<grid.blockCount() ; ++i) {
-		auto block = grid.block(i);
-		ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
-        dispatcher.launch(func, symbols);
-        dispatcher.synchronize();
-        if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk)
-			return CUDA_ERROR_UNKNOWN;
-	}
-	return CUDA_SUCCESS;
+    return _default_cuda_stream->launch(f,
+                                 gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
+                                 gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ),
+                                 sharedMemBytes,
+                                 kernelParams,
+                                 extra);
 }

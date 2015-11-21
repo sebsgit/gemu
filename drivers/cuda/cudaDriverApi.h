@@ -2,6 +2,7 @@
 #define GEMUCUDADRIVERAPIH
 
 #include "cudaDefines.h"
+#include "cudaStream.h"
 #include "drivers/cuda/cuda.h"
 #include "arch/Device.h"
 #include "semantics/Function.h"
@@ -83,5 +84,6 @@ namespace gemu {
 extern gemu::cuda::GlobalContext * _driverContext;
 extern gemu::Device * _default_cuda_device;
 extern const CUdevice _default_cuda_device_id;
+extern gemu::cuda::Stream * _default_cuda_stream;
 
 #endif
