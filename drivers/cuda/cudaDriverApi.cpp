@@ -9,7 +9,7 @@ CUresult cuInit (unsigned int flags) {
 	if (!_default_cuda_device) {
 		_default_cuda_device = new gemu::Device(1024 * 1024 * 1024);
 		_driverContext = new gemu::cuda::GlobalContext();
-        _default_cuda_stream = new gemu::cuda::Stream(*_default_cuda_device,0);
+        _default_cuda_stream = new gemu::cuda::Stream(*_default_cuda_device, CU_STREAM_DEFAULT);
 	}
 	return CUDA_SUCCESS;
 }
@@ -92,8 +92,32 @@ CUresult cuMemFreeHost ( void* dptr ) {
     return _default_cuda_device->memory()->freeLocked(dptr) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_VALUE;
 }
 
+CUresult cuStreamCreate(CUstream* stream, unsigned int flags) {
+    *stream = _driverContext->createStream(flags);
+    return CUDA_SUCCESS;
+}
+
+CUresult cuStreamGetFlags (CUstream hStream, unsigned int* flags) {
+    if (!flags)
+        return CUDA_ERROR_OUT_OF_MEMORY;
+    return _driverContext->streamFlags(hStream, flags) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuStreamDestroy(CUstream stream) {
+    return _driverContext->destroyStream(stream) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuStreamSynchronize(CUstream stream) {
+    if (stream == 0){
+        _default_cuda_stream->synchronize();
+        return CUDA_SUCCESS;
+    }
+    return _driverContext->synchronizeStream(stream) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+}
+
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
 CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
 CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }
 CUresult cuMemcpyHtoD_v2 ( CUdeviceptr dstDevice, const void* srcHost, size_t byteCount ) { return cuMemcpyHtoD(dstDevice,srcHost,byteCount); }
 CUresult cuMemAllocHost_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAllocHost(dptr, bytesize); }
+CUresult cuStreamDestroy_v2(CUstream stream) { return cuStreamDestroy(stream); }

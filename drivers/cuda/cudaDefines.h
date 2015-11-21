@@ -148,6 +148,11 @@ enum CUdevice_attribute {
 	CU_DEVICE_ATTRIBUTE_MAX
 };
 
+enum CUstream_flags {
+    CU_STREAM_DEFAULT = 0x0,
+    CU_STREAM_NON_BLOCKING = 0x1
+};
+
 typedef int CUdevice;
 typedef void * CUdeviceptr;
 typedef struct CUctx_st * CUcontext;

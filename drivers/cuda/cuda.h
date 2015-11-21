@@ -1,7 +1,7 @@
 #ifndef GEMUCUDAFWDDEFINEDH
 #define GEMUCUDAFWDDEFINEDH
 
-#include "cuda/cudaDefines.h"
+#include "cudaDefines.h"
 #include <memory>
 
 #define GEMU_DECLARE_EXTERN(F) extern "C" CUresult F ;
@@ -42,6 +42,12 @@ GEMU_DECLARE_EXTERN( cuModuleLoadData ( CUmodule* module, const void* image ) )
 // GEMU_DECLARE_EXTERN( cuModuleLoadDataEx ( CUmodule* module, const void* image, unsigned int  numOptions, CUjit_option* options, void** optionValues ) )
 GEMU_DECLARE_EXTERN( cuModuleLoadFatBinary ( CUmodule* module, const void* fatCubin ) )
 GEMU_DECLARE_EXTERN( cuModuleUnload ( CUmodule hmod ) )
+
+GEMU_DECLARE_EXTERN( cuStreamCreate(CUstream*, unsigned int) )
+GEMU_DECLARE_EXTERN( cuStreamDestroy(CUstream) )
+GEMU_DECLARE_EXTERN( cuStreamDestroy_v2(CUstream) )
+GEMU_DECLARE_EXTERN( cuStreamSynchronize(CUstream) )
+GEMU_DECLARE_EXTERN( cuStreamGetFlags (CUstream, unsigned int*) )
 
 GEMU_DECLARE_EXTERN( cuLaunchKernel ( CUfunction, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CUstream, void**, void** ))
 

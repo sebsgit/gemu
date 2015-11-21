@@ -11,7 +11,7 @@ namespace gemu {
 namespace cuda {
     class Stream {
     public:
-        Stream(gemu::Device& device, CUstream streamId);
+        Stream(gemu::Device& device, unsigned int flags);
         ~Stream();
         CUresult launch(CUfunction f,
                   const dim3& gridDim,
@@ -20,15 +20,16 @@ namespace cuda {
                   void** kernelParams,
                   void** extra);
         void synchronize();
+        unsigned int flags() const { return this->_flags; }
     private:
         void dispatchBlocks();
     private:
-        const CUstream _streamId;
         gemu::Device& _device;
         gemu::cuda::ThreadGrid _grid;
         ptx::Function _currentKernel;
         ptx::SymbolTable _currentSymbols;
         std::thread* _thread = nullptr;
+        unsigned int _flags = 0;
     };
 }
 }

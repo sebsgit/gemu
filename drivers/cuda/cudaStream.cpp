@@ -5,9 +5,9 @@
 namespace gemu{
 namespace cuda{
 
-Stream::Stream(gemu::Device& device, CUstream streamId)
-    :_streamId(streamId)
-    ,_device(device)
+Stream::Stream(gemu::Device& device, unsigned int flags)
+    :_device(device)
+    ,_flags(flags)
 {
 
 }
