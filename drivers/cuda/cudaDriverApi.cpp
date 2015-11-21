@@ -66,14 +66,16 @@ CUresult cuMemFree ( CUdeviceptr dptr ) {
 }
 
 CUresult cuMemcpyDtoH ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) {
-	if (_default_cuda_device->memory()->isValid(srcDevice) && (memcpy(dstHost, (const void *)srcDevice, byteCount) != 0)) {
-		return CUDA_SUCCESS;
+    if (_default_cuda_device->memory()->isValid(srcDevice)) {
+        _default_cuda_stream->synchronize();
+        return (memcpy(dstHost, (const void *)srcDevice, byteCount) != 0) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
 	}
 	return CUDA_ERROR_INVALID_VALUE;
 }
 
 CUresult cuMemcpyHtoD ( CUdeviceptr dstDevice, const void* srcHost, size_t byteCount ) {
 	if (_default_cuda_device->memory()->isValid(dstDevice) && (memcpy(dstDevice, srcHost, byteCount) != 0)) {
+        _default_cuda_stream->synchronize();
 		return CUDA_SUCCESS;
 	}
 	return CUDA_ERROR_INVALID_VALUE;

@@ -10,6 +10,8 @@
 #include <vector>
 #include <algorithm>
 
+extern gemu::cuda::Stream * _default_cuda_stream;
+
 namespace gemu {
 	namespace cuda {
 		class Module {
@@ -71,9 +73,15 @@ namespace gemu {
                 }
                 return ptx::Function();
             }
+            Stream* stream(CUstream id) {
+                if (id == 0)
+                    return _default_cuda_stream;
+                return this->_streams[id];
+            }
 		private:
 			std::vector<Module> _modules;
 			std::unordered_map<CUfunction, ptx::Function> _funcCache;
+            std::unordered_map<CUstream, Stream*> _streams;
 			unsigned long long _nextModuleId = 0;
 
             friend class PtxExecutionContext;
@@ -84,6 +92,5 @@ namespace gemu {
 extern gemu::cuda::GlobalContext * _driverContext;
 extern gemu::Device * _default_cuda_device;
 extern const CUdevice _default_cuda_device_id;
-extern gemu::cuda::Stream * _default_cuda_stream;
 
 #endif

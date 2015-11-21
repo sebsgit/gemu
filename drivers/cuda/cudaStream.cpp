@@ -1,5 +1,6 @@
 #include "cudaStream.h"
 #include "cudaDriverApi.h"
+#include <cassert>
 
 namespace gemu{
 namespace cuda{
@@ -9,6 +10,10 @@ Stream::Stream(gemu::Device& device, CUstream streamId)
     ,_device(device)
 {
 
+}
+
+Stream::~Stream(){
+    delete this->_thread;
 }
 
 CUresult Stream::launch(CUfunction f,
@@ -21,27 +26,39 @@ CUresult Stream::launch(CUfunction f,
     if (kernelParams && extra)
         return CUDA_ERROR_INVALID_VALUE;
     //TODO sainty check on grid size
-    ptx::Function func = _driverContext->function(f);
-    if (func.isNull())
+    this->_currentKernel = _driverContext->function(f);
+    if (_currentKernel.isNull())
         return CUDA_ERROR_NOT_FOUND;
-    auto funcParams = func.parameters();
-    ptx::SymbolTable symbols;
+    this->_grid = gemu::cuda::ThreadGrid(gridDim,blockDim);
+    auto funcParams = this->_currentKernel.parameters();
+    this->_currentSymbols = ptx::SymbolTable();
     for (size_t i=0 ; i<funcParams.size() ; ++i) {
         void * address = kernelParams[i];
         ptx::param_storage_t storage;
         memcpy(&storage, address, funcParams[i].size());
-        symbols.set(funcParams[i], storage);
+        this->_currentSymbols.set(funcParams[i], storage);
     }
-    gemu::cuda::ThreadGrid grid(gridDim,blockDim);
-    for (size_t i=0 ; i<grid.blockCount() ; ++i) {
-        auto block = grid.block(i);
-        ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
-        dispatcher.launch(func, symbols);
-        dispatcher.synchronize();
-        if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk)
-            return CUDA_ERROR_UNKNOWN;
-    }
+    this->_thread = new std::thread([this](){
+        for (size_t i=0 ; i<this->_grid.blockCount() ; ++i) {
+            auto block = this->_grid.block(i);
+            ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
+            dispatcher.launch(this->_currentKernel, this->_currentSymbols);
+            dispatcher.synchronize();
+            if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk){
+                std::cout << "block dispatch error.\n";
+                break;
+            }
+        }
+    });
     return CUDA_SUCCESS;
+}
+
+void Stream::synchronize(){
+    if (this->_thread) {
+        this->_thread->join();
+        delete _thread;
+        _thread = nullptr;
+    }
 }
 
 } }

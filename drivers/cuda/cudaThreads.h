@@ -130,7 +130,7 @@ namespace gemu {
 		typedef std::shared_ptr<ThreadBlock> ThreadBlockPtr;
 		class ThreadGrid {
 		public:
-			ThreadGrid(const dim3& gridSize, const dim3& blockSize)
+            ThreadGrid(const dim3& gridSize=dim3(), const dim3& blockSize=dim3())
 				:_size(gridSize)
 				,_blockSize(blockSize)
 			{
@@ -163,8 +163,8 @@ namespace gemu {
 				return this->_size;
 			}
 		private:
-			const dim3 _size;
-			const dim3 _blockSize;
+            dim3 _size;
+            dim3 _blockSize;
 		};
 	}
 }

@@ -39,7 +39,7 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 							void** kernelParams,
 							void** extra )
 {
-    return _default_cuda_stream->launch(f,
+    return _driverContext->stream(hStream)->launch(f,
                                  gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
                                  gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ),
                                  sharedMemBytes,
