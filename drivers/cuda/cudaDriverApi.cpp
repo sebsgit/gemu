@@ -100,7 +100,12 @@ CUresult cuStreamCreate(CUstream* stream, unsigned int flags) {
 CUresult cuStreamGetFlags (CUstream hStream, unsigned int* flags) {
     if (!flags)
         return CUDA_ERROR_OUT_OF_MEMORY;
-    return _driverContext->streamFlags(hStream, flags) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+    gemu::cuda::Stream* streamPtr = nullptr;
+    if (_driverContext->findStream(hStream, &streamPtr)) {
+        *flags = streamPtr->flags();
+        return CUDA_SUCCESS;
+    }
+    return CUDA_ERROR_INVALID_HANDLE;
 }
 
 CUresult cuStreamDestroy(CUstream stream) {
@@ -108,19 +113,13 @@ CUresult cuStreamDestroy(CUstream stream) {
 }
 
 CUresult cuStreamSynchronize(CUstream stream) {
-    if (stream == 0){
-        _default_cuda_stream->synchronize();
-        return CUDA_SUCCESS;
-    }
-    return _driverContext->synchronizeStream(stream) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+    gemu::cuda::Stream* streamPtr = nullptr;
+    return _driverContext->findStream(stream, &streamPtr) ? streamPtr->synchronize(), CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
 }
 
 CUresult cuStreamAddCallback( CUstream hStream, CUstreamCallback callback, void* userData, unsigned int  flags ) {
-    if (hStream == 0){
-        _default_cuda_stream->addCallback(hStream, callback, userData);
-        return CUDA_SUCCESS;
-    }
-    return _driverContext->addStreamCallback(hStream, callback, userData, flags) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+    gemu::cuda::Stream* streamPtr = nullptr;
+    return _driverContext->findStream(hStream, &streamPtr) ? streamPtr->addCallback(hStream, callback, userData) : CUDA_ERROR_INVALID_HANDLE;
 }
 
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }

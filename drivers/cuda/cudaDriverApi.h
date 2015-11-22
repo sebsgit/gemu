@@ -75,11 +75,6 @@ namespace gemu {
                 }
                 return ptx::Function();
             }
-            Stream* stream(CUstream id) {
-                if (id == 0)
-                    return _default_cuda_stream;
-                return this->_streams[id];
-            }
             CUstream createStream(unsigned int flags=CU_STREAM_DEFAULT){
                 Stream * stream = new Stream(*_default_cuda_device, flags);
                 this->_streams[(CUstream)stream] = stream;
@@ -94,35 +89,18 @@ namespace gemu {
                 }
                 return false;
             }
-            bool synchronizeStream(CUstream stream){
-                auto it = this->_streams.find(stream);
+            bool findStream(CUstream streamId, Stream** stream) {
+                if (streamId==0){
+                    *stream = _default_cuda_stream;
+                    return true;
+                }
+                auto it = this->_streams.find(streamId);
                 if (it != this->_streams.end()){
-                    it->second->synchronize();
+                    *stream = it->second;
                     return true;
                 }
                 return false;
             }
-            bool streamFlags(CUstream stream, unsigned int* flags) {
-                auto it = this->_streams.find(stream);
-                if (it != this->_streams.end()){
-                    *flags = it->second->flags();
-                    return true;
-                }
-                return false;
-            }
-            bool addStreamCallback(CUstream stream,
-                                   CUstreamCallback callback,
-                                   void* userData,
-                                   unsigned int flags )
-            {
-                auto it = this->_streams.find(stream);
-                if (it != this->_streams.end()){
-                    it->second->addCallback(stream, callback, userData);
-                    return true;
-                }
-                return false;
-            }
-
 		private:
 			std::vector<Module> _modules;
 			std::unordered_map<CUfunction, ptx::Function> _funcCache;

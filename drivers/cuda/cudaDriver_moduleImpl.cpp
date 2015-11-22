@@ -39,10 +39,13 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 							void** kernelParams,
 							void** extra )
 {
-    return _driverContext->stream(hStream)->launch(f,
+    gemu::cuda::Stream* streamPtr = nullptr;
+    return _driverContext->findStream(hStream,&streamPtr) ?
+                streamPtr->launch(f,
                                  gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
                                  gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ),
                                  sharedMemBytes,
                                  kernelParams,
-                                 extra);
+                                 extra)
+                : CUDA_ERROR_INVALID_HANDLE;
 }
