@@ -42,7 +42,7 @@ namespace gemu {
 			if (it != this->_allocData.end()) {
 				this->_size -= it->second;
 				this->_allocData.erase(it);
-				free(ptr);
+                ::free(ptr);
 				return true;
 			}
 			return false;
