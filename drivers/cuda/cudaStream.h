@@ -9,6 +9,28 @@
 
 namespace gemu {
 namespace cuda {
+
+    class AbstractStreamItem {
+    public:
+        virtual ~AbstractStreamItem(){}
+        virtual void execute() = 0;
+    };
+    class KernelLaunchItem : public AbstractStreamItem {
+    public:
+        KernelLaunchItem(const ThreadGrid& grid, ptx::Function kernel, const ptx::SymbolTable& symbols)
+            :_grid(grid)
+            ,_function(kernel)
+            ,_symbols(symbols)
+        {
+
+        }
+        void execute() override;
+    private:
+        gemu::cuda::ThreadGrid _grid;
+        ptx::Function _function;
+        ptx::SymbolTable _symbols;
+    };
+
     class Stream {
     public:
         Stream(gemu::Device& device, unsigned int flags);
@@ -25,9 +47,7 @@ namespace cuda {
         void dispatchBlocks();
     private:
         gemu::Device& _device;
-        gemu::cuda::ThreadGrid _grid;
-        ptx::Function _currentKernel;
-        ptx::SymbolTable _currentSymbols;
+        KernelLaunchItem* _kernelLaunch = nullptr;
         std::thread* _thread = nullptr;
         unsigned int _flags = 0;
     };

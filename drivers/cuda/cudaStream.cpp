@@ -5,6 +5,20 @@
 namespace gemu{
 namespace cuda{
 
+
+void KernelLaunchItem::execute() {
+    for (size_t i=0 ; i<this->_grid.blockCount() ; ++i) {
+        auto block = this->_grid.block(i);
+        ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
+        dispatcher.launch(this->_function, this->_symbols);
+        dispatcher.synchronize();
+        if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk){
+            std::cout << "block dispatch error.\n";
+            break;
+        }
+    }
+}
+
 Stream::Stream(gemu::Device& device, unsigned int flags)
     :_device(device)
     ,_flags(flags)
@@ -26,29 +40,22 @@ CUresult Stream::launch(CUfunction f,
     if (kernelParams && extra)
         return CUDA_ERROR_INVALID_VALUE;
     //TODO sainty check on grid size
-    this->_currentKernel = _driverContext->function(f);
-    if (_currentKernel.isNull())
+    auto kernel = _driverContext->function(f);
+    if (kernel.isNull())
         return CUDA_ERROR_NOT_FOUND;
-    this->_grid = gemu::cuda::ThreadGrid(gridDim,blockDim);
-    auto funcParams = this->_currentKernel.parameters();
-    this->_currentSymbols = ptx::SymbolTable();
+    auto funcParams = kernel.parameters();
+    ptx::SymbolTable symbols;
     for (size_t i=0 ; i<funcParams.size() ; ++i) {
         void * address = kernelParams[i];
         ptx::param_storage_t storage;
         memcpy(&storage, address, funcParams[i].size());
-        this->_currentSymbols.set(funcParams[i], storage);
+        symbols.set(funcParams[i], storage);
     }
+    this->_kernelLaunch = new KernelLaunchItem(gemu::cuda::ThreadGrid(gridDim,blockDim),
+                                               kernel,
+                                               symbols);
     this->_thread = new std::thread([this](){
-        for (size_t i=0 ; i<this->_grid.blockCount() ; ++i) {
-            auto block = this->_grid.block(i);
-            ptx::exec::PtxBlockDispatcher dispatcher(*_default_cuda_device, *block);
-            dispatcher.launch(this->_currentKernel, this->_currentSymbols);
-            dispatcher.synchronize();
-            if (dispatcher.result() != ptx::exec::BlockExecResult::BlockOk){
-                std::cout << "block dispatch error.\n";
-                break;
-            }
-        }
+        this->_kernelLaunch->execute();
     });
     return CUDA_SUCCESS;
 }
