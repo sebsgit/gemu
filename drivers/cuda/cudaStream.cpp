@@ -110,4 +110,11 @@ void Stream::synchronize(){
     }
 }
 
+CUresult Stream::status() {
+    std::unique_lock<std::mutex> lock(this->_mutex);
+    if (this->_working || this->_queue.empty()==false)
+        return CUDA_ERROR_NOT_READY;
+    return CUDA_SUCCESS;
+}
+
 } }

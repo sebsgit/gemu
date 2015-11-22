@@ -67,6 +67,7 @@ namespace cuda {
                              void* userData);
         void synchronize();
         unsigned int flags() const { return this->_flags; }
+        CUresult status();
     private:
         void threadFunction();
     private:

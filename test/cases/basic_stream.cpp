@@ -10,6 +10,7 @@ int main(){
     unsigned int flags;
     std::cout << cuStreamGetFlags(stream, &flags) << '\n';
     std::cout << flags << '\n';
+    std::cout << cuStreamQuery(stream) << '\n';
     std::cout << cuStreamDestroy(stream) << '\n';
     return 0;
 }

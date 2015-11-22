@@ -38,6 +38,7 @@ static int launch_kernel(int a, int b, int c){
 	cu_assert(cuMemAlloc(&devResult, sizeof(int)));
 	void * params[] = {&devResult, &a, &b, &c};
 	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+    assert(cuStreamQuery(0) == CUDA_ERROR_NOT_READY);
 	int result = 0;
 	cu_assert(cuMemcpyDtoH(&result, devResult, sizeof(result)));
 	cu_assert(cuMemFree(devResult));

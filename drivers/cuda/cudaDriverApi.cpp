@@ -122,6 +122,11 @@ CUresult cuStreamAddCallback( CUstream hStream, CUstreamCallback callback, void*
     return _driverContext->findStream(hStream, &streamPtr) ? streamPtr->addCallback(hStream, callback, userData) : CUDA_ERROR_INVALID_HANDLE;
 }
 
+CUresult cuStreamQuery(CUstream stream) {
+    gemu::cuda::Stream* streamPtr = nullptr;
+    return _driverContext->findStream(stream, &streamPtr) ? streamPtr->status() : CUDA_ERROR_INVALID_HANDLE;
+}
+
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
 CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
 CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }
