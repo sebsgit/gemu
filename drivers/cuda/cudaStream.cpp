@@ -23,10 +23,13 @@ Stream::Stream(gemu::Device& device, unsigned int flags)
     :_device(device)
     ,_flags(flags)
 {
-
+    this->_thread = new std::thread([this](){ this->threadFunction(); });
 }
 
 Stream::~Stream(){
+    this->_abortThread = true;
+    this->_waitCondition.notify_one();
+    this->_thread->detach();
     delete this->_thread;
 }
 
@@ -51,20 +54,46 @@ CUresult Stream::launch(CUfunction f,
         memcpy(&storage, address, funcParams[i].size());
         symbols.set(funcParams[i], storage);
     }
-    this->_kernelLaunch = new KernelLaunchItem(gemu::cuda::ThreadGrid(gridDim,blockDim),
+    auto kernelLaunch = AbstractStreamItemPtr(new KernelLaunchItem(gemu::cuda::ThreadGrid(gridDim,blockDim),
                                                kernel,
-                                               symbols);
-    this->_thread = new std::thread([this](){
-        this->_kernelLaunch->execute();
-    });
+                                               symbols));
+    this->_mutex.lock();
+    this->_queue.push(kernelLaunch);
+    this->_mutex.unlock();
+    this->_waitCondition.notify_one();
     return CUDA_SUCCESS;
 }
 
+void Stream::threadFunction(){
+    while (1) {
+        std::unique_lock<std::mutex> lock(this->_mutex);
+        if (this->_queue.empty()) {
+            this->_waitCondition.wait(lock);
+        }
+        if (this->_abortThread)
+            break;
+        if (this->_queue.empty()==false) {
+            AbstractStreamItemPtr item = this->_queue.front();
+            this->_queue.pop();
+            this->_working = true;
+            lock.unlock();
+            item->execute();
+            lock.lock();
+            this->_working = false;
+        }
+    }
+}
+
 void Stream::synchronize(){
-    if (this->_thread) {
-        this->_thread->join();
-        delete _thread;
-        _thread = nullptr;
+    while (1){
+        std::unique_lock<std::mutex> lock(this->_mutex);
+        if (this->_queue.empty()==false) {
+            lock.unlock();
+            std::this_thread::yield();
+        } else {
+            if (this->_working==false)
+                break;
+        }
     }
 }
 

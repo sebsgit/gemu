@@ -6,6 +6,10 @@
 #include "semantics/Function.h"
 #include "runtime/PtxExecutionContext.h"
 #include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <queue>
+#include <memory>
 
 namespace gemu {
 namespace cuda {
@@ -15,6 +19,7 @@ namespace cuda {
         virtual ~AbstractStreamItem(){}
         virtual void execute() = 0;
     };
+    typedef std::shared_ptr<AbstractStreamItem> AbstractStreamItemPtr;
     class KernelLaunchItem : public AbstractStreamItem {
     public:
         KernelLaunchItem(const ThreadGrid& grid, ptx::Function kernel, const ptx::SymbolTable& symbols)
@@ -44,11 +49,15 @@ namespace cuda {
         void synchronize();
         unsigned int flags() const { return this->_flags; }
     private:
-        void dispatchBlocks();
+        void threadFunction();
     private:
         gemu::Device& _device;
-        KernelLaunchItem* _kernelLaunch = nullptr;
+        std::queue<AbstractStreamItemPtr> _queue;
+        std::mutex _mutex;
+        std::condition_variable _waitCondition;
         std::thread* _thread = nullptr;
+        bool _abortThread = false;
+        bool _working = false;
         unsigned int _flags = 0;
     };
 }
