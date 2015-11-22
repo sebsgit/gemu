@@ -110,6 +110,18 @@ namespace gemu {
                 }
                 return false;
             }
+            bool addStreamCallback(CUstream stream,
+                                   CUstreamCallback callback,
+                                   void* userData,
+                                   unsigned int flags )
+            {
+                auto it = this->_streams.find(stream);
+                if (it != this->_streams.end()){
+                    it->second->addCallback(stream, callback, userData);
+                    return true;
+                }
+                return false;
+            }
 
 		private:
 			std::vector<Module> _modules;

@@ -20,6 +20,7 @@ namespace cuda {
         virtual void execute() = 0;
     };
     typedef std::shared_ptr<AbstractStreamItem> AbstractStreamItemPtr;
+
     class KernelLaunchItem : public AbstractStreamItem {
     public:
         KernelLaunchItem(const ThreadGrid& grid, ptx::Function kernel, const ptx::SymbolTable& symbols)
@@ -35,6 +36,21 @@ namespace cuda {
         ptx::Function _function;
         ptx::SymbolTable _symbols;
     };
+    class StreamCallbackItem : public AbstractStreamItem {
+    public:
+        StreamCallbackItem(CUstream stream, CUstreamCallback callback, void* userData)
+            :_stream(stream)
+            ,_callback(callback)
+            ,_userData(userData)
+        {
+
+        }
+        void execute() override;
+    private:
+        CUstream _stream;
+        CUstreamCallback _callback;
+        void* _userData;
+    };
 
     class Stream {
     public:
@@ -46,6 +62,9 @@ namespace cuda {
                   unsigned int sharedMemBytes,
                   void** kernelParams,
                   void** extra);
+        CUresult addCallback(CUstream stream,
+                             CUstreamCallback callback,
+                             void* userData);
         void synchronize();
         unsigned int flags() const { return this->_flags; }
     private:

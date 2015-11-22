@@ -19,6 +19,10 @@ void KernelLaunchItem::execute() {
     }
 }
 
+void StreamCallbackItem::execute() {
+    this->_callback(this->_stream, CUDA_SUCCESS, this->_userData);
+}
+
 Stream::Stream(gemu::Device& device, unsigned int flags)
     :_device(device)
     ,_flags(flags)
@@ -59,6 +63,15 @@ CUresult Stream::launch(CUfunction f,
                                                symbols));
     this->_mutex.lock();
     this->_queue.push(kernelLaunch);
+    this->_mutex.unlock();
+    this->_waitCondition.notify_one();
+    return CUDA_SUCCESS;
+}
+
+CUresult Stream::addCallback(CUstream stream, CUstreamCallback callback, void *userData){
+    this->_mutex.lock();
+    this->_queue.push(AbstractStreamItemPtr(
+                          new StreamCallbackItem(stream, callback, userData)));
     this->_mutex.unlock();
     this->_waitCondition.notify_one();
     return CUDA_SUCCESS;

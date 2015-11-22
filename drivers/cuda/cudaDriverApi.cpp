@@ -115,6 +115,14 @@ CUresult cuStreamSynchronize(CUstream stream) {
     return _driverContext->synchronizeStream(stream) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
 }
 
+CUresult cuStreamAddCallback( CUstream hStream, CUstreamCallback callback, void* userData, unsigned int  flags ) {
+    if (hStream == 0){
+        _default_cuda_stream->addCallback(hStream, callback, userData);
+        return CUDA_SUCCESS;
+    }
+    return _driverContext->addStreamCallback(hStream, callback, userData, flags) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+}
+
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
 CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
 CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }

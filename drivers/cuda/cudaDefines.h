@@ -161,5 +161,6 @@ typedef struct CUmod_st * CUmodule;
 typedef struct CUfunc_st * CUfunction;
 typedef struct CUsurfref_st * CUsurfref;
 typedef struct CUtexref_st * CUtexref;
+typedef void(*CUstreamCallback)(CUstream hStream, CUresult status, void* userData);
 
 #endif

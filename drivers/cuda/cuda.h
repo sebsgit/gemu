@@ -48,6 +48,7 @@ GEMU_DECLARE_EXTERN( cuStreamDestroy(CUstream) )
 GEMU_DECLARE_EXTERN( cuStreamDestroy_v2(CUstream) )
 GEMU_DECLARE_EXTERN( cuStreamSynchronize(CUstream) )
 GEMU_DECLARE_EXTERN( cuStreamGetFlags (CUstream, unsigned int*) )
+GEMU_DECLARE_EXTERN( cuStreamAddCallback ( CUstream hStream, CUstreamCallback callback, void* userData, unsigned int  flags )  )
 
 GEMU_DECLARE_EXTERN( cuLaunchKernel ( CUfunction, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CUstream, void**, void** ))
 
