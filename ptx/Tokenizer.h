@@ -107,6 +107,10 @@ namespace ptx {
                 std::cout << '"' << t << "\" ";
             std::cout << '\n';
         }
+        std::vector<token_t>::iterator begin() { return this->_tokens.begin(); }
+        std::vector<token_t>::iterator end() { return this->_tokens.end(); }
+        std::vector<token_t>::const_iterator begin() const { return this->_tokens.cbegin(); }
+        std::vector<token_t>::const_iterator end() const { return this->_tokens.cend(); }
 		friend std::ostream& operator << (std::ostream& out, const TokenList& list);
 	private:
 		std::vector<token_t> _tokens;

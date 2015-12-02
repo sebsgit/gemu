@@ -23,8 +23,8 @@ static const std::string test_source = ".version 4.2\n"
 		"}";
 
 std::ostream& operator << (std::ostream& out, const ptx::TokenList& list) {
-	for (size_t i=0 ; i<list.size() ; ++i)
-		out << list[i] << " ";
+    for (const auto& t : list)
+        out << t << " ";
 	out << "\n";
 	return out;
 }
