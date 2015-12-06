@@ -321,6 +321,14 @@ static void test_module_with_sync() {
     assert(result == 66);
 }
 
+static void test_events() {
+    CUevent startEvent, endEvent;
+    cu_assert(cuEventCreate(&startEvent, CU_EVENT_DEFAULT));
+    cu_assert(cuEventCreate(&endEvent, CU_EVENT_DEFAULT));
+    cu_assert(cuEventDestroy(startEvent));
+    cu_assert(cuEventDestroy(endEvent));
+}
+
 static void test_modules() {
 	test_module();
 	test_module_2();
@@ -338,5 +346,6 @@ void test_cuda(){
 	test_device();
 	test_memory();
 	test_modules();
+    test_events();
 	std::cout << "done.\n";
 }

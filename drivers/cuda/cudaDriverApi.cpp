@@ -127,9 +127,53 @@ CUresult cuStreamQuery(CUstream stream) {
     return _driverContext->findStream(stream, &streamPtr) ? streamPtr->status() : CUDA_ERROR_INVALID_HANDLE;
 }
 
+CUresult cuEventCreate ( CUevent* phEvent, unsigned int flags ) {
+    *phEvent = _driverContext->createEvent(flags);
+    return CUDA_SUCCESS;
+}
+
+CUresult cuEventDestroy ( CUevent event ) {
+    return _driverContext->destroyEvent(event) ? CUDA_SUCCESS : CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuEventElapsedTime ( float* pMilliseconds, CUevent hStart, CUevent hEnd ) {
+    gemu::cuda::Event* start=nullptr, *end = nullptr;
+    if (_driverContext->findEvent(hStart, &start) && _driverContext->findEvent(hEnd, &end)) {
+        *pMilliseconds = start->msTo(*end);
+        return CUDA_SUCCESS;
+    }
+    return CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuEventQuery ( CUevent hEvent ) {
+    gemu::cuda::Event* event = nullptr;
+    if (_driverContext->findEvent(hEvent, &event) ) {
+        return event->wasRecorded() ? CUDA_SUCCESS : CUDA_ERROR_NOT_READY;
+    }
+    return CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuEventRecord ( CUevent hEvent, CUstream stream ) {
+    gemu::cuda::Stream* streamPtr = nullptr;
+    gemu::cuda::Event* eventPtr = nullptr;
+    return (_driverContext->findStream(stream, &streamPtr) && _driverContext->findEvent(hEvent, &eventPtr)) ? eventPtr->setStream(stream), streamPtr->recordEvent(eventPtr) : CUDA_ERROR_INVALID_HANDLE;
+}
+
+CUresult cuEventSynchronize ( CUevent hEvent ) {
+    gemu::cuda::Event* event = nullptr;
+    if (_driverContext->findEvent(hEvent, &event) ) {
+        gemu::cuda::Stream* stream = nullptr;
+        if (_driverContext->findStream(event->streamId(), &stream)) {
+            return stream->waitForEvent(event);
+        }
+    }
+    return CUDA_ERROR_INVALID_HANDLE;
+}
+
 CUresult cuMemAlloc_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAlloc(dptr, bytesize); }
 CUresult cuMemFree_v2 ( CUdeviceptr dptr ) { return cuMemFree(dptr); }
 CUresult cuMemcpyDtoH_v2 ( void* dstHost, CUdeviceptr srcDevice, size_t byteCount ) { return cuMemcpyDtoH(dstHost,srcDevice,byteCount); }
 CUresult cuMemcpyHtoD_v2 ( CUdeviceptr dstDevice, const void* srcHost, size_t byteCount ) { return cuMemcpyHtoD(dstDevice,srcHost,byteCount); }
 CUresult cuMemAllocHost_v2 ( CUdeviceptr* dptr, size_t bytesize ) { return cuMemAllocHost(dptr, bytesize); }
 CUresult cuStreamDestroy_v2(CUstream stream) { return cuStreamDestroy(stream); }
+CUresult cuEventDestroy_v2(CUevent event) { return cuEventDestroy(event); }

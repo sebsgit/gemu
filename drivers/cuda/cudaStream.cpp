@@ -23,6 +23,10 @@ void StreamCallbackItem::execute() {
     this->_callback(this->_stream, CUDA_SUCCESS, this->_userData);
 }
 
+void EventRecordItem::execute() {
+    this->_event->record();
+}
+
 Stream::Stream(gemu::Device& device, unsigned int flags)
     :_device(device)
     ,_flags(flags)
@@ -74,6 +78,24 @@ CUresult Stream::addCallback(CUstream stream, CUstreamCallback callback, void *u
                           new StreamCallbackItem(stream, callback, userData)));
     this->_mutex.unlock();
     this->_waitCondition.notify_one();
+    return CUDA_SUCCESS;
+}
+
+CUresult Stream::recordEvent(Event *event){
+    this->_mutex.lock();
+    this->_queue.push(AbstractStreamItemPtr(new EventRecordItem(event)));
+    this->_mutex.unlock();
+    this->_waitCondition.notify_one();
+    return CUDA_SUCCESS;
+}
+
+CUresult Stream::waitForEvent(Event *event) {
+    while (1) {
+        std::unique_lock<std::mutex> lock(this->_mutex);
+        if (event->wasRecorded())
+            break;
+        std::this_thread::yield();
+    }
     return CUDA_SUCCESS;
 }
 

@@ -53,6 +53,15 @@ GEMU_DECLARE_EXTERN( cuStreamQuery(CUstream) )
 
 GEMU_DECLARE_EXTERN( cuLaunchKernel ( CUfunction, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, CUstream, void**, void** ))
 
+// event management
+GEMU_DECLARE_EXTERN( cuEventCreate ( CUevent* phEvent, unsigned int  Flags ) )
+GEMU_DECLARE_EXTERN( cuEventDestroy ( CUevent hEvent ) )
+GEMU_DECLARE_EXTERN( cuEventDestroy_v2(CUevent) )
+GEMU_DECLARE_EXTERN( cuEventElapsedTime ( float* pMilliseconds, CUevent hStart, CUevent hEnd ) )
+GEMU_DECLARE_EXTERN( cuEventQuery ( CUevent hEvent ) )
+GEMU_DECLARE_EXTERN( cuEventRecord ( CUevent hEvent, CUstream hStream ) )
+GEMU_DECLARE_EXTERN( cuEventSynchronize ( CUevent hEvent ) )
+
 #undef GEMU_DECLARE_EXTERN
 
 #endif

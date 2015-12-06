@@ -153,6 +153,13 @@ enum CUstream_flags {
     CU_STREAM_NON_BLOCKING = 0x1
 };
 
+enum CUevent_flags {
+    CU_EVENT_DEFAULT = 0x0,
+    CU_EVENT_BLOCKING_SYNC = 0x1,
+    CU_EVENT_DISABLE_TIMING = 0x2,
+    CU_EVENT_INTERPROCESS = 0x4
+};
+
 typedef int CUdevice;
 typedef void * CUdeviceptr;
 typedef struct CUctx_st * CUcontext;
@@ -161,6 +168,7 @@ typedef struct CUmod_st * CUmodule;
 typedef struct CUfunc_st * CUfunction;
 typedef struct CUsurfref_st * CUsurfref;
 typedef struct CUtexref_st * CUtexref;
+typedef struct CUevent_st * CUevent;
 typedef void(*CUstreamCallback)(CUstream hStream, CUresult status, void* userData);
 
 #endif

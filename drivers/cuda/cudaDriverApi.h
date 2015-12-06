@@ -15,7 +15,7 @@ extern gemu::Device * _default_cuda_device;
 extern const CUdevice _default_cuda_device_id;
 
 namespace gemu {
-	namespace cuda {
+    namespace cuda {
 		class Module {
 		public:
 			Module():_id(nullptr) {}
@@ -101,10 +101,35 @@ namespace gemu {
                 }
                 return false;
             }
+
+            CUevent createEvent(unsigned int flags=CU_EVENT_DEFAULT){
+                Event * event = new Event(flags);
+                this->_events[(CUevent)event] = event;
+                return (CUevent)event;
+            }
+            bool destroyEvent(CUevent event){
+                auto it = this->_events.find(event);
+                if (it != this->_events.end()){
+                    delete it->second;
+                    this->_events.erase(event);
+                    return true;
+                }
+                return false;
+            }
+            bool findEvent(CUevent eventId, Event** event) {
+                auto it = this->_events.find(eventId);
+                if (it != this->_events.end()){
+                    *event = it->second;
+                    return true;
+                }
+                return false;
+            }
+
 		private:
 			std::vector<Module> _modules;
 			std::unordered_map<CUfunction, ptx::Function> _funcCache;
             std::unordered_map<CUstream, Stream*> _streams;
+            std::unordered_map<CUevent, Event*> _events;
 			unsigned long long _nextModuleId = 0;
 
             friend class PtxExecutionContext;

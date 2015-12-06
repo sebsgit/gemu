@@ -5,6 +5,7 @@
 #include "cudaThreads.h"
 #include "semantics/Function.h"
 #include "runtime/PtxExecutionContext.h"
+#include "cudaEvent.h"
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -51,6 +52,16 @@ namespace cuda {
         CUstreamCallback _callback;
         void* _userData;
     };
+    class EventRecordItem : public AbstractStreamItem {
+    public:
+        EventRecordItem(Event* event)
+            :_event(event)
+        {
+        }
+        void execute() override;
+    private:
+        Event* _event;
+    };
 
     class Stream {
     public:
@@ -65,6 +76,8 @@ namespace cuda {
         CUresult addCallback(CUstream stream,
                              CUstreamCallback callback,
                              void* userData);
+        CUresult recordEvent(Event* event);
+        CUresult waitForEvent(Event* event);
         void synchronize();
         unsigned int flags() const { return this->_flags; }
         CUresult status();
