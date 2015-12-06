@@ -29,7 +29,7 @@ namespace cuda{
         const unsigned _flags;
         clock_t _recordTime;
         bool _wasRecorded = false;
-        CUstream _stream;
+        CUstream _stream = (CUstream)-1;
     };
 }
 }

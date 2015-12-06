@@ -92,6 +92,11 @@ namespace cuda {
         bool _abortThread = false;
         bool _working = false;
         unsigned int _flags = 0;
+    private:
+	Stream(const Stream&);
+	Stream(Stream&&);
+	Stream& operator=(const Stream&);
+	Stream& operator=(Stream&&);
     };
 }
 }
