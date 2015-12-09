@@ -19,7 +19,7 @@ namespace ptx {
                 symbols.set(this->_operands[0].symbol(), source);
             } else {
 				const param_storage_t dest = symbols.get(this->_operands[0].symbol());
-            	*(reinterpret_cast<unsigned int *>(dest.data)) = source.data;
+                *(reinterpret_cast<unsigned int *>(dest.data + this->_operands[0].offset()*this->size())) = source.data;
 			}
         }
 	};

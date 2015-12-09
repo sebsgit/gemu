@@ -12,6 +12,7 @@ namespace ptx {
 		std::string toString() const override {
 			return "<load> " + MemoryInstruction::toString();
 		}
+        //TODO check with offsets
         void resolve(SymbolTable& symbols) const override {
             param_storage_t stored;
             param_storage_t source = symbols.get(this->_operands[1].symbol());
@@ -19,7 +20,7 @@ namespace ptx {
 				unsigned long long * address = reinterpret_cast<unsigned long long*>(source.data);
 				stored.data = *address;
 			} else {
-            	memcpy(&stored, &source, this->size());
+                memcpy(&stored, &source, this->size());
 			}
             symbols.set(this->_operands[0].symbol(), stored);
         }
