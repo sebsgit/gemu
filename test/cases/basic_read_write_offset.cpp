@@ -128,8 +128,7 @@ int main(){
 	cu_assert(cuModuleUnload(modId));
 	for (int i=0 ; i<size ; ++i)
 		std::cout << hostArrayOut[i] << '\n';
-	//TODO fix doubles
-	//for (int i=0 ; i<size ; ++i)
-		//std::cout << hostArrayDoubleOut[i] << '\n';
+	for (int i=0 ; i<size ; ++i)
+		std::cout << hostArrayDoubleOut[i] << '\n';
 	return 0;
 }

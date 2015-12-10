@@ -17,8 +17,7 @@ namespace ptx {
             param_storage_t stored;
             param_storage_t source = symbols.get(this->_operands[1].symbol());
 			if (this->space() == AllocSpace::Global) {
-                unsigned int * address = reinterpret_cast<unsigned int*>(source.data + this->_operands[1].offset());
-				stored.data = *address;
+                memcpy(&stored.data, (void*)(source.data + this->_operands[1].offset()), this->size());
 			} else {
                 memcpy(&stored, &source, this->size());
 			}
