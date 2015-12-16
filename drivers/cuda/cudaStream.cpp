@@ -56,6 +56,7 @@ CUresult Stream::launch(CUfunction f,
         return CUDA_ERROR_NOT_FOUND;
     auto funcParams = kernel.parameters();
     ptx::SymbolTable symbols;
+    symbols.setGlobalSection(_driverContext->globalSymbols());
     for (size_t i=0 ; i<funcParams.size() ; ++i) {
         void * address = kernelParams[i];
         ptx::param_storage_t storage;

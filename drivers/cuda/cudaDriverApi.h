@@ -6,6 +6,7 @@
 #include "drivers/cuda/cuda.h"
 #include "arch/Device.h"
 #include "semantics/Function.h"
+#include "semantics/SymbolTable.h"
 #include <cstring>
 #include <vector>
 #include <algorithm>
@@ -124,12 +125,15 @@ namespace gemu {
                 }
                 return false;
             }
-
+            std::shared_ptr<ptx::SymbolStorage> globalSymbols() const {
+                return this->_globalSymbols;
+            }
 		private:
 			std::vector<Module> _modules;
 			std::unordered_map<CUfunction, ptx::Function> _funcCache;
             std::unordered_map<CUstream, Stream*> _streams;
             std::unordered_map<CUevent, Event*> _events;
+            std::shared_ptr<ptx::SymbolStorage> _globalSymbols = std::make_shared<ptx::SymbolStorage>();
 			unsigned long long _nextModuleId = 0;
 
             friend class PtxExecutionContext;

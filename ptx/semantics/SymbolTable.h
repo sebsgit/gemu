@@ -59,10 +59,12 @@ namespace ptx {
 
 	class SymbolTable {
 	private:
+        std::shared_ptr<ptx::SymbolStorage> _globalData;
 		ProtectedStoragePtr _sharedData;
 		SymbolStorage _data;
 	public:
 		void setSharedSection(ProtectedStoragePtr sharedData);
+        void setGlobalSection(std::shared_ptr<ptx::SymbolStorage> data){ this->_globalData = data; }
 		ProtectedStoragePtr sharedSection() const {return this->_sharedData;}
 		void set(const ptx::Variable& var, const param_storage_t& storage){
 			if (var.space() == AllocSpace::Shared) {
@@ -73,7 +75,8 @@ namespace ptx {
 		}
 		void set(const std::string& name, const param_storage_t& storage) {
             if (this->_data.setIfExists(name, storage) == false)
-                this->_sharedData->data.setIfExists(name, storage);
+                if (this->_globalData->setIfExists(name, storage) == false)
+                    this->_sharedData->data.setIfExists(name, storage);
 		}
 		param_storage_t get(const ptx::Variable& var) const {
 			if (var.space() == AllocSpace::Shared)
@@ -84,6 +87,8 @@ namespace ptx {
 		param_storage_t get(const std::string& name) const {
             param_storage_t tmp;
             if (this->_data.getIfExists(name, tmp))
+                return tmp;
+            else if (this->_globalData->getIfExists(name, tmp))
                 return tmp;
 			return this->_sharedData->data.get(name);
 		}
