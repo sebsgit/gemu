@@ -18,6 +18,10 @@ CUresult cuCtxCreate(CUcontext*, unsigned int, CUdevice) {
 	return CUDA_SUCCESS;
 }
 
+CUresult cuCtxCreate_v2(CUcontext* context, unsigned int flags, CUdevice device) {
+    return cuCtxCreate(context, flags, device);
+}
+
 CUresult cuCtxDestroy(CUcontext) {
 	return CUDA_SUCCESS;
 }

@@ -1,10 +1,6 @@
 #!/bin/bash
-if [[ ! -f test ]]; then
-	make
-fi
-if [[ ! -f cuda_lib/libcuda.so.1 ]]; then
-	make lib
-fi
+qmake && make
+qmake -config lib && make
 if [[ $# -eq 0 ]]; then
 	./test
 	if [[ $? -ne 0 ]]; then
@@ -30,7 +26,7 @@ ls | grep cpp | grep $CASES | while read -r fname; do
 	if [[ $? -ne 0 ]]; then
 		exit;
 	fi
-	LD_PRELOAD=../cuda_lib/libcuda.so.1
+	LD_PRELOAD=../cuda_lib/libcuda.so.1.0.0
 	export LD_PRELOAD
 	./$base_name > 2.out
 	diff 1.out 2.out &>/dev/null
