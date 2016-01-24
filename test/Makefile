@@ -11,7 +11,9 @@ PTX_SOURCES=../ptx/runtime/PtxExecutionContext.cpp	\
 			../drivers/cuda/cudaDriver_moduleImpl.cpp	\
 			../drivers/cuda/cudaError.cpp	\
 			../drivers/cuda/cudaStream.cpp	\
-			../ptx/parser/InstructionParser.cpp
+			../ptx/parser/InstructionParser.cpp	\
+			../ptx/Parser.cpp	\
+			../ptx/Tokenizer.cpp
 SOURCES=testParsePtx.cpp 	\
 		testCuda.cpp		\
 		test.cpp			\

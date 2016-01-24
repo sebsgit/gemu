@@ -1,6 +1,8 @@
 #include "../ptx/Parser.h"
 #include "../ptx/parser/CallParser.h"
 #include "../ptx/semantics/instructions/control/Call.h"
+#include "../ptx/parser/VariableParser.h"
+#include <cassert>
 
 static const std::string test_source = ".version 4.2\n"
 		".target sm_20 // a comment\n"
