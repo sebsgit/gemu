@@ -119,6 +119,7 @@ namespace ptx {
                           const MemoryInstructionOperand& sourceLeft,
                           const MemoryInstructionOperand& sourceRight)
     {
+        PTX_UNUSED(size);
         param_storage_t dest = symbols.get(result.symbol());
         const param_storage_t left = symbols.get(sourceLeft.symbol());
         const param_storage_t right = symbols.get(sourceRight.symbol());
@@ -166,6 +167,7 @@ namespace ptx {
 		void setSize(const size_t s) { this->_size = s; }
 		void setVolatile(bool v=true) { this->_isVolatile = v; }
 		virtual void resolve(SymbolTable& table) const{
+            PTX_UNUSED(table);
 			std::cout << "[mem instr] resolve default\n";
 		}
     protected:

@@ -6,6 +6,7 @@ const CUdevice _default_cuda_device_id = 1;
 gemu::cuda::Stream * _default_cuda_stream = nullptr;
 
 CUresult cuInit (unsigned int flags) {
+    PTX_UNUSED(flags);
 	if (!_default_cuda_device) {
 		_default_cuda_device = new gemu::Device(1024 * 1024 * 1024);
 		_driverContext = new gemu::cuda::GlobalContext();
@@ -37,6 +38,9 @@ CUresult cuDeviceGet ( CUdevice* device, int  ordinal ) {
 	return ordinal==0 ? CUDA_SUCCESS : CUDA_ERROR_NO_DEVICE;
 }
 CUresult cuDeviceGetAttribute ( int* pi, CUdevice_attribute attrib, CUdevice dev ) {
+    PTX_UNUSED(pi);
+    PTX_UNUSED(attrib);
+    PTX_UNUSED(dev);
 	return CUDA_SUCCESS;
 }
 CUresult cuDeviceGetCount ( int* count ) {
@@ -122,6 +126,7 @@ CUresult cuStreamSynchronize(CUstream stream) {
 }
 
 CUresult cuStreamAddCallback( CUstream hStream, CUstreamCallback callback, void* userData, unsigned int  flags ) {
+    PTX_UNUSED(flags);
     gemu::cuda::Stream* streamPtr = nullptr;
     return _driverContext->findStream(hStream, &streamPtr) ? streamPtr->addCallback(hStream, callback, userData) : CUDA_ERROR_INVALID_HANDLE;
 }

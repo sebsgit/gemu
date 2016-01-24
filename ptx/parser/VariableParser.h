@@ -13,14 +13,17 @@ namespace ptx {
 				AllocSpace space = AllocSpace::Undefined;
 				if (Utils::parseAllocSpace(tokens, &space)) {
                     int alignment = -1;
-                    if(Utils::parseAlignment(tokens, &alignment));//unused
+                    if(Utils::parseAlignment(tokens, &alignment)) {
+                        ;//unused
+                    }
 					ptx::Type type;
 					size_t size = 0;
 					if  (Utils::parseTypeAndSize(tokens, &type, &size)) {
                         const std::string name = tokens.takeFirst();
 						result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name)));
-                        if(tokens.poll(";"))
+                        if(tokens.poll(";")) {
                             ;// unused
+                        }
 						return true;
 					}
 				}

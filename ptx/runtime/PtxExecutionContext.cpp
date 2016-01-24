@@ -48,6 +48,9 @@ unsigned long long SymbolStorage::address(const std::string& name) const{
 	return 0;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
 param_storage_t SymbolStorage::get(const std::string& name) const {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end())
@@ -63,6 +66,9 @@ param_storage_t SymbolStorage::get(const std::string& name) const {
 	}
 	return result;
 }
+
+#pragma GCC diagnostic pop
+
 void SymbolStorage::set(const ptx::Variable& var, const param_storage_t& storage) {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
 	if (it != _data.end()) {
@@ -133,14 +139,17 @@ void PtxExecutionContext::exec(const MemoryInstruction& i) {
 
 void PtxExecutionContext::exec(const Return& r) {
 	// std::cout << "exec return: " << r.toString() << "\n";
+    PTX_UNUSED(r);
 	if (this->_instr)
 		this->_pc = this->_instr->count();
 }
 void PtxExecutionContext::exec(const FunctionDeclaration& fdecl) {
 	// std::cout << "exec func decl: " << fdecl.toString() << "\n";
+    PTX_UNUSED(fdecl);
 }
 void PtxExecutionContext::exec(const ModuleDirective& d) {
 	// std::cout << "exec directive: " << d.toString() << "\n";
+    PTX_UNUSED(d);
 }
 
 void PtxExecutionContext::exec(const Branch& branch) {
@@ -153,6 +162,7 @@ void PtxExecutionContext::exec(const VariableDeclaration& var) {
 }
 
 void PtxExecutionContext::exec(const Barrier& barrier) {
+    PTX_UNUSED(barrier);
 	this->_barrierWait = true;
 }
 

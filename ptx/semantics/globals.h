@@ -1,6 +1,8 @@
 #ifndef SEMANTICGLOBALSH
 #define SEMANTICGLOBALSH
 
+#define PTX_UNUSED(x) (void)(x)
+
 namespace ptx {
 	enum AllocSpace {
 		Register,

@@ -35,7 +35,7 @@ namespace gemu {
 					}
 				}
 			}
-			const size_t count() const {
+            size_t count() const {
 				return this->_size.x * this->_size.y * this->_size.z;
 			}
 			const dim3& size() const {
@@ -64,7 +64,9 @@ namespace gemu {
 		class Thread {
 		public:
 			Thread(){}
-			Thread(ThreadBlock& block){}
+            Thread(ThreadBlock& block){
+                (void)(block);
+            }
 			Thread(const Thread& other)
 			:_pos(other._pos)
 			{}
@@ -109,7 +111,7 @@ namespace gemu {
 			const dim3& size() const {
 				return this->_threads->size();
 			}
-			const size_t threadCount() const {
+            size_t threadCount() const {
 				return this->_threads->count();
 			}
 			const dim3& pos() const {
@@ -156,7 +158,7 @@ namespace gemu {
 				const size_t ny = (i - nz * nxy) / this->_size.x;
 				return this->block(nx, ny, nz);
 			}
-			const size_t blockCount() const {
+            size_t blockCount() const {
 				return this->_size.x * this->_size.y * this->_size.z;
 			}
 			const dim3& size() const {

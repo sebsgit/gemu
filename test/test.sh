@@ -1,6 +1,6 @@
 #!/bin/bash
-qmake && make
 qmake -config lib && make
+qmake && make
 if [[ $# -eq 0 ]]; then
 	./test
 	if [[ $? -ne 0 ]]; then
