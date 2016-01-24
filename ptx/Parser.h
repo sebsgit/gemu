@@ -27,6 +27,8 @@ namespace ptx {
 		bool parseTokens(TokenList& tokens, ParserResult& result) const {
 			parser::DirectiveParser directive;
 			while (directive.parse(tokens, result));
+            parser::VariableParser globalVariables;
+            while (globalVariables.parse(tokens, result));
 			parser::FunctionParser functions;
 			while (functions.parse(tokens, result));
 			return true;

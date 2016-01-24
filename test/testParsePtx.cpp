@@ -548,19 +548,60 @@ static void test_with_short() {
     assert(kernel.fetch<ptx::Return>(12));
 }
 
+static void test_with_global() {
+    const std::string source =
+        ".version 4.3\n"
+        ".target sm_20\n"
+        ".address_size 64\n"
+        "\n"
+        "	// .globl	_Z10kernel_seti\n"
+        ".global .align 4 .u32 globalValue;\n"
+        "\n"
+        ".visible .entry _Z10kernel_seti(\n"
+        "	.param .u32 _Z10kernel_seti_param_0\n"
+        ")\n"
+        "{\n"
+        "	.reg .b32 	%r<2>;\n"
+        "\n"
+        "\n"
+        "	ld.param.u32 	%r1, [_Z10kernel_seti_param_0];\n"
+        "	st.global.u32 	[globalValue], %r1;\n"
+        "	ret;\n"
+        "}\n"
+        "\n"
+        "	// .globl	_Z10kernel_getPi\n"
+        ".visible .entry _Z10kernel_getPi(\n"
+        "	.param .u64 _Z10kernel_getPi_param_0\n"
+        ")\n"
+        "{\n"
+        "	.reg .b32 	%r<2>;\n"
+        "	.reg .b64 	%rd<3>;\n"
+        "\n"
+        "\n"
+        "	ld.param.u64 	%rd1, [_Z10kernel_getPi_param_0];\n"
+        "	cvta.to.global.u64 	%rd2, %rd1;\n"
+        "	ldu.global.u32 	%r1, [globalValue];\n"
+        "	st.global.u32 	[%rd2], %r1;\n"
+        "	ret;\n"
+        "}\n";
+    ptx::ParserResult result = ptx::Parser().parseModule(source);
+    assert(result.empty()==false);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
-	test_variable_parser();
-	test_tokenizer();
-	test_parser();
-	test_parser_branch();
-	test_parser_2();
-	test_parser_matrix();
-	test_parse_sync();
-	test_parse_atomic();
+    test_variable_parser();
+    test_tokenizer();
+    test_parser();
+    test_parser_branch();
+    test_parser_2();
+    test_parser_matrix();
+    test_parse_sync();
+    test_parse_atomic();
     test_parse_two_functions();
     test_call_parser();
     test_parse_3dgrid();
     test_with_short();
+    test_with_global();
 	std::cout << "done.\n";
 }

@@ -12,6 +12,8 @@ namespace ptx {
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
 				AllocSpace space = AllocSpace::Undefined;
 				if (Utils::parseAllocSpace(tokens, &space)) {
+                    int alignment = -1;
+                    if(Utils::parseAlignment(tokens, &alignment));//unused
 					ptx::Type type;
 					size_t size = 0;
 					if  (Utils::parseTypeAndSize(tokens, &type, &size)) {

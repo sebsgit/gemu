@@ -35,6 +35,14 @@ namespace ptx {
 				}
 				return false;
 			}
+            static bool parseAlignment(TokenList& tokens, int* result) {
+                *result = -1;
+                if (tokens.poll(".align")) {
+                    const auto value = tokens.takeFirst();
+                    *result = atoi(value.c_str());
+                }
+                return *result > 0;
+            }
 			static bool parseTypeAndSize(TokenList& tokens, Type * type, size_t * size) {
 				const auto str = tokens.peek();
 				*size = 0;
