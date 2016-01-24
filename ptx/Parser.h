@@ -19,7 +19,8 @@ namespace ptx {
 		ParserResult parseModule(const std::string& source){
 			ParserResult result;
 			auto tokens = Tokenizer().tokenize(source);
-			this->parse(tokens, result);
+            if(!this->parse(tokens, result))
+                throw std::string("unable to parse: ") + source;
 			return result;
 		}
 	protected:

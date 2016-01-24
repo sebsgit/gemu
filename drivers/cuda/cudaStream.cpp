@@ -48,7 +48,7 @@ CUresult Stream::launch(CUfunction f,
           void** kernelParams,
           void** extra)
 {
-    if (kernelParams && extra)
+    if ((kernelParams && extra) || (!kernelParams && !extra))
         return CUDA_ERROR_INVALID_VALUE;
     //TODO sainty check on grid size
     auto kernel = _driverContext->function(f);

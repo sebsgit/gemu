@@ -32,7 +32,8 @@ namespace ptx {
                                 while (tokens.peek() != ")"){
                                     if (Utils::isIdentifier(tokens.peek())){
                                         callParameters.push_back(tokens.takeFirst());
-                                        tokens.poll(",");
+                                        if(!tokens.poll(","))
+                                            break;
                                     }
                                 }
                                 tokens.removeFirst();

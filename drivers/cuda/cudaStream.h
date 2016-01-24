@@ -24,7 +24,7 @@ namespace cuda {
 
     class KernelLaunchItem : public AbstractStreamItem {
     public:
-        KernelLaunchItem(const ThreadGrid& grid, ptx::Function kernel, const ptx::SymbolTable& symbols)
+        KernelLaunchItem(const ThreadGrid& grid, const ptx::Function& kernel, const ptx::SymbolTable& symbols)
             :_grid(grid)
             ,_function(kernel)
             ,_symbols(symbols)

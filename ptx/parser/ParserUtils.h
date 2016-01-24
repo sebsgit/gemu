@@ -61,7 +61,7 @@ namespace ptx {
 							*size /= 8;
 					}
 				}
-				if(size!=0) {
+                if(*size != 0) {
 					tokens.removeFirst();
 					return true;
 				}

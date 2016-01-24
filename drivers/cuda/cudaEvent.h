@@ -27,7 +27,7 @@ namespace cuda{
         }
     private:
         const unsigned _flags;
-        clock_t _recordTime;
+        clock_t _recordTime = 0;
         bool _wasRecorded = false;
         CUstream _stream = (CUstream)-1;
     };

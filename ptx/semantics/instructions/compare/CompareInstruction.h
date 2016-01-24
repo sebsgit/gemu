@@ -12,8 +12,8 @@ namespace ptx {
 		BooleanOperation booleanOperation() const {return this->_boolOperator;}
 		CompareOperation compareOperation() const {return this->_compareOperator;}
 	private:
-		BooleanOperation _boolOperator;
-		CompareOperation _compareOperator;
+        BooleanOperation _boolOperator = NotValidBooleanOperation;
+        CompareOperation _compareOperator = NotValidCompareOperation;
 	};
 }
 
