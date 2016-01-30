@@ -37,6 +37,7 @@ namespace ptx {
             }
             return false;
         }
+        TokenList sublist(int start, int length) const;
         TokenList sublist(const token_t& startToken, const token_t& endToken) const;
         TokenList sublist(const token_t& endToken) const;
         TokenList bracketBody() const;
@@ -63,7 +64,11 @@ namespace ptx {
 		void clear() {
 			this->_tokens.clear();
 		}
-        void print() const;
+        void print() const {
+            this->print(this->size());
+        }
+        void print(int maxTokens) const;
+        std::string toString() const;
         std::vector<token_t>::iterator begin() { return this->_tokens.begin(); }
         std::vector<token_t>::iterator end() { return this->_tokens.end(); }
         std::vector<token_t>::const_iterator begin() const { return this->_tokens.cbegin(); }

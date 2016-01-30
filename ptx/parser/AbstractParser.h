@@ -9,15 +9,13 @@ namespace ptx {
 	namespace parser {
 		class AbstractParser {
 		protected:
-			typedef TokenList::token_t token_t;
+            typedef TokenList::token_t token_t;
 		public:
 			virtual ~AbstractParser(){}
 			bool parse(TokenList& tokens, ParserResult& result) const {
-				TokenList copy = tokens;
 				ParserResult partialResult;
-				const bool parsedOk = this->parseTokens(copy, partialResult);
+                const bool parsedOk = this->parseTokens(tokens, partialResult);
 				if (parsedOk) {
-					tokens = copy;
 					result.add(partialResult);
 				}
 				return parsedOk;

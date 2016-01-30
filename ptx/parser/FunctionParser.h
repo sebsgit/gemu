@@ -14,13 +14,14 @@ namespace ptx {
 			bool parseTokens(TokenList& tokens, ParserResult& result) const {
 				if (tokens.empty())
 					return false;
-				bool toReturn = true;
+                bool toReturn = false;
 				Function function;
 				function.setAllocSpace(AllocSpace::Local);
                 if (tokens.poll(".visible")) {
 					function.setAllocSpace(AllocSpace::Shared);
 				}
                 if (tokens.poll(".entry") || tokens.poll(".func")) {
+                    toReturn = true;
                     if (tokens.poll("(")) {
                         ParserResult var;
                         if (VariableParser().parse(tokens,var) && tokens.poll(")")) {

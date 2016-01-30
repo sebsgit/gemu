@@ -4,7 +4,11 @@
 #include <algorithm>
 
 namespace ptx {
-
+    TokenList TokenList::sublist(int start, int length) const {
+        TokenList result;
+        std::copy(this->_tokens.begin()+start, this->_tokens.begin()+length, std::back_inserter(result._tokens));
+        return result;
+    }
     TokenList TokenList::sublist(const token_t& startToken, const token_t& endToken) const {
         TokenList result;
         auto start = std::find(this->_tokens.begin(), this->_tokens.end(), startToken);
@@ -48,11 +52,21 @@ namespace ptx {
         if(this->peek() == "}")
             this->removeFirst();
     }
-
-    void TokenList::print() const{
-        for(const auto & t : _tokens)
+    void TokenList::print(int maxTokens) const{
+        for(const auto & t : _tokens) {
             std::cout << '"' << t << "\" ";
+            if (-- maxTokens <= 0)
+                break;
+        }
         std::cout << '\n';
+    }
+    std::string TokenList::toString() const {
+        return std::accumulate(this->_tokens.begin(),
+                    this->_tokens.end(),
+                    std::string(),
+                    [&](const std::string& a, const std::string& b) {
+                        return a + ' ' + b;
+        });
     }
 
 
