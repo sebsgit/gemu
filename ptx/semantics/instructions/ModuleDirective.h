@@ -11,7 +11,8 @@ namespace ptx {
 			Undefined,
 			Version,
 			Target,
-			AddressSize
+            AddressSize,
+            FileName
 		};
 		ModuleDirective(Type t, const std::string& data)
 			:_type(t)
