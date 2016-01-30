@@ -667,6 +667,6 @@ void test_ptx() {
     test_parse_3dgrid();
     test_with_short();
     test_with_global();
-    //test_with_file_and_loc();
+    test_with_file_and_loc();
 	std::cout << "done.\n";
 }

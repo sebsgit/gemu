@@ -49,6 +49,7 @@ HEADERS += ../arch/Device.h \
            ../ptx/parser/StoreParser.h \
            ../ptx/parser/SubParser.h \
            ../ptx/parser/VariableParser.h \
+           ../ptx/parser/DebugDirectiveParser.h \
            ../ptx/runtime/PtxExecutionContext.h \
            ../ptx/semantics/Function.h \
            ../ptx/semantics/globals.h \
@@ -91,6 +92,7 @@ SOURCES += ../ptx/Parser.cpp \
            ../drivers/cuda/cudaError.cpp \
            ../drivers/cuda/cudaStream.cpp \
            ../ptx/parser/InstructionParser.cpp \
+           ../ptx/parser/DebugDirectiveParser.cpp \
            ../ptx/runtime/PtxExecutionContext.cpp
 
 TEMPLATE = app

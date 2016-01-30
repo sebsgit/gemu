@@ -1,4 +1,5 @@
 #include "InstructionParser.h"
+#include "parser/DebugDirectiveParser.h"
 #include "parser/VariableParser.h"
 #include "parser/StoreParser.h"
 #include "parser/LoadParser.h"
@@ -47,6 +48,7 @@ namespace ptx {
             parsers.push_back(std::make_shared<AtomicParser>());
             parsers.push_back(std::make_shared<InstructionBracketParser>());
             parsers.push_back(std::make_shared<CallParser>());
+            parsers.push_back(std::make_shared<DebugDirectiveParser>());
         }
         bool InstructionParser::parseTokens(TokenList& tokens, ParserResult& result) const {
             bool parsedOk = false;
