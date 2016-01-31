@@ -9,7 +9,9 @@ namespace ptx {
 		class ShlParser : public AbstractParser{
 		protected:
 			bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-                if (tokens.poll("shl")) {
+                if (tokens.peek() == "shl" || tokens.peek() == "shr") {
+                    const bool shiftLeft = tokens.peek() == "shl";
+                    tokens.removeFirst();
 					Type type;
 					size_t size;
 					if (Utils::parseTypeAndSize(tokens, &type, &size)) {
@@ -19,7 +21,10 @@ namespace ptx {
 							instr.setType(type);
 							instr.setSize(size);
 							instr.setOperands(operands);
-							result.add(std::make_shared<Shl>(std::move(instr)));
+                            if (shiftLeft)
+                                result.add(std::make_shared<Shl>(std::move(instr)));
+                            else
+                                result.add(std::make_shared<Shr>(std::move(instr)));
 							return true;
 						}
 					}

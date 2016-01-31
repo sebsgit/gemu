@@ -20,7 +20,16 @@ namespace ptx {
 					size_t size = 0;
 					if  (Utils::parseTypeAndSize(tokens, &type, &size)) {
                         const std::string name = tokens.takeFirst();
-						result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name)));
+                        size_t arrayCount = 1;
+                        if (tokens.poll("[")) {
+                            auto first = tokens.peek();
+                            int value = atoi(first.c_str());
+                            if (value > 0 && tokens.peek(1) == "]") {
+                                arrayCount = value;
+                                tokens.removeFirst(2);
+                            }
+                        }
+                        result.add(std::make_shared<ptx::VariableDeclaration>(ptx::Variable(space, type, size, name, arrayCount)));
                         if(tokens.poll(";")) {
                             ;// unused
                         }
