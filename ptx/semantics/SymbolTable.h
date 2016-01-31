@@ -7,7 +7,7 @@
 
 namespace ptx {
 	union param_storage_t {
-		unsigned long long data = 0;
+        unsigned long long data = 0;
         bool b;
         short s;
         int i;

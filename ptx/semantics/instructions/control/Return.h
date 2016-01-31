@@ -11,6 +11,7 @@ namespace ptx {
 			:_isDivergent(isDivergent)
 		{}
 		bool isDivergent() const { return this->_isDivergent; }
+        std::string toString() const override { return "<return>"; }
 	private:
 		bool _isDivergent;
 	};

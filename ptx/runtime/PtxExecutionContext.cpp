@@ -274,7 +274,12 @@ void PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				}
 			}
 		}
-		for (int i=0 ; i<16 ; ++i){
+        //TODO settings
+        int maxThreads = 16;
+        #ifdef PTX_KERNEL_DEBUG
+        maxThreads = 1;
+        #endif
+        for (int i=0 ; i<maxThreads ; ++i){
             this->_data->threads.push_back(new std::thread([&](){
 				thread_launch_data_t data;
 				bool isEmpty=false;

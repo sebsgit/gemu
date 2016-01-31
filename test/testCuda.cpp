@@ -1,6 +1,7 @@
 #include "drivers/cuda/cuda.h"
 #include "../arch/Device.h"
 #include "cuda/cudaThreads.h"
+#include "debug/KernelDebugger.h"
 #include <cassert>
 #include <iostream>
 
