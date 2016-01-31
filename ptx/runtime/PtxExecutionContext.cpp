@@ -321,6 +321,7 @@ void PtxBlockDispatcher::synchronize(){
         th->join();
         delete th;
     }
+    this->_data->threads.clear();
     if (this->_result == BlockExecResult::BlockRunning)
         this->_result = BlockExecResult::BlockOk;
 }
