@@ -11,6 +11,11 @@ class InstructionPtr;
 #include "semantics/SymbolTable.h"
 
 namespace ptx {
+
+    #ifdef PTX_KERNEL_DEBUG
+        namespace debug { class KernelDebugger; }
+    #endif
+
 	namespace exec {
 
         enum ThreadExecResult {
@@ -54,6 +59,12 @@ namespace ptx {
 			const InstructionList * _instr = nullptr;
 			size_t _pc = 0;
 			bool _barrierWait=false;
+    #ifdef PTX_KERNEL_DEBUG
+        protected:
+            static debug::KernelDebugger* _debugger;
+            void exec_debug(const InstructionList& list);
+            friend class debug::KernelDebugger;
+    #endif
 		};
 
 		class PtxBlockDispatcher {

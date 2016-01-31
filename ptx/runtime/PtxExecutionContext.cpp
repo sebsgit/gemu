@@ -7,6 +7,11 @@
 using namespace ptx;
 using namespace exec;
 
+#ifdef PTX_KERNEL_DEBUG
+#include "debug/KernelDebugger.h"
+debug::KernelDebugger* PtxExecutionContext::_debugger = nullptr;
+#endif
+
 void SymbolStorage::set(const std::string& name, const param_storage_t& storage) {
 	auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == name;});
 	if (it != _data.end()) {
@@ -108,6 +113,10 @@ size_t PtxExecutionContext::programCounter() const{
 }
 
 void PtxExecutionContext::exec(const InstructionList& list) {
+#ifdef PTX_KERNEL_DEBUG
+    if (PtxExecutionContext::_debugger)
+        return this->exec_debug(list);
+#endif
 	this->_instr = &list;
 	while (this->_pc < list.count()){
 		list.fetch(this->_pc++)->dispatch(*this);
@@ -116,6 +125,12 @@ void PtxExecutionContext::exec(const InstructionList& list) {
 	}
 	this->_instr = nullptr;
 }
+
+#ifdef PTX_KERNEL_DEBUG
+void PtxExecutionContext::exec_debug(const InstructionList& list) {
+    PtxExecutionContext::_debugger->exec(this, list);
+}
+#endif
 
 void PtxExecutionContext::exec(const Instruction& i) {
 	std::cout << "!!!EXEC DEFAULT: " << i.toString() << "\n";
