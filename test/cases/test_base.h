@@ -10,11 +10,11 @@
 #define assert_float_eq(x,y) (assert(fabs(x-y) < 0.001f))
 
 void init_test() {
-	cuInit(0);
+	cu_assert(cuInit(0));
 	int devId;
 	CUcontext context;
-	cuDeviceGet(&devId,0);
-	cuCtxCreate(&context,0,devId);
+	cu_assert(cuDeviceGet(&devId,0));
+	cu_assert(cuCtxCreate(&context,0,devId));
 }
 
 #endif

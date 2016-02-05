@@ -1,6 +1,6 @@
 #include "test_base.h"
 
-void callback_1(CUstream hStream, CUresult status, void* userData){
+void __attribute__((__stdcall__)) callback_1(CUstream hStream, CUresult status, void* userData){
 	std::cout << "\ncallback 1: " << *(int*)userData << '\n';
 }
 
