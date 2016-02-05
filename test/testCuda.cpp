@@ -2,6 +2,12 @@
 #include "../arch/Device.h"
 #include "cuda/cudaThreads.h"
 #include "debug/KernelDebugger.h"
+#include "VariableDeclaration.h"
+#include "Load.h"
+#include "Convert.h"
+#include "Move.h"
+#include "Store.h"
+#include "Return.h"
 #include <cassert>
 #include <iostream>
 
@@ -81,6 +87,7 @@ static void test_module() {
 	"st.global.u32 	[%rd2], %r1;\n"
 	"ret;\n"
 	"}\n";
+    ptx::debug::KernelDebugger debugger;
 	CUmodule modId = 0;
 	CUfunction funcHandle = 0;
 	cu_assert(cuModuleLoadData(&modId, test_source.c_str()));
@@ -93,6 +100,14 @@ static void test_module() {
 	void * params[] = {&devValue};
 	assert(hostValue != 5);
 	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+    assert(std::dynamic_pointer_cast<ptx::VariableDeclaration>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::VariableDeclaration>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::Load>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::Convert>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::Move>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::Store>(debugger.step()));
+    assert(std::dynamic_pointer_cast<ptx::Return>(debugger.step()));
+    assert(debugger.step().get() == nullptr);
 	cu_assert(cuMemcpyDtoH(&hostValue, devValue, sizeof(hostValue)));
 	assert(hostValue == -5);
 	cu_assert(cuMemFree(devValue));
@@ -113,7 +128,6 @@ static void test_module_2() {
 	"st.global.u32 	[%rd2], %r1;\n"
 	"ret;\n"
 	"}";
-
 	CUmodule modId = 0;
 	CUfunction funcHandle = 0;
 	cu_assert(cuModuleLoadData(&modId, source.c_str()));

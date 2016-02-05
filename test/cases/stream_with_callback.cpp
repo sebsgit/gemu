@@ -1,6 +1,10 @@
 #include "test_base.h"
 
-void __attribute__((__stdcall__)) callback_1(CUstream hStream, CUresult status, void* userData){
+void 
+#ifdef __WIN32
+__attribute__((__stdcall__)) 
+#endif
+callback_1(CUstream hStream, CUresult status, void* userData){
 	std::cout << "\ncallback 1: " << *(int*)userData << '\n';
 }
 

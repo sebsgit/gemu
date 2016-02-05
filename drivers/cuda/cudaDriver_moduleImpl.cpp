@@ -1,6 +1,7 @@
 #include "ptx/Parser.h"
 #include "cudaDriverApi.h"
 #include "arch/Device.h"
+#include "debug/KernelDebugger.h"
 
 CUresult cuModuleLoadData (CUmodule* module, const void* image) {
 	ptx::ParserResult result = ptx::Parser().parseModule(std::string(reinterpret_cast<const char*>(image)));
@@ -40,7 +41,7 @@ CUresult cuLaunchKernel ( 	CUfunction f,
 							void** extra )
 {
     gemu::cuda::Stream* streamPtr = nullptr;
-    return _driverContext->findStream(hStream,&streamPtr) ?
+    auto result = _driverContext->findStream(hStream,&streamPtr) ?
                 streamPtr->launch(f,
                                  gemu::cuda::dim3(gridDimX, gridDimY, gridDimZ),
                                  gemu::cuda::dim3(blockDimX, blockDimY, blockDimZ),
@@ -48,4 +49,9 @@ CUresult cuLaunchKernel ( 	CUfunction f,
                                  kernelParams,
                                  extra)
                 : CUDA_ERROR_INVALID_HANDLE;
+#ifdef PTX_KERNEL_DEBUG
+    if (auto debugger = ptx::exec::PtxExecutionContext::debugger())
+        debugger->waitForLaunch();
+#endif
+    return result;
 }

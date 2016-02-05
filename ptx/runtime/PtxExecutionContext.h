@@ -64,6 +64,11 @@ namespace ptx {
             static debug::KernelDebugger* _debugger;
             void exec_debug(const InstructionList& list);
             friend class debug::KernelDebugger;
+        public:
+            static debug::KernelDebugger* debugger() {
+                return PtxExecutionContext::_debugger;
+            }
+
     #endif
 		};
 

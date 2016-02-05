@@ -20,45 +20,40 @@ KernelDebugger::~KernelDebugger() {
     exec::PtxExecutionContext::_debugger = nullptr;
 }
 
+KernelDebugger::Result KernelDebugger::status() const {
+    return this->_stepResult;
+}
+
 void KernelDebugger::waitForLaunch() {
-    std::unique_lock<std::mutex> lock(this->_mutex);
-    if (!this->_execStarted)
-        this->_waitCondition.wait(lock);
+    this->_execStarted.waitFor(true);
 }
 
 void KernelDebugger::exec(exec::PtxExecutionContext *context, const InstructionList &list){
     context->_instr = &list;
-    this->_mutex.lock();
-    this->_execStarted = true;
-    this->_waitCondition.notify_one();
-    this->_mutex.unlock();
+    this->_execStarted.set(true);
     while (1){
-        std::unique_lock<std::mutex> lock(this->_mutex);
-        this->_waitCondition.wait(lock);
+        this->_singleStep.waitFor(true);
         this->_stepResult = Done;
         if (context->_pc < list.count()) {
-            InstructionPtr ptr = list.fetch(context->_pc++);
-            assert(ptr.get());
-            ptr->dispatch(*context);
+            this->_lastInstruction = list.fetch(context->_pc++);
+            assert(this->_lastInstruction.get());
+            this->_lastInstruction->dispatch(*context);
             this->_stepResult = Running;
+        } else {
+            this->_lastInstruction.reset();
         }
-        this->_waitCondition.notify_one();
+        this->_stepDone.set(true);
         if (this->_stepResult != Running)
             break;
-        if (context->_barrierWait) {
-            this->_stepResult = Wait;
-            this->_waitCondition.notify_one();
-            return;
-        }
     }
-    context->_instr = nullptr;
+    if (this->_stepResult != Wait)
+        context->_instr = nullptr;
 }
 
-KernelDebugger::Result KernelDebugger::step() {
-    std::unique_lock<std::mutex> lock(this->_mutex);
-    this->_waitCondition.notify_one();
-    this->_waitCondition.wait(lock);
-    return this->_stepResult;
+InstructionPtr KernelDebugger::step() {
+    this->_singleStep.set(true);
+    this->_stepDone.waitFor(true);
+    return this->_lastInstruction;
 }
 
 }
