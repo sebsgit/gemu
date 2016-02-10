@@ -1,6 +1,7 @@
 #include "runtime/PtxExecutionContext.h"
 #include "semantics/Semantics.h"
 #include "../drivers/cuda/cudaDriverApi.h"
+#include "../drivers/cuda/gemuConfig.h"
 #include <thread>
 #include <mutex>
 
@@ -274,8 +275,7 @@ void PtxBlockDispatcher::launch(ptx::Function& func, SymbolTable& symbols) {
 				}
 			}
 		}
-        //TODO settings
-        int maxThreads = 16;
+        int maxThreads = gemu::config::defaultDevice.maxRuntimeThreads;
         #ifdef PTX_KERNEL_DEBUG
         maxThreads = 1;
         #endif

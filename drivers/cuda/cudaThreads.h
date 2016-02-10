@@ -15,8 +15,9 @@ namespace gemu {
 			bool operator==(const pt3d& other) const {
 				return x==other.x && y==other.y && z==other.z;
 			}
+            T product() const { return x * y * z; }
 		};
-		typedef pt3d<size_t> dim3;
+        typedef pt3d<size_t> dim3;
 
 		template <typename T>
 		class Array3D {

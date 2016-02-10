@@ -84,7 +84,8 @@ HEADERS += ../arch/Device.h \
            ../ptx/semantics/instructions/memory/MemoryInstruction.h \
            ../ptx/semantics/instructions/memory/Move.h \
            ../ptx/semantics/instructions/memory/Store.h \
-           ../ptx/debug/KernelDebugger.h
+           ../ptx/debug/KernelDebugger.h \
+    ../drivers/cuda/gemuConfig.h
 
 SOURCES += ../ptx/Parser.cpp \
            ../ptx/Tokenizer.cpp \
@@ -95,7 +96,7 @@ SOURCES += ../ptx/Parser.cpp \
            ../ptx/parser/InstructionParser.cpp \
            ../ptx/parser/DebugDirectiveParser.cpp \
            ../ptx/runtime/PtxExecutionContext.cpp \
-           ../ptx/debug/KernelDebugger.cpp
+           ../drivers/cuda/gemuConfig.cpp
 
 TEMPLATE = app
 TARGET = gemu
@@ -116,4 +117,5 @@ lib {
 	SOURCES += test.cpp \
            testCuda.cpp \
            testParsePtx.cpp \
+           ../ptx/debug/KernelDebugger.cpp \
 }

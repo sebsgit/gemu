@@ -1,5 +1,6 @@
 #include "cudaStream.h"
 #include "cudaDriverApi.h"
+#include "gemuConfig.h"
 #include <cassert>
 
 namespace gemu{
@@ -41,6 +42,15 @@ Stream::~Stream(){
     delete this->_thread;
 }
 
+inline bool check_dev_caps(const gemu::config::device_t& dev, const dim3& grid, const dim3& block) {
+    if( (int32_t)grid.x <= dev.attribs.maxGridDimX && (int32_t)grid.y <= dev.attribs.maxGridDimY && (int32_t)grid.z <= dev.attribs.maxGridDimZ
+            && (int32_t)block.x <= dev.attribs.maxBlockDimX && (int32_t)block.y <= dev.attribs.maxBlockDimY && (int32_t)block.z <= dev.attribs.maxBlockDimZ)
+    {
+        return (int32_t)block.product() <= dev.attribs.maxThreadsPerBlock;
+    }
+    return false;
+}
+
 CUresult Stream::launch(CUfunction f,
           const dim3& gridDim,
           const dim3& blockDim,
@@ -53,7 +63,9 @@ CUresult Stream::launch(CUfunction f,
         return CUDA_ERROR_INVALID_VALUE;
     if (!kernelParams)
         return CUDA_ERROR_INVALID_VALUE;
-    //TODO sainty check on grid size
+    const auto deviceCaps = gemu::config::defaultDevice;
+    if (!check_dev_caps(deviceCaps, gridDim, blockDim))
+        return CUDA_ERROR_INVALID_VALUE;
     auto kernel = _driverContext->function(f);
     if (kernel.isNull())
         return CUDA_ERROR_NOT_FOUND;

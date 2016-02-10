@@ -1,4 +1,5 @@
 #include "cudaDriverApi.h"
+#include "gemuConfig.h"
 
 gemu::cuda::GlobalContext * _driverContext = nullptr;
 gemu::Device * _default_cuda_device = nullptr;
@@ -8,7 +9,7 @@ gemu::cuda::Stream * _default_cuda_stream = nullptr;
 CUresult cuInit (unsigned int flags) {
     PTX_UNUSED(flags);
 	if (!_default_cuda_device) {
-		_default_cuda_device = new gemu::Device(1024 * 1024 * 1024);
+        _default_cuda_device = new gemu::Device(gemu::config::defaultDevice.totalMemory);
 		_driverContext = new gemu::cuda::GlobalContext();
         _default_cuda_stream = new gemu::cuda::Stream(*_default_cuda_device, CU_STREAM_DEFAULT);
 	}
