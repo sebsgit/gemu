@@ -45,12 +45,14 @@ public:
     Result status() const;
     InstructionPtr step();
     void waitForLaunch();
+    SymbolTable& symbols();
 private:
     SafeFlag _execStarted;
     SafeFlag _singleStep;
     SafeFlag _stepDone;
     Result _stepResult = NotInitialized;
     InstructionPtr _lastInstruction;
+    ptx::exec::PtxExecutionContext* _context = nullptr;
 };
 
 

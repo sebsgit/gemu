@@ -139,6 +139,7 @@ static void test_debugger() {
     assert(std::dynamic_pointer_cast<ptx::Convert>(debugger.step()));
     assert(std::dynamic_pointer_cast<ptx::Move>(debugger.step()));
     assert(std::dynamic_pointer_cast<ptx::Store>(debugger.step()));
+    assert(debugger.symbols()["%r1"].i == -5);
     assert(std::dynamic_pointer_cast<ptx::Return>(debugger.step()));
     assert(debugger.step().get() == nullptr);
     cu_assert(cuMemcpyDtoH(&hostValue, devValue, sizeof(hostValue)));

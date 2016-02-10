@@ -29,6 +29,8 @@ void KernelDebugger::waitForLaunch() {
 }
 
 void KernelDebugger::exec(exec::PtxExecutionContext *context, const InstructionList &list){
+    assert(context);
+    this->_context = context;
     context->_instr = &list;
     this->_execStarted.set(true);
     while (1){
@@ -54,6 +56,11 @@ InstructionPtr KernelDebugger::step() {
     this->_singleStep.set(true);
     this->_stepDone.waitFor(true);
     return this->_lastInstruction;
+}
+
+SymbolTable& KernelDebugger::symbols() {
+    assert(this->_context);
+    return this->_context->_symbols;
 }
 
 }

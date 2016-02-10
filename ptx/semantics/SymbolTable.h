@@ -92,6 +92,9 @@ namespace ptx {
                 return tmp;
 			return this->_sharedData->data.get(name);
 		}
+        param_storage_t operator[](const std::string& name) const {
+            return this->get(name);
+        }
 		unsigned long long address(const std::string& name) const {
             unsigned long long result = this->_data.address(name);
             if (result == 0)
