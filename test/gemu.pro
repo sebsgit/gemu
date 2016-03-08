@@ -112,6 +112,7 @@ lib {
 	TARGET = cuda_lib/cuda
 } else {
         DEFINES += PTX_KERNEL_DEBUG
+        QMAKE_CXXFLAGS += -pg
 	TEMPLATE = app
 	TARGET = test
 	SOURCES += test.cpp \
