@@ -801,6 +801,14 @@ static void test_with_kernel_array() {
         "}\n";
     ptx::ParserResult result = ptx::Parser().parseModule(source);
     assert(result.empty()==false);
+	ptx::Function kernel = result.fetch<ptx::FunctionDeclaration>(3)->func();
+	assert(kernel.name() == "_Z6kernelPiS_i");
+	auto vardecl = kernel.fetch<ptx::VariableDeclaration>(0);
+	assert(vardecl);
+	ptx::Variable var = vardecl->var();
+	assert(var.name() == "__local_depot0");
+	assert(var.size() == 8/8);
+	assert(var.arraySize() == 1024);
 }
 
 void test_ptx() {
