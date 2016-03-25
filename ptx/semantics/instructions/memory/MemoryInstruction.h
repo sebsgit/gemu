@@ -111,6 +111,30 @@ namespace ptx {
            return left <= right;
        }
     };
+	template< template<typename T> class Operator>
+	param_storage_t computeOperator(const Type type,
+									const size_t size,
+									const param_storage_t& left,
+									const param_storage_t& right)
+	{
+		PTX_UNUSED(size);
+		param_storage_t dest;
+		switch (type) {
+		case Type::Signed:
+			dest.i = Operator<int>()(left.i, right.i);
+			break;
+		case Type::Unsigned:
+			dest.u = Operator<unsigned>()(left.u, right.u);
+			break;
+		case Type::Float:
+			dest.f = Operator<float>()(left.f, right.f);
+			break;
+		default:
+			break;
+		}
+		return dest;
+	}
+
     template < template<typename T> class Operator>
     void dispatchOperator(Type type,
                           const size_t size,
@@ -119,24 +143,9 @@ namespace ptx {
                           const MemoryInstructionOperand& sourceLeft,
                           const MemoryInstructionOperand& sourceRight)
     {
-        PTX_UNUSED(size);
-        param_storage_t dest = symbols.get(result.symbol());
         const param_storage_t left = symbols.get(sourceLeft.symbol());
         const param_storage_t right = symbols.get(sourceRight.symbol());
-        switch (type) {
-        case Type::Signed:
-            dest.i = Operator<int>()(left.i, right.i);
-            break;
-        case Type::Unsigned:
-            dest.u = Operator<unsigned>()(left.u, right.u);
-            break;
-        case Type::Float:
-            dest.f = Operator<float>()(left.f, right.f);
-            break;
-        default:
-            break;
-        }
-        symbols.set(result.symbol(), dest);
+		symbols.set(result.symbol(), computeOperator<Operator>(type, size, left, right));
     }
 
 	class MemoryInstruction : public Instruction {
