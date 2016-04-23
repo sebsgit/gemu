@@ -4,7 +4,7 @@
 #define PTX_UNUSED(x) (void)(x)
 
 namespace ptx {
-	enum AllocSpace {
+	enum class AllocSpace {
 		Register,
 		SpecialRegister,
 		Constant,
@@ -14,7 +14,7 @@ namespace ptx {
 		Shared,
 		Undefined
 	};
-	enum Type {
+	enum class Type {
 		Signed,
 		Unsigned,
 		Float,
@@ -22,12 +22,12 @@ namespace ptx {
 		Predicate,
 		Unknown
 	};
-	enum VectorType {
+	enum class VectorType {
 		VecNone,
 		Vec2,
 		Vec4
 	};
-	enum CacheOperation {
+	enum class CacheOperation {
 		CacheAllLevels,
 		CacheGlobal,
 		CacheStreaming,
@@ -37,7 +37,7 @@ namespace ptx {
 		CacheWriteBack,
 		CacheWriteThrough
 	};
-	enum CompareOperation {
+	enum class CompareOperation {
 		NotValidCompareOperation,
 		Equal,
 		NotEqual,
@@ -46,13 +46,13 @@ namespace ptx {
 		LowerEqual,
 		GreaterEqual
 	};
-	enum BooleanOperation {
+	enum class BooleanOperation {
 		NotValidBooleanOperation,
 		And,
 		Or,
 		Xor
 	};
-	enum BarrierType {
+	enum class BarrierType {
 		BarSync,
 		BarArrive,
 		BarReduction

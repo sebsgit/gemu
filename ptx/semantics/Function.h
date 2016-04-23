@@ -60,7 +60,7 @@ namespace ptx {
 		std::string _name;
 		FunctionParameters _parameters;
         Variable _returnVariable;
-		AllocSpace _space = Undefined;
+		AllocSpace _space = AllocSpace::Undefined;
 	};
 }
 
