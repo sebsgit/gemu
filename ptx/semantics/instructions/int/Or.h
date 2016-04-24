@@ -12,8 +12,10 @@ namespace ptx {
             return "<bit_or> " + MemoryInstruction::toString();
         }
         void resolve(SymbolTable& symbols) const override {
-            param_storage_t result;
-			result.data = symbols.get(this->_operands[1]).data | symbols.get(this->_operands[2]).data;
+			const param_storage_t result = computeBitwiseOperator<BitwiseOr>(
+						symbols.get(this->_operands[1]),
+						symbols.get(this->_operands[2])
+					);
 			symbols.set(this->_operands[0], result);
         }
     };
@@ -26,8 +28,10 @@ namespace ptx {
             return "<bit_xor> " + MemoryInstruction::toString();
         }
         void resolve(SymbolTable& symbols) const override {
-            param_storage_t result;
-			result.data = symbols.get(this->_operands[1]).data ^ symbols.get(this->_operands[2]).data;
+			const param_storage_t result = computeBitwiseOperator<BitwiseXOR>(
+						symbols.get(this->_operands[1]),
+						symbols.get(this->_operands[2])
+					);
 			symbols.set(this->_operands[0], result);
         }
     };

@@ -114,6 +114,27 @@ namespace ptx {
            return left <= right;
        }
     };
+	template <typename T>
+	class BitwiseAnd {
+	public:
+		T operator() (const T left, const T right) const {
+			return left & right;
+		}
+	};
+	template <typename T>
+	class BitwiseOr {
+	public:
+		T operator() (const T left, const T right) const {
+			return left | right;
+		}
+	};
+	template <typename T>
+	class BitwiseXOR {
+	public:
+		T operator() (const T left, const T right) const {
+			return left ^ right;
+		}
+	};
 	template< template<typename T> class Operator>
 	param_storage_t computeOperator(const Type type,
 									const size_t size,
@@ -136,6 +157,12 @@ namespace ptx {
 			break;
 		}
 		return dest;
+	}
+	template <template<typename T> class BitOp>
+	param_storage_t computeBitwiseOperator(const param_storage_t& left, const param_storage_t& right) {
+		param_storage_t result;
+		result.data = BitOp<decltype(left.data)>()(left.data, right.data);
+		return result;
 	}
 
     template < template<typename T> class Operator>
