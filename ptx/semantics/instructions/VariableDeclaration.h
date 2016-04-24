@@ -37,11 +37,10 @@ namespace ptx {
                 for (size_t i=1 ; i<count ; ++i) {
                     std::stringstream ss;
                     ss << baseName << i;
-                    symbols.set(ptx::Variable(this->_toDeclare.space(),
-                                              this->_toDeclare.type(),
-                                              this->_toDeclare.size(),
-                                              ss.str()),
-                                param_storage_t());
+					symbols.declare(ptx::Variable(this->_toDeclare.space(),
+												this->_toDeclare.type(),
+												this->_toDeclare.size(),
+												ss.str()));
                 }
             } else{
 				if (this->_toDeclare.space() == AllocSpace::Shared) {

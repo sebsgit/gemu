@@ -12,7 +12,7 @@ namespace ptx {
 			return "<bit_and> " + MemoryInstruction::toString();
 		}
 		void resolve(SymbolTable& symbols) const override {
-			const param_storage_t result = computeBitwiseOperator<BitwiseAnd>(
+			const auto result = computeBitwiseOperator<BitwiseAnd>(
 						symbols.get(this->_operands[1]),
 						symbols.get(this->_operands[2])
 					);

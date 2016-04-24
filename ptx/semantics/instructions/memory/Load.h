@@ -15,7 +15,7 @@ namespace ptx {
         //TODO check with offsets
         void resolve(SymbolTable& symbols) const override {
             param_storage_t stored;
-			param_storage_t source = symbols.get(this->_operands[1]);
+			auto source = symbols.get(this->_operands[1]);
 			if (this->space() == AllocSpace::Global) {
 				param_copy_from(stored, (void*)(param_cast<address_t>(source) + this->_operands[1].offset()), this->size());
 			} else {

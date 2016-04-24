@@ -12,7 +12,7 @@ namespace ptx {
             return "<bit_or> " + MemoryInstruction::toString();
         }
         void resolve(SymbolTable& symbols) const override {
-			const param_storage_t result = computeBitwiseOperator<BitwiseOr>(
+			const auto result = computeBitwiseOperator<BitwiseOr>(
 						symbols.get(this->_operands[1]),
 						symbols.get(this->_operands[2])
 					);
@@ -28,7 +28,7 @@ namespace ptx {
             return "<bit_xor> " + MemoryInstruction::toString();
         }
         void resolve(SymbolTable& symbols) const override {
-			const param_storage_t result = computeBitwiseOperator<BitwiseXOR>(
+			const auto result = computeBitwiseOperator<BitwiseXOR>(
 						symbols.get(this->_operands[1]),
 						symbols.get(this->_operands[2])
 					);

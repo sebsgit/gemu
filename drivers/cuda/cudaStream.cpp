@@ -73,9 +73,9 @@ CUresult Stream::launch(CUfunction f,
     ptx::SymbolTable symbols;
     symbols.setGlobalSection(_driverContext->globalSymbols());
     for (size_t i=0 ; i<funcParams.size() ; ++i) {
-        void * address = kernelParams[i];
+		const void * address = kernelParams[i];
         ptx::param_storage_t storage;
-        memcpy(&storage, address, funcParams[i].size());
+		ptx::param_copy_from(storage, address, funcParams[i].size());
         symbols.set(funcParams[i], storage);
     }
     auto kernelLaunch = AbstractStreamItemPtr(new KernelLaunchItem(gemu::cuda::ThreadGrid(gridDim,blockDim),

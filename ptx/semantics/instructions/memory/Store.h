@@ -12,11 +12,11 @@ namespace ptx {
 			return "<store> " + MemoryInstruction::toString();
 		}
         void resolve(SymbolTable& symbols) const override {
-			const param_storage_t source = symbols.get(this->_operands[1]);
+			const auto source = symbols.get(this->_operands[1]);
 			if (this->space() == AllocSpace::Shared || this->space() == AllocSpace::Parameter) {
 				symbols.set(this->_operands[0], source);
 			} else {
-				const param_storage_t dest = symbols.get(this->_operands[0]);
+				const auto dest = symbols.get(this->_operands[0]);
 				param_copy_into((void*)(param_cast<address_t>(dest) + this->_operands[0].offset()), source, this->size());
 			}
         }

@@ -12,10 +12,7 @@ namespace ptx {
 			return "<convert> " + MemoryInstruction::toString();
 		}
         void resolve(SymbolTable& symbols) const override {
-            param_storage_t stored;
-			param_storage_t source = symbols.get(this->_operands[1]);
-            memcpy(&stored, &source, this->size());
-			symbols.set(this->_operands[0], stored);
+			symbols.set(this->_operands[0], symbols.get(this->_operands[1]));
         }
 	};
 
@@ -28,7 +25,7 @@ namespace ptx {
 		}
 		void resolve(SymbolTable& symbols) const override {
 			param_storage_t stored;
-			param_storage_t source = symbols.get(this->_operands[1]);
+			auto source = symbols.get(this->_operands[1]);
 			param_cast<float>(stored) = param_cast<unsigned>(source);
 			symbols.set(this->_operands[0], stored);
 		}

@@ -13,8 +13,8 @@ namespace ptx {
 			return "<move> " + MemoryInstruction::toString();
 		}
         void resolve(SymbolTable& symbols) const override {
-			param_storage_t dest = symbols.get(this->_operands[0]);
-			const param_storage_t source = symbols.get(this->_operands[1]);
+			auto dest = symbols.get(this->_operands[0]);
+			const auto source = symbols.get(this->_operands[1]);
 			if (symbols.variable(this->_operands[1]).space()==AllocSpace::Shared){
 				param_cast<address_t>(dest) = symbols.address(this->_operands[1]);
 			} else {

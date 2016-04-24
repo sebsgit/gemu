@@ -12,9 +12,9 @@ namespace ptx {
             return "<selp> " + MemoryInstruction::toString();
         }
         void resolve(SymbolTable& symbols) const override {
-			const param_storage_t left = symbols.get(this->_operands[1]);
-			const param_storage_t right = symbols.get(this->_operands[2]);
-			const param_storage_t condition = symbols.get(this->_operands[3]);
+			const auto left = symbols.get(this->_operands[1]);
+			const auto right = symbols.get(this->_operands[2]);
+			const auto condition = symbols.get(this->_operands[3]);
 			symbols.set(this->_operands[0], param_cast<bool>(condition) ? left : right);
         }
     };
