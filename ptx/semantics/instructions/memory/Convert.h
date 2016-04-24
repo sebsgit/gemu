@@ -13,9 +13,9 @@ namespace ptx {
 		}
         void resolve(SymbolTable& symbols) const override {
             param_storage_t stored;
-            param_storage_t source = symbols.get(this->_operands[1].symbol());
+			param_storage_t source = symbols.get(this->_operands[1]);
             memcpy(&stored, &source, this->size());
-            symbols.set(this->_operands[0].symbol(), stored);
+			symbols.set(this->_operands[0], stored);
         }
 	};
 
@@ -28,9 +28,9 @@ namespace ptx {
 		}
 		void resolve(SymbolTable& symbols) const override {
 			param_storage_t stored;
-			param_storage_t source = symbols.get(this->_operands[1].symbol());
+			param_storage_t source = symbols.get(this->_operands[1]);
 			stored.f = source.u;
-			symbols.set(this->_operands[0].symbol(), stored);
+			symbols.set(this->_operands[0], stored);
 		}
 	};
 

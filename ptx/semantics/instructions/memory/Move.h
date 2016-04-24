@@ -13,14 +13,14 @@ namespace ptx {
 			return "<move> " + MemoryInstruction::toString();
 		}
         void resolve(SymbolTable& symbols) const override {
-            param_storage_t dest = symbols.get(this->_operands[0].symbol());
-            const param_storage_t source = symbols.get(this->_operands[1].symbol());
-			if (symbols.variable(this->_operands[1].symbol()).space()==AllocSpace::Shared){
-				dest.data = symbols.address(this->_operands[1].symbol());
+			param_storage_t dest = symbols.get(this->_operands[0]);
+			const param_storage_t source = symbols.get(this->_operands[1]);
+			if (symbols.variable(this->_operands[1]).space()==AllocSpace::Shared){
+				dest.data = symbols.address(this->_operands[1]);
 			} else {
             	memcpy(&dest, &source, this->size());
 			}
-            symbols.set(this->_operands[0].symbol(), dest);
+			symbols.set(this->_operands[0], dest);
         }
 	};
 }

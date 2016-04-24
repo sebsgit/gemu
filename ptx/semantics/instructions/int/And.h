@@ -13,8 +13,8 @@ namespace ptx {
 		}
 		void resolve(SymbolTable& symbols) const override {
             param_storage_t result;
-			result.data = symbols.get(this->_operands[1].symbol()).data & symbols.get(this->_operands[2].symbol()).data;
-			symbols.set(this->_operands[0].symbol(), result);
+			result.data = symbols.get(this->_operands[1]).data & symbols.get(this->_operands[2]).data;
+			symbols.set(this->_operands[0], result);
 		}
 	};
 }

@@ -146,8 +146,8 @@ namespace ptx {
                           const MemoryInstructionOperand& sourceLeft,
                           const MemoryInstructionOperand& sourceRight)
     {
-        const param_storage_t left = symbols.get(sourceLeft.symbol());
-        const param_storage_t right = symbols.get(sourceRight.symbol());
+		const param_storage_t left = symbols.get(sourceLeft.symbol());
+		const param_storage_t right = symbols.get(sourceRight.symbol());
 		symbols.set(result.symbol(), computeOperator<Operator>(type, size, left, right));
     }
 
