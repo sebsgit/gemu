@@ -17,7 +17,7 @@ namespace ptx {
 				symbols.set(this->_operands[0], source);
 			} else {
 				const param_storage_t dest = symbols.get(this->_operands[0]);
-				memcpy((void*)(param_cast<address_t>(dest) + this->_operands[0].offset()), &source.data, this->size());
+				param_copy_into((void*)(param_cast<address_t>(dest) + this->_operands[0].offset()), source, this->size());
 			}
         }
 	};

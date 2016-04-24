@@ -3,6 +3,7 @@
 
 #include "semantics/Variable.h"
 #include <vector>
+#include <cstring>
 #include <mutex>
 
 namespace ptx {
@@ -43,6 +44,12 @@ namespace ptx {
 	template<> inline double param_cast(const param_storage_t& s) { return s.d; }
 	template<> inline unsigned param_cast(const param_storage_t& s) { return s.u; }
 	template<> inline unsigned long param_cast(const param_storage_t& s) { return s.ul; }
+	inline void param_copy_from(param_storage_t& output, const void* input, const size_t size) {
+		std::memcpy(&output.data, input, size);
+	}
+	inline void param_copy_into(void* output, const param_storage_t& input, const size_t size) {
+		std::memcpy(output, &input.data, size);
+	}
 
 	class SymbolStorage {
 	public:
