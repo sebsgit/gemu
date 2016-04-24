@@ -13,21 +13,8 @@ namespace ptx {
 					AllocSpace space;
 					if (Utils::parseAllocSpace(tokens,&space) && (space==AllocSpace::Shared || space==AllocSpace::Global)){
 						//TODO other atomics
-						if (tokens.poll(".add")) {
-							Type type;
-							size_t size;
-							if (Utils::parseTypeAndSize(tokens, &type, &size)) {
-								MemoryInstructionOperands operands;
-								if (Utils::parseOperands(tokens, 3, &operands)) {
-									MemoryInstruction instr;
-									instr.setType(type);
-									instr.setSize(size);
-									instr.setOperands(operands);
-									result.add(std::make_shared<AtomicAdd>(std::move(instr)));
-									return true;
-								}
-							}
-						}
+						if (this->standardParse<AtomicAdd>(".add", 3, tokens, result))
+							return true;
 					}
 				}
 				return false;

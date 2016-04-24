@@ -17,9 +17,9 @@ namespace ptx {
             param_storage_t stored;
 			param_storage_t source = symbols.get(this->_operands[1]);
 			if (this->space() == AllocSpace::Global) {
-                memcpy(&stored.data, (void*)(source.data + this->_operands[1].offset()), this->size());
+				memcpy(&stored.data, (void*)(source.data + this->_operands[1].offset()), this->size());
 			} else {
-                memcpy(&stored, &source, this->size());
+				memcpy(&stored, &source, this->size());
 			}
 			symbols.set(this->_operands[0], stored);
         }

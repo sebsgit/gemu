@@ -9,22 +9,7 @@ namespace ptx {
         class DivParser : public AbstractParser{
         protected:
             bool parseTokens(TokenList& tokens, ParserResult& result) const override {
-                if (tokens.poll("div")) {
-                    Type type;
-                    size_t size;
-                    if (Utils::parseTypeAndSize(tokens, &type, &size)) {
-                        MemoryInstructionOperands operands;
-                        if (Utils::parseOperands(tokens, 3, &operands)) {
-                            MemoryInstruction instr;
-                            instr.setType(type);
-                            instr.setSize(size);
-                            instr.setOperands(operands);
-                            result.add(std::make_shared<Div>(std::move(instr)));
-                            return true;
-                        }
-                    }
-                }
-                return false;
+				return this->standardParse<Div>("div", 3, tokens, result);
             }
         };
     }

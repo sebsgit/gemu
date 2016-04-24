@@ -13,11 +13,9 @@ namespace ptx {
 		}
         void resolve(SymbolTable& symbols) const override {
 			const param_storage_t source = symbols.get(this->_operands[1]);
-			if (this->space() == AllocSpace::Shared) {
+			if (this->space() == AllocSpace::Shared || this->space() == AllocSpace::Parameter) {
 				symbols.set(this->_operands[0], source);
-            } else if (this->space() == AllocSpace::Parameter) {
-				symbols.set(this->_operands[0], source);
-            } else {
+			} else {
 				const param_storage_t dest = symbols.get(this->_operands[0]);
                 memcpy((void*)(dest.data + this->_operands[0].offset()), &source.data, this->size());
 			}

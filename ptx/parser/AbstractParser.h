@@ -22,6 +22,25 @@ namespace ptx {
 			}
 		protected:
 			virtual bool parseTokens(TokenList& tokens, ParserResult& result) const = 0;
+			template <typename T>
+			bool standardParse(const token_t& token, const int opCount, TokenList& tokens, ParserResult& result) const {
+				if (tokens.poll(token)) {
+					Type type;
+					size_t size;
+					if (Utils::parseTypeAndSize(tokens, &type, &size)) {
+						MemoryInstructionOperands operands;
+						if (Utils::parseOperands(tokens, opCount, &operands)) {
+							MemoryInstruction instr;
+							instr.setType(type);
+							instr.setSize(size);
+							instr.setOperands(operands);
+							result.add(std::make_shared<T>(std::move(instr)));
+							return true;
+						}
+					}
+				}
+				return false;
+			}
 		};
 
 		template <typename Parser>
