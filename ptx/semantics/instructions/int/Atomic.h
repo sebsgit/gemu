@@ -16,8 +16,8 @@ namespace ptx {
 			const unsigned long long address = symbols.get(this->_operands[1]).data;
 			param_storage_t * operand1 = reinterpret_cast<param_storage_t*>(address);
 			symbols.lockSharedSection();
+			*operand1 = computeOperator<Addition>(this->type(), this->size(), *operand1, operand2);
 			symbols.set(this->_operands[0], *operand1);
-			operand1->u += operand2.u;
 			symbols.unlockSharedSection();
 		}
 	};
