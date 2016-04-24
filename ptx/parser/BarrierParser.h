@@ -16,7 +16,8 @@ namespace ptx {
 						MemoryInstruction instr;
 						if (Utils::parseOperands(tokens, 1, &operands)){
 							instr.setOperands(operands);
-							const int id = atoi(operands[0].symbol().c_str());
+							const std::string str = operands[0];
+							const int id = atoi(str.c_str());
 							result.add(std::make_shared<ptx::Barrier>(id, type, std::move(instr)));
 							return true;
 						}

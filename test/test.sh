@@ -1,6 +1,14 @@
 #!/bin/bash
 qmake && make
+if [[ $? -ne 0 ]]; then
+    echo -e "\nmake error.\n"
+    exit
+fi
 qmake -config lib && make
+if [[ $? -ne 0 ]]; then
+    echo -e "\nmake lib error.\n"
+    exit
+fi
 if [[ $# -eq 0 ]]; then
 	./test
 	if [[ $? -ne 0 ]]; then

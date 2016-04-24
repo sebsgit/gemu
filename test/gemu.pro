@@ -126,3 +126,6 @@ lib {
            testParsePtx.cpp \
            ../ptx/debug/KernelDebugger.cpp \
 }
+
+DISTFILES += \
+    test.sh

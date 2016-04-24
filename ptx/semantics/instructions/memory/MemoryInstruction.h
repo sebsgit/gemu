@@ -18,6 +18,9 @@ namespace ptx {
 		std::string toString() const {
 			return this->symbol() + (isAddressed() ? " [addres]" : "") + (offset() ? "[off]":"");
 		}
+		operator std::string() const {
+			return this->_name;
+		}
 	private:
 		std::string _name;
 		bool _isAddressed = false;
