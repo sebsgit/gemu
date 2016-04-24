@@ -17,8 +17,32 @@ namespace ptx {
         double d;
 		unsigned u;
         unsigned long ul;
-        unsigned long long ull;
 	};
+
+	using address_t = unsigned long long;
+
+	template <typename T> T& param_cast(param_storage_t& s) { return -1; }
+	template<> inline unsigned long long& param_cast(param_storage_t& s) { return s.data; }
+	template<> inline bool& param_cast(param_storage_t& s) { return s.b; }
+	template<> inline short& param_cast(param_storage_t& s) { return s.s; }
+	template<> inline int& param_cast(param_storage_t& s) { return s.i; }
+	template<> inline long& param_cast(param_storage_t& s) { return s.l; }
+	template<> inline long long& param_cast(param_storage_t& s) { return s.ll; }
+	template<> inline float& param_cast(param_storage_t& s) { return s.f; }
+	template<> inline double& param_cast(param_storage_t& s) { return s.d; }
+	template<> inline unsigned& param_cast(param_storage_t& s) { return s.u; }
+	template<> inline unsigned long& param_cast(param_storage_t& s) { return s.ul; }
+	template <typename T> T param_cast(const param_storage_t& s) { return -1; }
+	template<> inline unsigned long long param_cast(const param_storage_t& s) { return s.data; }
+	template<> inline bool param_cast(const param_storage_t& s) { return s.b; }
+	template<> inline short param_cast(const param_storage_t& s) { return s.s; }
+	template<> inline int param_cast(const param_storage_t& s) { return s.i; }
+	template<> inline long param_cast(const param_storage_t& s) { return s.l; }
+	template<> inline long long param_cast(const param_storage_t& s) { return s.ll; }
+	template<> inline float param_cast(const param_storage_t& s) { return s.f; }
+	template<> inline double param_cast(const param_storage_t& s) { return s.d; }
+	template<> inline unsigned param_cast(const param_storage_t& s) { return s.u; }
+	template<> inline unsigned long param_cast(const param_storage_t& s) { return s.ul; }
 
 	class SymbolStorage {
 	public:

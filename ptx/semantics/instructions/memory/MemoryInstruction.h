@@ -145,13 +145,13 @@ namespace ptx {
 		param_storage_t dest;
 		switch (type) {
 		case Type::Signed:
-			dest.i = Operator<int>()(left.i, right.i);
+			param_cast<int>(dest) = Operator<int>()(param_cast<int>(left), param_cast<int>(right));
 			break;
 		case Type::Unsigned:
-			dest.u = Operator<unsigned>()(left.u, right.u);
+			param_cast<unsigned>(dest) = Operator<unsigned>()(param_cast<unsigned>(left), param_cast<unsigned>(right));
 			break;
 		case Type::Float:
-			dest.f = Operator<float>()(left.f, right.f);
+			param_cast<float>(dest) = Operator<float>()(param_cast<float>(left), param_cast<float>(right));
 			break;
 		default:
 			break;
@@ -160,8 +160,9 @@ namespace ptx {
 	}
 	template <template<typename T> class BitOp>
 	param_storage_t computeBitwiseOperator(const param_storage_t& left, const param_storage_t& right) {
+		using ull = unsigned long long;
 		param_storage_t result;
-		result.data = BitOp<decltype(left.data)>()(left.data, right.data);
+		param_cast<ull>(result) = BitOp<ull>()(param_cast<ull>(left), param_cast<ull>(right));
 		return result;
 	}
 

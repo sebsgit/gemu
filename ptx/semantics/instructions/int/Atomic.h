@@ -13,7 +13,7 @@ namespace ptx {
 		}
 		void resolve(SymbolTable& symbols) const override {
 			const param_storage_t operand2 = symbols.get(this->_operands[2]);
-			const unsigned long long address = symbols.get(this->_operands[1]).data;
+			const address_t address = param_cast<address_t>(symbols.get(this->_operands[1]));
 			param_storage_t * operand1 = reinterpret_cast<param_storage_t*>(address);
 			symbols.lockSharedSection();
 			*operand1 = computeOperator<Addition>(this->type(), this->size(), *operand1, operand2);

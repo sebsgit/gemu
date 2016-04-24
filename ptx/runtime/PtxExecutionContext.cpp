@@ -66,9 +66,9 @@ param_storage_t SymbolStorage::get(const std::string& name) const {
 	if (name.size() > 2 && name[0]=='0' && name[1] == 'f'){
 		const auto number = name.substr(2, name.size()-2);
 		const int i = strtol(number.c_str(), 0, 16);
-		result.f = *reinterpret_cast<const float*>(&i);
+		param_cast<float>(result) = *reinterpret_cast<const float*>(&i);
 	} else {
-		result.data = atoi(name.c_str());
+		param_cast<unsigned long long>(result) = atoi(name.c_str());
 	}
 	return result;
 }
@@ -141,7 +141,7 @@ void PtxExecutionContext::exec(const Instruction& i) {
 static bool test_predicate(const Instruction& i, const SymbolTable& symbols) {
 	if (i.hasPredicate()) {
         const param_storage_t value = symbols.get(i.predicate());
-        if (value.b == i.predicateNegated()) {
+		if (param_cast<bool>(value) == i.predicateNegated()) {
             return true;
         }
     }
@@ -232,7 +232,7 @@ PtxBlockDispatcher::~PtxBlockDispatcher(){
 
 static void alloc_constant(SymbolTable& symbols, const std::string& name, const int value) {
     param_storage_t tmp;
-    tmp.i = value;
+	param_cast<int>(tmp) = value;
     symbols.set(ptx::Variable(AllocSpace::Constant,Type::Signed,sizeof(int),name),tmp);
 }
 

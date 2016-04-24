@@ -29,7 +29,7 @@ namespace ptx {
 		void resolve(SymbolTable& symbols) const override {
 			param_storage_t stored;
 			param_storage_t source = symbols.get(this->_operands[1]);
-			stored.f = source.u;
+			param_cast<float>(stored) = param_cast<unsigned>(source);
 			symbols.set(this->_operands[0], stored);
 		}
 	};
