@@ -4,10 +4,11 @@
 #include "semantics/Variable.h"
 #include <vector>
 #include <cstring>
+#include <memory>
 #include <mutex>
 
 namespace ptx {
-	union param_storage_t {
+	union param_raw_storage_t {
         unsigned long long data = 0;
         bool b;
         short s;
@@ -20,35 +21,56 @@ namespace ptx {
         unsigned long ul;
 	};
 
+	class param_storage_t {
+	public:
+		/*implicit*/
+		param_storage_t(const param_raw_storage_t& init=param_raw_storage_t())
+			:_data(init)
+		{}
+		static param_storage_t allocArray(const size_t size) {
+			param_storage_t result;
+			result._allocAddr.reset(malloc(size), ::free);
+			return result;
+		}
+	private:
+		param_raw_storage_t _data;
+		std::shared_ptr<void> _allocAddr;
+
+		template<typename T> friend T& param_cast(param_storage_t&);
+		template<typename T> friend T param_cast(const param_storage_t&);
+		friend void param_copy_from(param_storage_t& output, const void* input, const size_t size);
+		friend void param_copy_into(void* output, const param_storage_t& input, const size_t size);
+	};
+
 	using address_t = unsigned long long;
 
 	template <typename T> T& param_cast(param_storage_t& s) { return -1; }
-	template<> inline unsigned long long& param_cast(param_storage_t& s) { return s.data; }
-	template<> inline bool& param_cast(param_storage_t& s) { return s.b; }
-	template<> inline short& param_cast(param_storage_t& s) { return s.s; }
-	template<> inline int& param_cast(param_storage_t& s) { return s.i; }
-	template<> inline long& param_cast(param_storage_t& s) { return s.l; }
-	template<> inline long long& param_cast(param_storage_t& s) { return s.ll; }
-	template<> inline float& param_cast(param_storage_t& s) { return s.f; }
-	template<> inline double& param_cast(param_storage_t& s) { return s.d; }
-	template<> inline unsigned& param_cast(param_storage_t& s) { return s.u; }
-	template<> inline unsigned long& param_cast(param_storage_t& s) { return s.ul; }
+	template<> inline unsigned long long& param_cast(param_storage_t& s) { return s._data.data; }
+	template<> inline bool& param_cast(param_storage_t& s) { return s._data.b; }
+	template<> inline short& param_cast(param_storage_t& s) { return s._data.s; }
+	template<> inline int& param_cast(param_storage_t& s) { return s._data.i; }
+	template<> inline long& param_cast(param_storage_t& s) { return s._data.l; }
+	template<> inline long long& param_cast(param_storage_t& s) { return s._data.ll; }
+	template<> inline float& param_cast(param_storage_t& s) { return s._data.f; }
+	template<> inline double& param_cast(param_storage_t& s) { return s._data.d; }
+	template<> inline unsigned& param_cast(param_storage_t& s) { return s._data.u; }
+	template<> inline unsigned long& param_cast(param_storage_t& s) { return s._data.ul; }
 	template <typename T> T param_cast(const param_storage_t& s) { return -1; }
-	template<> inline unsigned long long param_cast(const param_storage_t& s) { return s.data; }
-	template<> inline bool param_cast(const param_storage_t& s) { return s.b; }
-	template<> inline short param_cast(const param_storage_t& s) { return s.s; }
-	template<> inline int param_cast(const param_storage_t& s) { return s.i; }
-	template<> inline long param_cast(const param_storage_t& s) { return s.l; }
-	template<> inline long long param_cast(const param_storage_t& s) { return s.ll; }
-	template<> inline float param_cast(const param_storage_t& s) { return s.f; }
-	template<> inline double param_cast(const param_storage_t& s) { return s.d; }
-	template<> inline unsigned param_cast(const param_storage_t& s) { return s.u; }
-	template<> inline unsigned long param_cast(const param_storage_t& s) { return s.ul; }
+	template<> inline unsigned long long param_cast(const param_storage_t& s) { return s._data.data; }
+	template<> inline bool param_cast(const param_storage_t& s) { return s._data.b; }
+	template<> inline short param_cast(const param_storage_t& s) { return s._data.s; }
+	template<> inline int param_cast(const param_storage_t& s) { return s._data.i; }
+	template<> inline long param_cast(const param_storage_t& s) { return s._data.l; }
+	template<> inline long long param_cast(const param_storage_t& s) { return s._data.ll; }
+	template<> inline float param_cast(const param_storage_t& s) { return s._data.f; }
+	template<> inline double param_cast(const param_storage_t& s) { return s._data.d; }
+	template<> inline unsigned param_cast(const param_storage_t& s) { return s._data.u; }
+	template<> inline unsigned long param_cast(const param_storage_t& s) { return s._data.ul; }
 	inline void param_copy_from(param_storage_t& output, const void* input, const size_t size) {
-		std::memcpy(&output.data, input, size);
+		std::memcpy(output._allocAddr ? output._allocAddr.get() : &output._data.data, input, size);
 	}
 	inline void param_copy_into(void* output, const param_storage_t& input, const size_t size) {
-		std::memcpy(output, &input.data, size);
+		std::memcpy(output, input._allocAddr ? input._allocAddr.get() : &input._data.data, size);
 	}
 
 	class SymbolStorage {
@@ -74,7 +96,7 @@ namespace ptx {
 		unsigned long long address(const std::string& name) const;
 		void print() const{
 			for (const auto& x: _data)
-                std::cout << x.var.name() << ": " << x.data.i << "\n";
+				std::cout << x.var.name() << ": " << param_cast<int>(x.data) << "\n";
 		}
 
 	private:
