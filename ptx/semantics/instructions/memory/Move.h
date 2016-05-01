@@ -18,7 +18,7 @@ namespace ptx {
 			if (symbols.variable(this->_operands[1]).space()==AllocSpace::Shared){
 				param_cast<address_t>(dest) = symbols.address(this->_operands[1]);
 			} else {
-            	memcpy(&dest, &source, this->size());
+				dest = source;
 			}
 			symbols.set(this->_operands[0], dest);
         }

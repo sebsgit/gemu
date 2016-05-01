@@ -19,7 +19,7 @@ namespace ptx {
 			if (this->space() == AllocSpace::Global) {
 				param_copy_from(stored, (void*)(param_cast<address_t>(source) + this->_operands[1].offset()), this->size());
 			} else {
-				memcpy(&stored, &source, this->size());
+				stored = source;
 			}
 			symbols.set(this->_operands[0], stored);
         }
