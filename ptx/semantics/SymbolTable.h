@@ -39,6 +39,14 @@ namespace ptx {
 			std::memcpy(&result._data, data, size);
 			return result;
 		}
+		void copyFrom(const param_storage_t& other, const size_t size, const size_t offset = 0) {
+			const auto input = (void*)(other._data.data + offset);
+			std::memcpy(this->_allocAddr ? this->_allocAddr.get() : &this->_data.data, input, size);
+		}
+		void copyInto(param_storage_t& other, const size_t size, const size_t offset = 0) const {
+			auto output = (void*)(other._data.data + offset);
+			std::memcpy(output, this->_allocAddr ? this->_allocAddr.get() : &this->_data.data, size);
+		}
 
 	private:
 		param_raw_storage_t _data;
@@ -46,11 +54,7 @@ namespace ptx {
 
 		template<typename T> friend T& param_cast(param_storage_t&);
 		template<typename T> friend T param_cast(const param_storage_t&);
-		friend void param_copy_from(param_storage_t& output, const void* input, const size_t size);
-		friend void param_copy_into(void* output, const param_storage_t& input, const size_t size);
 	};
-
-	using address_t = unsigned long long;
 
 	template <typename T> T& param_cast(param_storage_t& s) { return -1; }
 	template<> inline unsigned long long& param_cast(param_storage_t& s) { return s._data.data; }
@@ -74,12 +78,6 @@ namespace ptx {
 	template<> inline double param_cast(const param_storage_t& s) { return s._data.d; }
 	template<> inline unsigned param_cast(const param_storage_t& s) { return s._data.u; }
 	template<> inline unsigned long param_cast(const param_storage_t& s) { return s._data.ul; }
-	inline void param_copy_from(param_storage_t& output, const void* input, const size_t size) {
-		std::memcpy(output._allocAddr ? output._allocAddr.get() : &output._data.data, input, size);
-	}
-	inline void param_copy_into(void* output, const param_storage_t& input, const size_t size) {
-		std::memcpy(output, input._allocAddr ? input._allocAddr.get() : &input._data.data, size);
-	}
 
 	class SymbolStorage {
 	public:
