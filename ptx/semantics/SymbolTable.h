@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstring>
 #include <memory>
+#include <cassert>
 #include <mutex>
 
 namespace ptx {
@@ -32,6 +33,13 @@ namespace ptx {
 			result._allocAddr.reset(malloc(size), ::free);
 			return result;
 		}
+		static param_storage_t fromRawData(const void* data, const size_t size) {
+			assert(size <= sizeof(param_raw_storage_t));
+			param_storage_t result;
+			std::memcpy(&result._data, data, size);
+			return result;
+		}
+
 	private:
 		param_raw_storage_t _data;
 		std::shared_ptr<void> _allocAddr;
