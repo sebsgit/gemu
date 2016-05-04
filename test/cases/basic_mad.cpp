@@ -48,9 +48,9 @@ static int launch_kernel(int a, int b, int c){
 
 int main(){
 	init_test();
-	for (int i=1 ; i<10 ; ++i)
-		for (int j=1 ; j<10 ; ++j)
-			for (int k=1 ; k<10 ; ++k) {
+	for (int i=1 ; i<5 ; ++i)
+		for (int j=1 ; j<5 ; ++j)
+			for (int k=1 ; k<5 ; ++k) {
 				int result = launch_kernel(i,j,k);
 				assert(result == i*j+k);
 				std::cout << result << '\n';
