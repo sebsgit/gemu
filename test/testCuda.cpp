@@ -568,11 +568,97 @@ static void test_module_with_kernel_array() {
 
 	::memset(out, 0, sizeof(out[0]) * 256);
 	cu_assert(cuMemcpyDtoH(&out, devOut, sizeof(out[0]) * 256));
-	for (int i=0 ; i<256 ; ++i)
-        std::cout << out[i] << ' ';
+//	for (int i=0 ; i<256 ; ++i)
+//        std::cout << out[i] << ' ';
+	//TODO assert out
 	cu_assert(cuMemFree(devOut));
 	cu_assert(cuMemFree(devIn));
 	cu_assert(cuMemFree(devCount));
+}
+
+static void test_module_with_small_kernel_array() {
+	/*
+__global__ void kernel(int* out, int* in) {
+	int v[1];
+	int r = in[0] % 256;
+	v[0] = 0;
+	v[r] += 1;
+	out[0] = v[0];
+}
+	*/
+
+	const std::string source = "\n"
+	".version 4.3\n"
+	".target sm_20\n"
+	".address_size 64\n"
+	"\n"
+	"	// .globl	_Z6kernelPiS_\n"
+	"\n"
+	".visible .entry _Z6kernelPiS_(\n"
+	"	.param .u64 _Z6kernelPiS__param_0,\n"
+	"	.param .u64 _Z6kernelPiS__param_1\n"
+	")\n"
+	"{\n"
+	"	.local .align 4 .b8 	__local_depot0[4];\n"
+	"	.reg .b64 	%SP;\n"
+	"	.reg .b64 	%SPL;\n"
+	"	.reg .b32 	%r<11>;\n"
+	"	.reg .b64 	%rd<10>;\n"
+	"\n"
+	"\n"
+	"	mov.u64 	%rd9, __local_depot0;\n"
+	"	cvta.local.u64 	%SP, %rd9;\n"
+	"	ld.param.u64 	%rd1, [_Z6kernelPiS__param_0];\n"
+	"	ld.param.u64 	%rd2, [_Z6kernelPiS__param_1];\n"
+	"	cvta.to.global.u64 	%rd3, %rd1;\n"
+	"	cvta.to.global.u64 	%rd4, %rd2;\n"
+	"	add.u64 	%rd5, %SP, 0;\n"
+	"	cvta.to.local.u64 	%rd6, %rd5;\n"
+	"	ldu.global.u32 	%r1, [%rd4];\n"
+	"	shr.s32 	%r2, %r1, 31;\n"
+	"	shr.u32 	%r3, %r2, 24;\n"
+	"	add.s32 	%r4, %r1, %r3;\n"
+	"	and.b32  	%r5, %r4, -256;\n"
+	"	sub.s32 	%r6, %r1, %r5;\n"
+	"	mov.u32 	%r7, 0;\n"
+	"	st.local.u32 	[%rd6], %r7;\n"
+	"	mul.wide.s32 	%rd7, %r6, 4;\n"
+	"	add.s64 	%rd8, %rd6, %rd7;\n"
+	"	ld.local.u32 	%r8, [%rd8];\n"
+	"	add.s32 	%r9, %r8, 1;\n"
+	"	st.local.u32 	[%rd8], %r9;\n"
+	"	ld.local.u32 	%r10, [%rd6];\n"
+	"	st.global.u32 	[%rd3], %r10;\n"
+	"	ret;\n"
+	"}\n"
+	"\n"
+	"\n";
+	CUmodule modId = 0;
+	CUfunction funcHandle = 0;
+	cu_assert(cuModuleLoadData(&modId, source.c_str()));
+	cu_assert(cuModuleGetFunction(&funcHandle, modId, "_Z6kernelPiS_"));
+	int in[1] = {0}, out[1];
+	CUdeviceptr devIn, devOut;
+	cu_assert(cuMemAlloc(&devIn, sizeof(in[0])));
+	cu_assert(cuMemAlloc(&devOut, sizeof(out[0])));
+	cu_assert(cuMemcpyHtoD(devIn, &in, sizeof(in[0])));
+	void * params[] = {&devOut, &devIn};
+
+//	#ifdef PTX_KERNEL_DEBUG
+//	ptx::debug::KernelDebugger debugger;
+//	#endif
+
+	cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
+
+//	#ifdef PTX_KERNEL_DEBUG
+//	ptx::debug::KernelDebuggerCLI cli(debugger);
+//	#endif
+
+	out[0] = 123;
+	cu_assert(cuMemcpyDtoH(&out, devOut, sizeof(out[0])));
+	assert(out[0] == 1);
+	cu_assert(cuMemFree(devOut));
+	cu_assert(cuMemFree(devIn));
 }
 
 static void test_events() {
@@ -591,7 +677,8 @@ static void test_modules() {
     test_module_with_mul();
     test_module_with_arithm();
     test_module_with_sync();
-	//test_module_with_kernel_array();
+	test_module_with_kernel_array();
+	test_module_with_small_kernel_array();
 }
 
 void test_cuda(){

@@ -16,10 +16,10 @@ namespace ptx {
         void resolve(SymbolTable& symbols) const override {
             param_storage_t stored;
 			const auto source = symbols.get(this->_operands[1]);
-			if (this->space() == AllocSpace::Global) {
-				stored.copyFrom(source, this->size(), this->_operands[1].offset());
-			} else {
+			if (this->space() == AllocSpace::Shared || this->space() == AllocSpace::Parameter) {
 				stored = source;
+			} else {
+				stored.copyFrom(source, this->size(), this->_operands[1].offset());
 			}
 			symbols.set(this->_operands[0], stored);
         }
