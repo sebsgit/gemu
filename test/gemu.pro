@@ -85,7 +85,8 @@ HEADERS += ../arch/Device.h \
            ../ptx/semantics/instructions/memory/Move.h \
            ../ptx/semantics/instructions/memory/Store.h \
            ../ptx/debug/KernelDebugger.h \
-    ../drivers/cuda/gemuConfig.h
+    ../drivers/cuda/gemuConfig.h \
+    ../ptx/debug/KernelDebuggerCLI.h
 
 SOURCES += ../ptx/Parser.cpp \
            ../ptx/Tokenizer.cpp \

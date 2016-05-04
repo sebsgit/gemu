@@ -48,6 +48,18 @@ namespace ptx {
 			auto output = (void*)(other._data.data + offset);
 			std::memcpy(output, this->_allocAddr ? (void*)this->_allocAddr.get() : (void*)&this->_data.data, size);
 		}
+		std::string printable(const ptx::Type type, const size_t size) const noexcept {
+			std::stringstream ss;
+			switch (type) {
+			case Type::Bits: size < 8 ? ss << _data.u : ss << _data.data; break;
+			case Type::Float: size < 8 ? ss << _data.f : ss << _data.d; break;
+			case Type::Predicate: ss << _data.b; break;
+			case Type::Signed: size < 8 ? ss << _data.i : ss << _data.ll; break;
+			case Type::Unsigned: size < 8 ? ss << _data.u : ss << _data.data; break;
+			default: break;
+			}
+			return ss.str();
+		}
 
 	private:
 		param_raw_storage_t _data;

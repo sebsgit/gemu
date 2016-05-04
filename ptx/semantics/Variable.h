@@ -2,6 +2,8 @@
 #define PTXSEMANTICSVARIABLEH
 
 #include "semantics/globals.h"
+#include <string>
+#include <sstream>
 
 namespace ptx {
 	class Variable {
@@ -40,6 +42,14 @@ namespace ptx {
         ptx::Variable renamed(const std::string& name) const {
             return ptx::Variable(this->space(), this->type(), this->size(), name);
         }
+		std::string toString() const noexcept {
+			std::stringstream ss;
+			ss << this->_name << ": ";
+			ss << ptx::toString(this->type()) << ' ' << this->size()*8 << ' ';
+			if (this->_arraySize > 1)
+				ss << "<array " << this->_arraySize << ">";
+			return ss.str();
+		}
 	};
 }
 

@@ -2,6 +2,7 @@
 #include "../arch/Device.h"
 #include "cuda/cudaThreads.h"
 #include "debug/KernelDebugger.h"
+#include "debug/KernelDebuggerCLI.h"
 #include "VariableDeclaration.h"
 #include "Load.h"
 #include "Convert.h"
@@ -559,6 +560,10 @@ static void test_module_with_kernel_array() {
 //	while (auto i = debugger.step()) {
 //		std::cout << i->toString() << ' ' << ptx::param_cast<unsigned long long>(debugger.symbols()["%rd22"]) << '\n';
 //	}
+//	#endif
+
+//	#ifdef PTX_KERNEL_DEBUG
+//	ptx::debug::KernelDebuggerCLI cli(debugger);
 //	#endif
 
 	::memset(out, 0, sizeof(out[0]) * 256);
