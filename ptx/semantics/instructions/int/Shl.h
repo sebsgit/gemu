@@ -30,15 +30,15 @@ namespace ptx {
 			switch(this->type()) {
 			case Type::Signed:
 				if (this->size() < 8)
-					param_cast<int>(dest) = param_cast<int>(src) >> shiftby;
+					this->do_shift<int>(dest, src, shiftby);
 				else
-					param_cast<long long>(dest) = param_cast<long long>(src) >> shiftby;
+					this->do_shift<long long>(dest, src, shiftby);
 				break;
 			case Type::Unsigned:
 				if (this->size() < 8)
-					param_cast<unsigned int>(dest) = param_cast<unsigned int>(src) >> shiftby;
+					this->do_shift<unsigned int>(dest, src, shiftby);
 				else
-					param_cast<unsigned long long>(dest) = param_cast<unsigned long long>(src) >> shiftby;
+					this->do_shift<unsigned long long>(dest, src, shiftby);
 				break;
 			default:
 				//TODO error
@@ -46,6 +46,14 @@ namespace ptx {
 			}
 
 			symbols.set(this->_operands[0], dest);
+		}
+	private:
+		template <typename T>
+		void do_shift(param_storage_t& dest, const param_storage_t& src, int shiftby) const noexcept {
+			if (shiftby >= sizeof(T) * 8)
+				param_cast<T>(dest) = param_cast<T>(src) > 0 ? (T)0 : (T)~0;
+			else
+				param_cast<T>(dest) = param_cast<T>(src) >> shiftby;
 		}
     };
 }

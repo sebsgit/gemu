@@ -1,5 +1,6 @@
 #include "test_base.h"
 #include <string.h>
+#include <vector>
 
 /* 
   __global__ void kernel_s32(int* out, int in, int value) {
@@ -135,11 +136,26 @@ T run_function(const std::string& name, const T input, const int shiftValue) {
 
 int main(){
 	init_test();
-	for (int i=0 ; i<10 ; ++i) {
+	const std::vector<int> sizes({0, 13, 32, 35, 41, 57, 63, 64, 65, 79, 91, 100});
+	for (const auto i : sizes) {
 		std::cout << run_function<unsigned long long>("_Z10kernel_u64Pyyi", 1024, i) << "\n";
 		std::cout << run_function<long long>("_Z10kernel_s64Pxxi", 1024, i) << "\n";
 		std::cout << run_function<unsigned int>("_Z10kernel_u32Pjji", 1024, i) << "\n";
 		std::cout << run_function<int>("_Z10kernel_s32Piii", 1024, i) << "\n";
+	}
+	for (const auto i : sizes) {
+		std::cout << run_function<long long>("_Z10kernel_s64Pxxi", -1024, i) << "\n";
+		std::cout << run_function<int>("_Z10kernel_s32Piii", -1024, i) << "\n";
+	}
+	const std::vector<unsigned long long> rand_bits({3293874391723201, 39439, 1239748478343, 9898347812, 2938738479912733, 3287538749487, 973849723});
+	for (size_t k=0 ; k<sizes.size() ; k += 2) {
+		const auto i = sizes[k];
+		for (const auto rnd : rand_bits) {
+			std::cout << run_function<unsigned long long>("_Z10kernel_u64Pyyi", rnd, i) << "\n";
+			std::cout << run_function<long long>("_Z10kernel_s64Pxxi", rnd, i) << "\n";
+			std::cout << run_function<unsigned int>("_Z10kernel_u32Pjji", rnd, i) << "\n";
+			std::cout << run_function<int>("_Z10kernel_s32Piii", rnd, i) << "\n";
+		}
 	}
 	return 0;
 }
