@@ -30,7 +30,8 @@ namespace ptx {
 		{}
 		static param_storage_t allocArray(const size_t size) {
 			param_storage_t result;
-			result._allocAddr.reset(malloc(size), ::free);
+			result._allocAddr.reset(new char[size], std::default_delete<char[]>());
+			result._data.data = (unsigned long long)result._allocAddr.get();
 			return result;
 		}
 		static param_storage_t fromRawData(const void* data, const size_t size) {
@@ -41,16 +42,16 @@ namespace ptx {
 		}
 		void copyFrom(const param_storage_t& other, const size_t size, const size_t offset = 0) {
 			const auto input = (void*)(other._data.data + offset);
-			std::memcpy(this->_allocAddr ? this->_allocAddr.get() : &this->_data.data, input, size);
+			std::memcpy(this->_allocAddr ? (void*)this->_allocAddr.get() : (void*)&this->_data.data, input, size);
 		}
 		void copyInto(param_storage_t& other, const size_t size, const size_t offset = 0) const {
 			auto output = (void*)(other._data.data + offset);
-			std::memcpy(output, this->_allocAddr ? this->_allocAddr.get() : &this->_data.data, size);
+			std::memcpy(output, this->_allocAddr ? (void*)this->_allocAddr.get() : (void*)&this->_data.data, size);
 		}
 
 	private:
 		param_raw_storage_t _data;
-		std::shared_ptr<void> _allocAddr;
+		std::shared_ptr<char> _allocAddr;
 
 		template<typename T> friend T& param_cast(param_storage_t&);
 		template<typename T> friend T param_cast(const param_storage_t&);

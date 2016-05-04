@@ -86,7 +86,7 @@ void SymbolStorage::set(const ptx::Variable& var, const param_storage_t& storage
 void SymbolStorage::declare(const Variable &var){
     auto it = std::find_if(_data.begin(), _data.end(), [&](const entry_t& d){ return d.var.name() == var.name();});
     if (it == _data.end())
-        _data.push_back(entry_t(var, param_storage_t()));
+		_data.push_back(entry_t(var, var.arraySize() > 1 ? param_storage_t::allocArray(var.arraySize() * var.size()) : param_storage_t()));
 }
 
 bool SymbolStorage::setIfExists(const ptx::Variable& var, const param_storage_t& storage) {

@@ -57,6 +57,16 @@ namespace ptx {
 		BarArrive,
 		BarReduction
 	};
+	inline const char* toString(const Type t) {
+		switch (t) {
+		case Type::Bits: return "{BITS}";
+		case Type::Float: return "{FLOAT}";
+		case Type::Predicate: return "{PRED}";
+		case Type::Signed: return "{SIGNED}";
+		case Type::Unsigned: return "{UNSIGNED}";
+		default: return "{UNKNOWN}";
+		}
+	}
 }
 
 #endif

@@ -102,7 +102,7 @@ TEMPLATE = app
 TARGET = gemu
 
 CONFIG -= qt
-CONFIG += thread c++14
+CONFIG += thread c++14 debug_and_release
 LIBS += -pthread
 
 OBJECTS_DIR = build_tmp

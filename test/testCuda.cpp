@@ -532,28 +532,42 @@ static void test_module_with_kernel_array() {
     "\n"
     "	ret;\n"
     "}\n";
+
+//	#ifdef PTX_KERNEL_DEBUG
+//	ptx::debug::KernelDebugger debugger;
+//	#endif
+
     CUmodule modId = 0;
     CUfunction funcHandle = 0;
     cu_assert(cuModuleLoadData(&modId, source.c_str()));
     cu_assert(cuModuleGetFunction(&funcHandle, modId, "_Z6kernelPiS_i"));
-    const int count = 32;
-    int in[count], out[count];
+	int count = 32;
+	int in[count], out[256];
     for (int i=0 ; i<count ; ++i)
         in[i] = i%6;
     CUdeviceptr devIn, devOut, devCount;
     cu_assert(cuMemAlloc(&devCount, sizeof(count)));
-    cu_assert(cuMemAlloc(&devIn, sizeof(in[0]) * count));
-    cu_assert(cuMemAlloc(&devOut, sizeof(out[0]) * count));
+	cu_assert(cuMemAlloc(&devIn, sizeof(in[0]) * count));
+	cu_assert(cuMemAlloc(&devOut, sizeof(out[0]) * 256));
     cu_assert(cuMemcpyHtoD(devCount, &count, sizeof(count)));
-    cu_assert(cuMemcpyHtoD(devIn, &in, sizeof(in[0]) * count));
+	cu_assert(cuMemcpyHtoD(devIn, &in, sizeof(in[0]) * count));
     void * params[] = {&devOut, &devIn, (void*)&count};
+
     cu_assert(cuLaunchKernel(funcHandle, 1,1,1, 1,1,1, 0,0, params, nullptr));
-    cu_assert(cuMemcpyDtoH(&out, devOut, sizeof(out[0]) * count));
-    for (int i=0 ; i<count ; ++i)
+
+//	#ifdef PTX_KERNEL_DEBUG
+//	while (auto i = debugger.step()) {
+//		std::cout << i->toString() << ' ' << ptx::param_cast<unsigned long long>(debugger.symbols()["%rd22"]) << '\n';
+//	}
+//	#endif
+
+	::memset(out, 0, sizeof(out[0]) * 256);
+	cu_assert(cuMemcpyDtoH(&out, devOut, sizeof(out[0]) * 256));
+	for (int i=0 ; i<256 ; ++i)
         std::cout << out[i] << ' ';
-    cu_assert(cuMemFree(devOut));
-    cu_assert(cuMemFree(devIn));
-    cu_assert(cuMemFree(devCount));
+	cu_assert(cuMemFree(devOut));
+	cu_assert(cuMemFree(devIn));
+	cu_assert(cuMemFree(devCount));
 }
 
 static void test_events() {
@@ -572,7 +586,7 @@ static void test_modules() {
     test_module_with_mul();
     test_module_with_arithm();
     test_module_with_sync();
-    //test_module_with_kernel_array();
+	//test_module_with_kernel_array();
 }
 
 void test_cuda(){

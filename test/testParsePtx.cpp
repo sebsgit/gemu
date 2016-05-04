@@ -811,6 +811,20 @@ static void test_with_kernel_array() {
 	assert(var.arraySize() == 1024);
 }
 
+static void test_storage() {
+	ptx::SymbolTable table;
+	ptx::Variable var(ptx::AllocSpace::Register, ptx::Type::Unsigned, 8, "%r22");
+	table.declare(var);
+	ptx::param_raw_storage_t d;
+	d.i = 3;
+	table.set(var, ptx::param_storage_t(d));
+	assert(ptx::param_cast<int>(table.get(var)) == 3);
+	table.declare(ptx::Variable(ptx::AllocSpace::Local, ptx::Type::Unsigned, 8, "array", 1024));
+	auto array = table.get("array");
+	unsigned long long address = ptx::param_cast<unsigned long long>(array);
+	assert(address != 0);
+}
+
 void test_ptx() {
 	std::cout << "testing parser...\n";
     test_variable_parser();
@@ -828,5 +842,6 @@ void test_ptx() {
     test_with_global();
     test_with_file_and_loc();
     test_with_kernel_array();
+	test_storage();
 	std::cout << "done.\n";
 }

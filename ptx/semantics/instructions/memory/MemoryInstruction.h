@@ -141,17 +141,25 @@ namespace ptx {
 									const param_storage_t& left,
 									const param_storage_t& right)
 	{
-		PTX_UNUSED(size);
 		param_storage_t dest;
 		switch (type) {
 		case Type::Signed:
-			param_cast<int>(dest) = Operator<int>()(param_cast<int>(left), param_cast<int>(right));
+			if (size < 8)
+				param_cast<int>(dest) = Operator<int>()(param_cast<int>(left), param_cast<int>(right));
+			else
+				param_cast<long long>(dest) = Operator<long long>()(param_cast<long long>(left), param_cast<long long>(right));
 			break;
 		case Type::Unsigned:
-			param_cast<unsigned>(dest) = Operator<unsigned>()(param_cast<unsigned>(left), param_cast<unsigned>(right));
+			if (size < 0)
+				param_cast<unsigned>(dest) = Operator<unsigned>()(param_cast<unsigned>(left), param_cast<unsigned>(right));
+			else
+				param_cast<unsigned long long>(dest) = Operator<unsigned long long>()(param_cast<unsigned long long>(left), param_cast<unsigned long long>(right));
 			break;
 		case Type::Float:
-			param_cast<float>(dest) = Operator<float>()(param_cast<float>(left), param_cast<float>(right));
+			if (size < 8)
+				param_cast<float>(dest) = Operator<float>()(param_cast<float>(left), param_cast<float>(right));
+			else
+				param_cast<double>(dest) = Operator<double>()(param_cast<double>(left), param_cast<double>(right));
 			break;
 		default:
 			break;
@@ -208,7 +216,7 @@ namespace ptx {
 		void setVolatile(bool v=true) { this->_isVolatile = v; }
 		virtual void resolve(SymbolTable& table) const{
             PTX_UNUSED(table);
-			std::cout << "[mem instr] resolve default\n";
+			std::cout << "[mem instr] resolve default: " << this->toString() << "\n";
 		}
     protected:
         template <template <typename T> class Operator>
