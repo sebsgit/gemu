@@ -542,7 +542,7 @@ static void test_module_with_kernel_array() {
     CUfunction funcHandle = 0;
     cu_assert(cuModuleLoadData(&modId, source.c_str()));
     cu_assert(cuModuleGetFunction(&funcHandle, modId, "_Z6kernelPiS_i"));
-	int count = 32;
+    const int count = 32;
 	int in[count], out[256];
     for (int i=0 ; i<count ; ++i)
         in[i] = i%6;

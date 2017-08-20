@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <algorithm>
+#include <numeric>
+#include <iterator>
+#include <cctype>
 
 namespace ptx {
     TokenList TokenList::sublist(int start, int length) const {

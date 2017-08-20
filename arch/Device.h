@@ -6,7 +6,7 @@
 #include <unordered_map>
 #ifdef __linux__
 #include <sys/mman.h>
-#elif defined(__WIN32)
+#elif defined(WIN32)
 #include <windows.h>
 #endif
 
@@ -76,14 +76,14 @@ namespace gemu {
         static bool lock_mem(const void* ptr, size_t len) {
             #ifdef __linux__
             return mlock(ptr, len) == 0;
-            #elif defined(__WIN32)
+            #elif defined(WIN32)
             return VirtualLock((LPVOID)ptr, len);
             #endif
         }
         static bool unlock_mem(const void * ptr, size_t len) {
             #ifdef __linux__
             return munlock(ptr, len) == 0;
-            #elif defined(__WIN32)
+            #elif defined(WIN32)
             return VirtualUnlock((LPVOID)ptr, len);
             #endif
         }
