@@ -4,11 +4,11 @@
 #include "debug/KernelDebugger.h"
 #include "debug/KernelDebuggerCLI.h"
 #include "VariableDeclaration.h"
-#include "Load.h"
-#include "Convert.h"
-#include "Move.h"
-#include "Store.h"
-#include "Return.h"
+#include "memory/Load.h"
+#include "memory/Convert.h"
+#include "memory/Move.h"
+#include "memory/Store.h"
+#include "control/Return.h"
 #include <cassert>
 #include <iostream>
 
